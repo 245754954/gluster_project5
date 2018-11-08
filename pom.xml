@@ -20,6 +20,7 @@
 
 	<modules>
 		<module>hycloud-server</module>
+		<module>hycloud-hdfs</module>
 		<module>hycloud-client</module>
 	</modules>
 	<properties>

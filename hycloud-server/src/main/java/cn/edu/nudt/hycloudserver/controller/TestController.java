@@ -1,8 +1,10 @@
 package cn.edu.nudt.hycloudserver.controller;
 
+import cn.edu.nudt.hycloudserver.entity.Student;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
-    public JSONObject saveModulation() {
+    public JSONObject saveModulation(String student, String student1) {
 //        ModulationTree mo = new ModulationTree();
 //        List<Node> list = new ArrayList<>();
 //        Node node1 = new Node();
@@ -46,9 +48,17 @@ public class TestController {
 //            return "failed";
 //        }
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("abc", "bca");
-        return jsonObject;
+        JSONObject jsonObject = JSONObject.fromObject(student);
+        JSONObject jsonObject1 = JSONObject.fromObject(student1);
+        Student studentx1 = (Student) JSONObject.toBean(jsonObject, Student.class);
+        Student studentx2 = (Student) JSONObject.toBean(jsonObject1, Student.class);
+
+
+        System.out.println("xxxxx"+studentx1.toString());
+        System.out.println("xxxxx"+studentx2.toString());
+        //System.out.println("hhhhh"+student.getName());
+        studentx1.setName("haskjdhflkjahs");
+        return JSONObject.fromObject(studentx1);
 
 
     }
