@@ -27,6 +27,8 @@ public class HdfsController {
             System.out.println(">" + fileStatus.getPath());
         }
 
+
+
         return "success";
 
     }
