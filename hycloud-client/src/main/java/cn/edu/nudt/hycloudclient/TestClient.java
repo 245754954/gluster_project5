@@ -13,7 +13,8 @@
 package cn.edu.nudt.hycloudclient;
 
 
-import cn.edu.nudt.hycloudserver.entity.Student;
+import cn.edu.nudt.hycloudinterface.entity.Student;
+
 import net.sf.json.JSONObject;
 
 import java.io.BufferedReader;

@@ -36,20 +36,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--新增后续dubbo项目中所需依赖，dubbo、zk。
-             父模块pom中使用dependencyManagement来管理依赖版本号，子模块pom中不需要再写版本号，exclusion也不需要-->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.sgroschupf</groupId>
-			<artifactId>zkclient</artifactId>
-		</dependency>
+
 
 		<!--使用Controller注解向前端返回html页面需要加入的模板 ，但是一般不推荐这么使用-->
 		<dependency>
@@ -79,6 +66,13 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>cn.edu.nudt</groupId>
+			<artifactId>hycloud-interface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

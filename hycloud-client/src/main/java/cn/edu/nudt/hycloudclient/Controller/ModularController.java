@@ -1,6 +1,6 @@
 package cn.edu.nudt.hycloudclient.Controller;
 
-
+/*
 import cn.edu.nudt.hycloudserver.entity.ModulationTree;
 import cn.edu.nudt.hycloudserver.entity.Node;
 import cn.edu.nudt.hycloudserver.service.ModularTreeService;
@@ -68,4 +68,4 @@ public class ModularController {
         System.out.println(modularTreeByPath);
         return  "success";
     }
-}
+}*/
