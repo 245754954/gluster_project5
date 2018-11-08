@@ -1,6 +1,9 @@
 package cn.edu.nudt.hycloudhdfs.controller;
 
 
+
+
+
 import org.apache.hadoop.fs.FileStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.fs.FsShell;
@@ -14,9 +17,7 @@ public class HdfsController {
     @Autowired
     FsShell fsShell;
 
-    public HdfsController() {
-        System.out.println("sdtfgyuh");
-    }
+
 
     //列出hadoop下面的所有文件，也就是进行遍历操作
     @RequestMapping(value = "/find")
@@ -25,9 +26,6 @@ public class HdfsController {
         for (FileStatus fileStatus : fsShell.lsr("/")) {
             System.out.println(">" + fileStatus.getPath());
         }
-
-
-
 
         return "success";
 

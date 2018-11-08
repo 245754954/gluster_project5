@@ -10,7 +10,7 @@ import java.util.Date;
 @Component
 @EnableScheduling
 public class TaskRunner {
-/*
+
     @Scheduled(cron = "0 0/1 * * * ?") // 每分钟执行一次
     public void work() throws Exception {
         System.out.println("执行调度任务："+new Date());
@@ -43,7 +43,7 @@ public class TaskRunner {
         System.out.println("每一小时执行一次的定时任务："+new Date());
     }
 
-*/
+
 
 
 }
