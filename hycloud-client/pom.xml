@@ -21,9 +21,47 @@
 	</properties>
 
 	<dependencies>
+		<!-- Client -->
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.25.2</version>
+		</dependency>
+
+		<!-- for hadoop -->
+		<dependency>
+			<groupId>ch.cern.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.7.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.cern.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>2.7.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-maven-plugins</artifactId>
+			<version>3.1.1</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<!-- Client -->
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

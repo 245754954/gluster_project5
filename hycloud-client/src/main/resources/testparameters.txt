@@ -1,0 +1,15 @@
+// Linux
+-a sput -f /root/workspace/yhbigdata/TestDir/LocalDir/testfile.txt -g 64
+-a sget -f testfile.txt -l /root/workspace/yhbigdata/TestDir/LocalDir/retrieved.txt
+-a sdump -f testfile.txt
+-a sdel -f testfile.txt -d 2 3
+
+
+// Windows
+-a sput -f E:\CodeHub\TestDir\LocalDir\testfile.txt -g 64
+-a sget -f testfile.txt -l E:\CodeHub\TestDir\LocalDir\retrieved.txt
+-a sdump -f testfile.txt
+-a sdel -f testfile.txt -d 2 3
+
+-a put -f E:\CodeHub\TestDir\LocalDir\testfile.txt
+-a get -f testfile.txt -l E:\CodeHub\TestDir\LocalDir\getfile.txt
