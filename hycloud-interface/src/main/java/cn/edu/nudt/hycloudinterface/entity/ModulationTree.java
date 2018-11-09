@@ -19,6 +19,12 @@ public class ModulationTree implements Serializable{
     private int mSegmentsNum;
     private List<Node> mTree;
 
+
+    public ModulationTree() {
+        this.mSegmentsNum = 0;
+        this.mTree = null;
+    }
+
     /**
      *
      * @param segmentsNum
@@ -357,6 +363,23 @@ public class ModulationTree implements Serializable{
             idx++;
         }
         helper.print("----------------------------------------------------------------");
+    }
+
+
+    public int getmSegmentsNum() {
+        return mSegmentsNum;
+    }
+
+    public List<Node> getmTree() {
+        return mTree;
+    }
+
+    public void setmSegmentsNum(int mSegmentsNum) {
+        this.mSegmentsNum = mSegmentsNum;
+    }
+
+    public void setmTree(List<Node> mTree) {
+        this.mTree = mTree;
     }
 
     public static void main(String[] args) throws IOException {

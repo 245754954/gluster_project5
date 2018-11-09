@@ -47,4 +47,12 @@ public class SegmentList implements Serializable {
     public int size() {
         return this.mSegmentList.size();
     }
+
+    public List<Integer> getmSegmentList() {
+        return mSegmentList;
+    }
+
+    public void setmSegmentList(List<Integer> mSegmentList) {
+        this.mSegmentList = mSegmentList;
+    }
 }
