@@ -2,6 +2,7 @@ package cn.edu.nudt.hycloudclient.deletion;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.crypto.AES;
+import cn.edu.nudt.hycloudclient.network.Transfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.entity.utils.helper;
@@ -13,7 +14,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.*;
 import java.math.BigInteger;
-import java.net.Socket;
+import java.net.MalformedURLException;
 import java.util.List;
 
 public class DeletionTransfer {
@@ -26,61 +27,36 @@ public class DeletionTransfer {
 	
 	/**
 	 * Obtain the key modulation tree at the remote server with the given segments deleted.
-	 * @param remoteTreePath
-	 * - path at the remote server for the key modulation tree.
+	 * @param filename
+	 * - filename corresponds to the requested ModulationTree
 	 * @param segmentsToDelete
 	 * - indexes of segments to be deleted. The indexes start with one.
 	 * @return
 	 * - an object of obtained key modulation tree.
 	 */
-	public static ModulationTree obtainRemoteTree(String remoteTreePath, SegmentList segmentsToDelete){
+	public static ModulationTree obtainRemoteTree(String filename, SegmentList segmentsToDelete){
 		ModulationTree tree = null;
 		try {
-			Socket client = new Socket(Config.getConfig().getManagerServerName(), Config.getConfig().getManagerServerPort());
-			DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-			// send action
-			dos.writeInt(DeletionTransfer.ObtainRemoteTreeWithDeletion);
-			// send data
-			dos.writeUTF(remoteTreePath);
-			ObjectOutputStream oos = new ObjectOutputStream(dos);
-			oos.writeObject(segmentsToDelete);
-			oos.flush();
-			// receive data
-			ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-			tree = (ModulationTree) ois.readObject();
-			
-			dos.close();
-			oos.close();
-			ois.close();
-			client.close();
-		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			tree = Transfer.obtainRemoteTree(filename, segmentsToDelete);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} 
+		}
 		return tree;
 	}
-	
-	public static ModulationTree obtainRemoteTree(String remoteTreePath){
+
+	/**
+	 *
+	 * @param filename
+	 * - filename corresponds to the requested ModulationTree
+	 * @return
+	 */
+	public static ModulationTree obtainRemoteTree(String filename){
 		ModulationTree tree = null;
 		try {
-			Socket client = new Socket(Config.getConfig().getManagerServerName(), Config.getConfig().getManagerServerPort());
-			DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-			// send action
-			dos.writeInt(DeletionTransfer.ObtainRemoteTreeWithoutDeletion);
-			// send data
-			dos.writeUTF(remoteTreePath);
-			dos.flush();
-			// receive data
-			ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-			tree = (ModulationTree) ois.readObject();
-			
-			dos.close();
-			ois.close();
-			client.close();
-		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			tree = Transfer.obtainRemoteTree(filename);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} 
+		}
 		return tree;
 	}
 	
@@ -90,33 +66,16 @@ public class DeletionTransfer {
 	 * - the key modulation tree object to be uploaded.
 	 * @param filename
 	 * @return
-	 * - the path at the remote server for the uploaded key modulation tree object.
+	 * - true if updating successes, false otherwise.
 	 */
-	public static String updateRemoteTree(ModulationTree tree, String filename) {
-		String remoteTreePath = null;
+	public static boolean updateModulationTree(String filename, ModulationTree tree) {
+		boolean rv = false;
 		try {
-			Socket client = new Socket(Config.getConfig().getManagerServerName(), Config.getConfig().getManagerServerPort());
-			DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-			// send action
-			dos.writeInt(DeletionTransfer.UpdateRemoteTree);
-			// send data
-			dos.writeUTF(filename);
-			ObjectOutputStream oos = new ObjectOutputStream(dos);
-			oos.writeObject(tree);
-			oos.flush();
-			// receive data
-			DataInputStream dis = new DataInputStream(client.getInputStream());
-			remoteTreePath = dis.readUTF();
-			
-			dos.close();
-			oos.close();
-			dis.close();
-			client.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			rv = Transfer.updateModulationTree(filename, tree);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} 
-		return remoteTreePath;
+		}
+		return  rv;
 	}
 	
 

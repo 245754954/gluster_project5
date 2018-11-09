@@ -1,6 +1,5 @@
 package cn.edu.nudt.hycloudclient.deletion;
 
-import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.LocalBase;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
@@ -45,14 +44,18 @@ public class DeletionHandler {
 		String filename = inputFile.getName();
 		
 		ModulationTree mTree = new ModulationTree(segmentsNum);
-		BigInteger masterKey = new BigInteger(Config.getConfig().getModulatorBits(), new SecureRandom());
+		BigInteger masterKey = new BigInteger(ModulationTree.ModulatorBits, new SecureRandom());
 		List<BigInteger> segmentKeys = mTree.deriveKeys(masterKey);
 		
 		String remotePath = DeletionTransfer.uploadWithEncryption(segmentSize, inputFile, segmentKeys);
-		String remoteTreePath = DeletionTransfer.updateRemoteTree(mTree, filename);
-		
+		boolean rv = DeletionTransfer.updateModulationTree(filename, mTree);
+
+		if(!rv){
+			throw new IOException("Error: updateModulationTree");
+		}
+
 		LocalBase dbh = new LocalBase();
-		dbh.insert(filename, filepath, masterKey, granularity, segmentsNum, remotePath, remoteTreePath);
+		dbh.insert(filename, filepath, masterKey, granularity, segmentsNum, remotePath);
 		dbh.close();
 	}
 	
@@ -77,12 +80,11 @@ public class DeletionHandler {
 		LocalBase dbh = new LocalBase();
 		BigInteger masterKey = dbh.getMasterKey(filename);
 		String remotePath = dbh.getRemotePath(filename);
-		String remoteTreePath = dbh.getRemoteTreePath(filename);
 		int granularity = dbh.getGranularity(filename);
 		int segmentsNum = dbh.getSegmentsNum(filename);
 		dbh.close();
 
-		ModulationTree mTree = DeletionTransfer.obtainRemoteTree(remoteTreePath);
+		ModulationTree mTree = DeletionTransfer.obtainRemoteTree(filename);
 		List<BigInteger> segmentKeys = mTree.deriveKeys(masterKey);
 		
 		DeletionTransfer.retrieve(granularity, segmentsNum, segmentKeys, remotePath, localPath);
@@ -112,14 +114,15 @@ public class DeletionHandler {
 	public static void sdel(String filename, SegmentList segmentsToDelete) throws IOException {
 		LocalBase dbh = new LocalBase();
 		BigInteger oldMasterKey = dbh.getMasterKey(filename);
-		String remoteTreePath = dbh.getRemoteTreePath(filename);
-		
-		ModulationTree newTree = DeletionTransfer.obtainRemoteTree(remoteTreePath, segmentsToDelete);
-		BigInteger newMasterKey = new BigInteger(Config.getConfig().getModulatorBits(), new SecureRandom());
+
+		ModulationTree newTree = DeletionTransfer.obtainRemoteTree(filename, segmentsToDelete);
+		BigInteger newMasterKey = new BigInteger(ModulationTree.ModulatorBits, new SecureRandom());
 		newTree.adjustModulators(newMasterKey, oldMasterKey);
-		remoteTreePath = DeletionTransfer.updateRemoteTree(newTree, filename);
-		
-		dbh.update(filename, newMasterKey, remoteTreePath);
+		boolean rv = DeletionTransfer.updateModulationTree(filename, newTree);
+		if(!rv){
+			throw new IOException("Error: updateModulationTree");
+		}
+		dbh.update(filename, newMasterKey);
 		dbh.close();
 	}
 	
@@ -131,18 +134,17 @@ public class DeletionHandler {
 	public static void sdel(String filename) throws IOException {
 		LocalBase dbh = new LocalBase();
 		BigInteger oldMasterKey = dbh.getMasterKey(filename);
-		String remoteTreePath = dbh.getRemoteTreePath(filename);
 		int segmentsNum = dbh.getSegmentsNum(filename);
 		
 		// list of all segments
 		SegmentList segmentsToDelete = new SegmentList(segmentsNum);
 		
-		ModulationTree newTree = DeletionTransfer.obtainRemoteTree(remoteTreePath, segmentsToDelete);
-		BigInteger newMasterKey = new BigInteger(Config.getConfig().getModulatorBits(), new SecureRandom());
+		ModulationTree newTree = DeletionTransfer.obtainRemoteTree(filename, segmentsToDelete);
+		BigInteger newMasterKey = new BigInteger(ModulationTree.ModulatorBits, new SecureRandom());
 		newTree.adjustModulators(newMasterKey, oldMasterKey);
-		remoteTreePath = DeletionTransfer.updateRemoteTree(newTree, filename);
-		
-		dbh.update(filename, newMasterKey, remoteTreePath);
+		boolean rv = DeletionTransfer.updateModulationTree(filename, newTree);
+
+		dbh.update(filename, newMasterKey);
 		dbh.close();
 	}
 	
@@ -156,11 +158,8 @@ public class DeletionHandler {
 			helper.err("Error: filename is null");
 			System.exit(-1);
 		}
-		LocalBase dbh = new LocalBase();
-		String remoteTreePath = dbh.getRemoteTreePath(filename);
-		dbh.close();
-		
-		ModulationTree tree = DeletionTransfer.obtainRemoteTree(remoteTreePath);
+
+		ModulationTree tree = DeletionTransfer.obtainRemoteTree(filename);
 		List<Boolean> segStatuses = tree.getLeafNodesStatus();
 		
 		String strStatuses = "||";
@@ -168,7 +167,6 @@ public class DeletionHandler {
 			strStatuses += (i+1) + ", " + segStatuses.get(i) + "||";
 		}
 		helper.print(strStatuses);
-		
 	}
 	
 }

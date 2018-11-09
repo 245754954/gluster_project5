@@ -21,8 +21,7 @@ public class LocalBase {
 					+ "masterKey text NOT NULL UNIQUE,"
 					+ "granularity integer NOT NULL,"
 					+ "segmentsNum integer NOT NULL,"
-					+ "remotePath text NOT NULL UNIQUE,"
-					+ "remoteTreePath text NOT NULL UNIQUE )";
+					+ "remotePath text NOT NULL UNIQUE)";
 			
 			
 			Statement st = conn.createStatement();
@@ -56,14 +55,13 @@ public class LocalBase {
 			BigInteger masterKey, 
 			int granularity, 
 			int segmentsNum,
-			String remotePath, 
-			String remoteTreePath) {
+			String remotePath) {
 		
 		delete(filename);
 		
 		String sqlInsert = "INSERT INTO deletionTable "
-				+ "(filename, localPath, masterKey, granularity, segmentsNum, remotePath, remoteTreePath) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+				+ "(filename, localPath, masterKey, granularity, segmentsNum, remotePath) "
+				+ "VALUES (?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlInsert);
 			pst.setString(1, filename);
@@ -72,8 +70,7 @@ public class LocalBase {
 			pst.setInt(4, granularity);
 			pst.setInt(5, segmentsNum);
 			pst.setString(6, remotePath);
-			pst.setString(7, remoteTreePath);
-			
+
 			pst.executeUpdate();
 			pst.close();
 		} catch (SQLException e) {
@@ -126,27 +123,27 @@ public class LocalBase {
 		return remotePath;
 	}
 	
-	public String getRemoteTreePath(String filename) {
-		String sqlQuery = "SELECT remoteTreePath FROM deletionTable WHERE filename is ?";
-		
-		String modulationTreePath = null;
-		try {
-			PreparedStatement pst = conn.prepareStatement(sqlQuery);
-			pst.setString(1, filename);
-			
-			ResultSet rs = pst.executeQuery();
-			
-			rs.next();
-			modulationTreePath = rs.getString("remoteTreePath");
-			
-			rs.close();
-			pst.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return modulationTreePath;
-	}
+//	public String getRemoteTreePath(String filename) {
+//		String sqlQuery = "SELECT remoteTreePath FROM deletionTable WHERE filename is ?";
+//
+//		String modulationTreePath = null;
+//		try {
+//			PreparedStatement pst = conn.prepareStatement(sqlQuery);
+//			pst.setString(1, filename);
+//
+//			ResultSet rs = pst.executeQuery();
+//
+//			rs.next();
+//			modulationTreePath = rs.getString("remoteTreePath");
+//
+//			rs.close();
+//			pst.close();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return modulationTreePath;
+//	}
 	
 	public int getGranularity(String filename) {
 		String sqlQuery = "SELECT granularity FROM deletionTable WHERE filename is ?";

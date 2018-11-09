@@ -26,10 +26,10 @@ public class Config {
      * path to store the client database
      */
     private String mClientDatabasePath;
-    /**
-     * bits to represent a modulator
-     */
-    private int mModulatorBits;
+//    /**
+//     * bits to represent a modulator
+//     */
+//    private int mModulatorBits;
 
     private Configuration mHdfsConf;
 
@@ -103,9 +103,9 @@ public class Config {
         return mClientDatabasePath;
     }
 
-    public int getModulatorBits() {
-        return mModulatorBits;
-    }
+//    public int getModulatorBits() {
+//        return mModulatorBits;
+//    }
 
     public Configuration getHdfsConf() {
         return this.mHdfsConf;
@@ -119,7 +119,7 @@ public class Config {
         helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
         helper.print("mManagerServerName: " + this.mManagerServerName);
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
-        helper.print("mModulatorBits: " + this.mModulatorBits);
+//        helper.print("mModulatorBits: " + this.mModulatorBits);
         helper.print("mHdfsConf: " + this.mHdfsConf);
         helper.print("mHdfsHome: " + this.mHdfsHome);
     }

@@ -40,14 +40,15 @@ public class Transfer {
         return tree;
     }
 
-    public static void uploadModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
+    public static boolean updateModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/uploadModulationTree");
 
         Map<String, JSONObject> param = new HashMap<>();
         param.put("filename", JSONObject.fromObject(filename));
         param.put("ModulationTree", JSONObject.fromObject(tree));
 
-        doPost(url, param);
+        JSONObject jsonObject = doPost(url, param);
+        return (Boolean)JSONObject.toBean(jsonObject, Boolean.class);
     }
 
     private static JSONObject doPost(URL url, Map<String, JSONObject> params) {
