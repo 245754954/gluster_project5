@@ -1,0 +1,31 @@
+#测试添加数据
+POST http://localhost:8080/obtainRemoteTree
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "filename": "bigdata"
+}
+
+#######
+
+#测试添加数据
+POST http://localhost:8080/xxx
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "filename": "bigdata",
+    "segmentsToDelete": {
+        "xxList": [],
+        "attr1": "123",
+        "attr2": 123
+    }
+}
+
+###
+#测试通过年龄查询
+GET http://localhost:8081/getGirls/age?age=18
+###

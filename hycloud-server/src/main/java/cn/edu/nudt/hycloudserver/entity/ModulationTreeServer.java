@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class ModulationTree implements Serializable {
+public class ModulationTreeServer implements Serializable {
 
     //全局唯一的主键,返回的是文件的路径
     @Id
@@ -19,13 +19,13 @@ public class ModulationTree implements Serializable {
     private int mSegmentsNum;
     //多个文件
     @OneToMany(cascade={CascadeType.ALL},fetch= FetchType.EAGER)
-    private List<Node> mTree;
+    private List<NodeServer> mTree;
 
-    public ModulationTree() {
+    public ModulationTreeServer() {
 
     }
 
-    public ModulationTree(String path, int mSegmentsNum, List<Node> mTree) {
+    public ModulationTreeServer(String path, int mSegmentsNum, List<NodeServer> mTree) {
         this.path = path;
         this.mSegmentsNum = mSegmentsNum;
         this.mTree = mTree;
@@ -47,17 +47,17 @@ public class ModulationTree implements Serializable {
         this.mSegmentsNum = mSegmentsNum;
     }
 
-    public List<Node> getmTree() {
+    public List<NodeServer> getmTree() {
         return mTree;
     }
 
-    public void setmTree(List<Node> mTree) {
+    public void setmTree(List<NodeServer> mTree) {
         this.mTree = mTree;
     }
 
     @Override
     public String toString() {
-        return "ModulationTree{" +
+        return "ModulationTreeServer{" +
                 "path='" + path + '\'' +
                 ", mSegmentsNum=" + mSegmentsNum +
                 ", mTree=" + mTree +
@@ -67,8 +67,8 @@ public class ModulationTree implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ModulationTree)) return false;
-        ModulationTree that = (ModulationTree) o;
+        if (!(o instanceof ModulationTreeServer)) return false;
+        ModulationTreeServer that = (ModulationTreeServer) o;
         return getmSegmentsNum() == that.getmSegmentsNum() &&
                 Objects.equals(getPath(), that.getPath()) &&
                 Objects.equals(getmTree(), that.getmTree());

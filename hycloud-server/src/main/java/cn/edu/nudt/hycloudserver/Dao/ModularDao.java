@@ -1,9 +1,9 @@
 package cn.edu.nudt.hycloudserver.Dao;
 
-import cn.edu.nudt.hycloudserver.entity.ModulationTree;
+import cn.edu.nudt.hycloudserver.entity.ModulationTreeServer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ModularDao extends JpaRepository<ModulationTree,String> {
+public interface ModularDao extends JpaRepository<ModulationTreeServer,String> {
 
-    public ModulationTree findByPath(String path);
+    public ModulationTreeServer findByPath(String path);
 }

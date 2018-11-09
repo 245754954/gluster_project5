@@ -8,18 +8,18 @@ import java.util.Objects;
 
 
 @Entity
-public class Node implements Serializable {
+public class NodeServer implements Serializable {
 
     @Id
     private BigInteger mModulator;
     public  int mStatus;
     public int traversed;
 
-    public Node() {
+    public NodeServer() {
 
     }
 
-    public Node(BigInteger mModulator, int mStatus, int traversed) {
+    public NodeServer(BigInteger mModulator, int mStatus, int traversed) {
         this.mModulator = mModulator;
         this.mStatus = mStatus;
         this.traversed = traversed;
@@ -52,11 +52,11 @@ public class Node implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Node)) return false;
-        Node node = (Node) o;
-        return getmStatus() == node.getmStatus() &&
-                getTraversed() == node.getTraversed() &&
-                Objects.equals(getmModulator(), node.getmModulator());
+        if (!(o instanceof NodeServer)) return false;
+        NodeServer nodeServer = (NodeServer) o;
+        return getmStatus() == nodeServer.getmStatus() &&
+                getTraversed() == nodeServer.getTraversed() &&
+                Objects.equals(getmModulator(), nodeServer.getmModulator());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Node implements Serializable {
 
     @Override
     public String toString() {
-        return "Node{" +
+        return "NodeServer{" +
                 "mModulator=" + mModulator +
                 ", mStatus=" + mStatus +
                 ", traversed=" + traversed +

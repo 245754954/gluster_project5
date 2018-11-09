@@ -45,7 +45,7 @@ public class Transfer {
 
         Map<String, JSONObject> param = new HashMap<>();
         param.put("filename", JSONObject.fromObject(filename));
-        param.put("ModulationTree", JSONObject.fromObject(tree));
+        param.put("modulationTree", JSONObject.fromObject(tree));
 
         JSONObject jsonObject = doPost(url, param);
         return (Boolean)JSONObject.toBean(jsonObject, Boolean.class);

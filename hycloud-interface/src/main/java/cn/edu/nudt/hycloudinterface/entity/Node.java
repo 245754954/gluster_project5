@@ -36,6 +36,12 @@ public class Node implements Serializable {
         this.mStatus = status;
     }
 
+    public Node(BigInteger mModulator, int mStatus, int traversed) {
+        this.mModulator = mModulator;
+        this.mStatus = mStatus;
+        this.traversed = traversed;
+    }
+
     public BigInteger getmModulator() {
         return mModulator;
     }

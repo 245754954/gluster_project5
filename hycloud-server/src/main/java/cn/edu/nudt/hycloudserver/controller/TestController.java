@@ -1,10 +1,9 @@
 package cn.edu.nudt.hycloudserver.controller;
 
-import cn.edu.nudt.hycloudserver.entity.Student;
+import cn.edu.nudt.hycloudserver.entity.StudentServer;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,14 +16,14 @@ public class TestController {
 
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
     public JSONObject saveModulation(String student, String student1) {
-//        ModulationTree mo = new ModulationTree();
-//        List<Node> list = new ArrayList<>();
-//        Node node1 = new Node();
+//        ModulationTreeServer mo = new ModulationTreeServer();
+//        List<NodeServer> list = new ArrayList<>();
+//        NodeServer node1 = new NodeServer();
 //        node1.setmModulator(BigInteger.ONE);
 //        node1.setmStatus(1);
 //        node1.setTraversed(2);
 //
-//        Node node2 = new Node();
+//        NodeServer node2 = new NodeServer();
 //        node2.setmModulator(BigInteger.TEN);
 //        node2.setmStatus(1);
 //        node2.setTraversed(2);
@@ -50,8 +49,8 @@ public class TestController {
 
         JSONObject jsonObject = JSONObject.fromObject(student);
         JSONObject jsonObject1 = JSONObject.fromObject(student1);
-        Student studentx1 = (Student) JSONObject.toBean(jsonObject, Student.class);
-        Student studentx2 = (Student) JSONObject.toBean(jsonObject1, Student.class);
+        StudentServer studentx1 = (StudentServer) JSONObject.toBean(jsonObject, StudentServer.class);
+        StudentServer studentx2 = (StudentServer) JSONObject.toBean(jsonObject1, StudentServer.class);
 
 
         System.out.println("xxxxx"+studentx1.toString());

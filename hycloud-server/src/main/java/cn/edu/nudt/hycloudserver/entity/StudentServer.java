@@ -6,18 +6,18 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Student implements Serializable {
+public class StudentServer implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
 
     private String name;
 
-    public Student() {
+    public StudentServer() {
 
     }
 
-    public Student(String name) {
+    public StudentServer(String name) {
         this.name = name;
     }
 
@@ -39,7 +39,7 @@ public class Student implements Serializable {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "StudentServer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';

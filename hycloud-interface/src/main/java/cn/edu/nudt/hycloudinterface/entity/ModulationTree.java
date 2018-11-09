@@ -25,6 +25,11 @@ public class ModulationTree implements Serializable{
         this.mTree = null;
     }
 
+    public ModulationTree(int mSegmentsNum, List<Node> mTree) {
+        this.mSegmentsNum = mSegmentsNum;
+        this.mTree = mTree;
+    }
+
     /**
      *
      * @param segmentsNum
