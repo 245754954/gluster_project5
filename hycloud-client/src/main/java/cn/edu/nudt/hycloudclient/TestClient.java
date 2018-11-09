@@ -36,8 +36,8 @@ public class TestClient {
 
     public static void main(String[] args) throws Exception {
 
-        URL url = new URL("http://127.0.0.1:8080/add");
-        JSONObject jsonObject = doGet(url);
+        //URL url = new URL("http://127.0.0.1:8080/add");
+        //JSONObject jsonObject = doGet(url);
 
 
         Student student = new Student();
@@ -55,8 +55,8 @@ public class TestClient {
         Map<String, JSONObject> param = new HashMap<>();
         param.put("student", JSONObject.fromObject(student));
 
-        student.setName("8173298071829s");
-        param.put("student1", JSONObject.fromObject(student));
+//        student.setName("8173298071829s");
+//        param.put("student1", JSONObject.fromObject(student));
         JSONObject jsonObject = doPost(url, param);
 
         Student student1 = (Student) JSONObject.toBean(jsonObject, Student.class);

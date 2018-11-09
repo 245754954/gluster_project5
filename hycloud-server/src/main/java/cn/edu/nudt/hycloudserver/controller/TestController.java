@@ -49,16 +49,16 @@ public class TestController {
 
         JSONObject jsonObject = JSONObject.fromObject(student);
         JSONObject jsonObject1 = JSONObject.fromObject(student1);
-        StudentServer studentx1 = (StudentServer) JSONObject.toBean(jsonObject, StudentServer.class);
-        StudentServer studentx2 = (StudentServer) JSONObject.toBean(jsonObject1, StudentServer.class);
+//        StudentServer studentx1 = (StudentServer) JSONObject.toBean(jsonObject, StudentServer.class);
+//        StudentServer studentx2 = (StudentServer) JSONObject.toBean(jsonObject1, StudentServer.class);
 
 
-        System.out.println("xxxxx"+studentx1.toString());
-        System.out.println("xxxxx"+studentx2.toString());
-        //System.out.println("hhhhh"+student.getName());
-        studentx1.setName("haskjdhflkjahs");
-        return JSONObject.fromObject(studentx1);
-
+//        System.out.println("xxxxx"+studentx1.toString());
+//        System.out.println("xxxxx"+studentx2.toString());
+//        //System.out.println("hhhhh"+student.getName());
+//        studentx1.setName("haskjdhflkjahs");
+//        return JSONObject.fromObject(studentx1);
+       return null;
 
     }
 }
