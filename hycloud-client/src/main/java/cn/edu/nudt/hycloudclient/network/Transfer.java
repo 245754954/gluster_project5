@@ -2,6 +2,7 @@ package cn.edu.nudt.hycloudclient.network;
 
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
+import cn.edu.nudt.hycloudinterface.entity.utils.helper;
 import net.sf.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -44,6 +45,7 @@ public class Transfer {
         URL url = new URL("http://127.0.0.1:8080/uploadModulationTree");
 
         Map<String, JSONObject> param = new HashMap<>();
+        helper.print("filename: " + filename);
         param.put("filename", JSONObject.fromObject(filename));
         param.put("modulationTree", JSONObject.fromObject(tree));
 
@@ -51,7 +53,7 @@ public class Transfer {
         return (Boolean)JSONObject.toBean(jsonObject, Boolean.class);
     }
 
-    private static JSONObject doPost(URL url, Map<String, JSONObject> params) {
+    public static JSONObject doPost(URL url, Map<String, JSONObject> params) {
         HttpURLConnection httpsConn = null;
         try {
             httpsConn = (HttpURLConnection) url.openConnection();
