@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
-    public JSONObject saveModulation(String student, String student1) {
+    public JSONObject saveModulation(String student1, String student2) {
 //        ModulationTreeServer mo = new ModulationTreeServer();
 //        List<NodeServer> list = new ArrayList<>();
 //        NodeServer node1 = new NodeServer();
@@ -47,18 +47,22 @@ public class TestController {
 //            return "failed";
 //        }
 
-        JSONObject jsonObject = JSONObject.fromObject(student);
+        System.out.println("student1" + student1);
+        System.out.println("student2" + student2);
         JSONObject jsonObject1 = JSONObject.fromObject(student1);
-//        StudentServer studentx1 = (StudentServer) JSONObject.toBean(jsonObject, StudentServer.class);
-//        StudentServer studentx2 = (StudentServer) JSONObject.toBean(jsonObject1, StudentServer.class);
+        JSONObject jsonObject2 = JSONObject.fromObject(student2);
+        StudentServer studentx1 = (StudentServer) JSONObject.toBean(jsonObject1, StudentServer.class);
+        StudentServer studentx2 = (StudentServer) JSONObject.toBean(jsonObject2, StudentServer.class);
 
 
-//        System.out.println("xxxxx"+studentx1.toString());
-//        System.out.println("xxxxx"+studentx2.toString());
-//        //System.out.println("hhhhh"+student.getName());
-//        studentx1.setName("haskjdhflkjahs");
-//        return JSONObject.fromObject(studentx1);
-       return null;
+        System.out.println("xxxxx"+studentx1.toString());
+        System.out.println("xxxxx"+studentx2.toString());
+        //System.out.println("hhhhh"+student.getName());
+
+
+        studentx1.setName("haskjdhflkjahs");
+        return JSONObject.fromObject(studentx1);
+
 
     }
 }

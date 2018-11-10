@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudclient.Entry;
 
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
+import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
 import cn.edu.nudt.hycloudinterface.entity.utils.helper;
 import com.beust.jcommander.JCommander;
@@ -42,6 +43,9 @@ public class Client {
         JCommander jcmd = builder.build();
         jcmd.parse(argv);
         jcmd.setProgramName("hycloud-client");
+
+        Config conf = Config.getConfig();
+        conf.dump();
 
         client.run(jcmd);
     }

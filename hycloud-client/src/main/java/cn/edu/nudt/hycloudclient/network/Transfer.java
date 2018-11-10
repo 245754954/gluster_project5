@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudclient.network;
 
+import cn.edu.nudt.hycloudclient.util.FileVo;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import net.sf.json.JSONObject;
@@ -19,7 +20,7 @@ public class Transfer {
 
     public static ModulationTree obtainRemoteTree(String filename) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/obtainRemoteTree");
-
+        FileVo f = new FileVo(filename);
         Map<String, JSONObject> param = new HashMap<>();
         param.put("filename", JSONObject.fromObject(filename));
 
@@ -44,6 +45,7 @@ public class Transfer {
         URL url = new URL("http://127.0.0.1:8080/uploadModulationTree");
 
         Map<String, JSONObject> param = new HashMap<>();
+
         param.put("filename", JSONObject.fromObject(filename));
         param.put("modulationTree", JSONObject.fromObject(tree));
 

@@ -1,0 +1,26 @@
+POST http://127.0.0.1:8080/uploadModulationTree?filename="bigdata"
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+//    "filename":"bigdata",
+    "modulationTree": {
+//        "leafNodesStatus":true,
+        "mSegmentsNum":1,
+        "mTree":[
+            {
+                "mModulator":1,
+                "mStatus":1,
+                "traversed":1
+            },
+            {
+                "mModulator":10,
+                "mStatus":2,
+                "traversed":2
+            }
+        ]
+    }
+}
+
+###

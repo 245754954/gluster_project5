@@ -54,14 +54,14 @@ public class Config {
         props.load(freader);
 
         mManagerServerName = props.getProperty("ManagerServerName", "localhost");
-        mManagerServerPort = Integer.parseInt(props.getProperty("ManagerServerPort", "8076"));
+        mManagerServerPort = Integer.parseInt(props.getProperty("ManagerServerPort", "8080"));
         mClientDatabasePath = props.getProperty("ClientDatabasePath", "./yhbdclient.db");
 //        mModulatorBits = Integer.parseInt(props.getProperty("ModulatorBits", "160"));
 
         this.mHdfsConf = new Configuration();
         mHdfsConf.set("fs.default.name",
-                props.getProperty("fs.default.name", "hdfs://192.168.6.129:9000"));
-        mHdfsHome = props.getProperty("HdfsHome", "hdfs://192.168.6.129:9000/yhbd/");
+                props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
+        mHdfsHome = props.getProperty("HdfsHome", "hdfs://192.168.6.173:9000/yhbd/");
         freader.close();
     }
 
@@ -69,12 +69,12 @@ public class Config {
         Properties props = new Properties();
 
         props.setProperty("ManagerServerName", "localhost");
-        props.setProperty("ManagerServerPort", "8076");
+        props.setProperty("ManagerServerPort", "8080");
         props.setProperty("ClientDatabasePath", "./yhbdclient.db");
 //        props.setProperty("ModulatorBits", "160");
 
 
-        props.setProperty("fs.default.name", "hdfs://192.168.6.129:9000");
+        props.setProperty("fs.default.name", "hdfs://192.168.6.173:9000");
 //		props.setProperty("fs.defaultFS", "hdfs://nameservice1");
 //		props.setProperty("dfs.Nameservices","nameservice1");
 //		props.setProperty("dfs.ha.namenodes.nameservice1","nn1,nn2");
@@ -83,7 +83,7 @@ public class Config {
 //		props.setProperty("dfs.client.failover.proxy.provider.nameservice1",
 //        		"org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
 
-        props.setProperty("HdfsHome", "hdfs://192.168.6.129:9000/yhbd");
+        props.setProperty("HdfsHome", "hdfs://192.168.6.173:9000/yhbd");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
