@@ -63,6 +63,12 @@ public class TestTransfer {
 
 
     }
+    @Test
+    public void test2()throws Exception{
+
+        Transfer.obtainRemoteTree("bigdata");
+
+    }
 
     public  JSONObject doPost(URL url, Map<String, JSONObject> params) {
         HttpURLConnection httpsConn = null;

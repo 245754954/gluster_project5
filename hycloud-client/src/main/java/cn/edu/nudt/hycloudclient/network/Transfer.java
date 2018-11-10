@@ -24,7 +24,7 @@ public class Transfer {
         param.put("filename", JSON.toJSONString(filename));
 
         String recvString = doPost(url, param);
-        ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
+        ModulationTree tree = JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
 
@@ -36,7 +36,7 @@ public class Transfer {
         param.put("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
 
         String recvString = doPost(url, param);
-        ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
+        ModulationTree tree = JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
 
@@ -59,22 +59,28 @@ public class Transfer {
             httpsConn.setReadTimeout(10000);
             String temp = new String();
             String response = new String();
-            httpsConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+         //   httpsConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            httpsConn.setRequestProperty("Content-type", "application/json;charset=UTF-8");
             httpsConn.setDoOutput(true);
             httpsConn.setRequestMethod("POST");
             httpsConn.setIfModifiedSince(999999999);
 
             Set<String> paramKeySet = params.keySet();
-            String paramData = "";
+            StringBuilder paramData = new StringBuilder();
+            int count = 0;
             for (String key : paramKeySet) {
-                paramData = paramData + key + "=" + params.get(key) + "&";
+                paramData.append(key).append("=").append(params.get(key));
+                if (count < paramKeySet.size() - 1) {
+                    paramData.append("&");
+                }
+                count += 1;
             }
 
             httpsConn.setRequestProperty("User-Agent",
                     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11");
 
             OutputStream outStream = httpsConn.getOutputStream();
-            outStream.write(paramData.getBytes());
+            outStream.write(paramData.toString().getBytes());
             outStream.flush();
             outStream.close();
             InputStream in = httpsConn.getInputStream();
