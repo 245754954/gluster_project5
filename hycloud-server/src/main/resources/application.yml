@@ -1,7 +1,7 @@
 spring:
     datasource:
         driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.6.173:3306/hycloud
+        url: jdbc:mysql://127.0.0.1:3306/hycloud
         username: root
         password: 123456
 #配置spring-jpa
