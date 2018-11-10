@@ -1,9 +1,8 @@
 package cn.edu.nudt.hycloudclient.network;
 
-import cn.edu.nudt.hycloudclient.util.FileVo;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -20,40 +19,39 @@ public class Transfer {
 
     public static ModulationTree obtainRemoteTree(String filename) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/obtainRemoteTree");
-        FileVo f = new FileVo(filename);
-        Map<String, JSONObject> param = new HashMap<>();
-        param.put("filename", JSONObject.fromObject(filename));
 
-        JSONObject jsonObject = doPost(url, param);
-        ModulationTree tree = (ModulationTree) JSONObject.toBean(jsonObject, ModulationTree.class);
+        Map<String, String> param = new HashMap<>();
+        param.put("filename", JSON.toJSONString(filename));
+
+        String recvString = doPost(url, param);
+        ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
 
     public static ModulationTree obtainRemoteTree(String filename, SegmentList segmentsToDelete) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/obtainRemoteTreeWithDel");
 
-        Map<String, JSONObject> param = new HashMap<>();
-        param.put("filename", JSONObject.fromObject(filename));
-        param.put("segmentsToDelete", JSONObject.fromObject(segmentsToDelete));
+        Map<String, String> param = new HashMap<>();
+        param.put("filename", JSON.toJSONString(filename));
+        param.put("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
 
-        JSONObject jsonObject = doPost(url, param);
-        ModulationTree tree = (ModulationTree) JSONObject.toBean(jsonObject, ModulationTree.class);
+        String recvString = doPost(url, param);
+        ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
 
     public static boolean updateModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/uploadModulationTree");
 
-        Map<String, JSONObject> param = new HashMap<>();
+        Map<String, String> param = new HashMap<>();
+        param.put("filename", JSON.toJSONString(filename));
+        param.put("modulationTree", JSON.toJSONString(tree));
 
-        param.put("filename", JSONObject.fromObject(filename));
-        param.put("modulationTree", JSONObject.fromObject(tree));
-
-        JSONObject jsonObject = doPost(url, param);
-        return (Boolean)JSONObject.toBean(jsonObject, Boolean.class);
+        String recvString = doPost(url, param);
+        return JSON.parseObject(recvString, Boolean.class);
     }
 
-    private static JSONObject doPost(URL url, Map<String, JSONObject> params) {
+    private static String doPost(URL url, Map<String, String> params) {
         HttpURLConnection httpsConn = null;
         try {
             httpsConn = (HttpURLConnection) url.openConnection();
@@ -84,10 +82,11 @@ public class Transfer {
             while ((temp = bd.readLine()) != null) {
                 response += temp;
             }
-            if (response.equals(""))
-                return null;
-            else
-                return JSONObject.fromObject(response);
+//            if (response.equals(""))
+//                return null;
+//            else
+//                return JSONObject.fromObject(response);
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

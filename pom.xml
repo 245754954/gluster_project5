@@ -37,6 +37,12 @@
 
 	<dependencyManagement>   <!--dependencyManagement用于管理依赖版本号-->
 		<dependencies>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.51</version>
+			</dependency>
+
 			<!--删除spring-boot-starter和spring-boot-starter-test，-->
 			<!--因为parent中继承的祖先中已经有了，并且一般dependencyManagement管理的依赖都要写版本号-->
 			<!--<dependency>

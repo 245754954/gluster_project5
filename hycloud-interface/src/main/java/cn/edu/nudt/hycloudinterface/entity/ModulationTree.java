@@ -16,37 +16,48 @@ public class ModulationTree implements Serializable{
     private static final long serialVersionUID = 294622255506745864L;
     public static final int ModulatorBits = 160;
 
+
     private int mSegmentsNum;
+    private int mNodesNum;
+    private int mLeavesStart;
     private List<Node> mTree;
 
 
     public ModulationTree() {
         this.mSegmentsNum = 0;
+        this.mNodesNum = 0;
+        this.mLeavesStart = 0;
         this.mTree = null;
     }
 
-    public ModulationTree(int mSegmentsNum, List<Node> mTree) {
-        this.mSegmentsNum = mSegmentsNum;
+    public ModulationTree(int segmentsNum, List<Node> mTree) {
+        this.mSegmentsNum = segmentsNum;
+        int leavesNum = calLeavesNum(this.mSegmentsNum);
+        this.mNodesNum = calNodesNum(leavesNum);
+        this.mLeavesStart = this.mNodesNum - leavesNum;
         this.mTree = mTree;
     }
+
+
 
     /**
      *
      * @param segmentsNum
      * is the actual number of segments in the file, which may not be the same with the number of leaves node in the tree.
-     * @throws IOException
      */
-    public ModulationTree(int segmentsNum) throws IOException {
+    public ModulationTree(int segmentsNum) {
+        this.mSegmentsNum = segmentsNum;
+        int leavesNum = calLeavesNum(this.mSegmentsNum);
+        this.mNodesNum = calNodesNum(leavesNum);
+        this.mLeavesStart = this.mNodesNum - leavesNum;
+
         this.mTree = new ArrayList<Node>();
         SecureRandom srand = new SecureRandom(); // or new SecureRandom.getInstance("Specified PRNG")
-
-        int nodesNum = getNodesNum(segmentsNum);
         BigInteger modulator;
-        for(int i = 0; i < nodesNum; i++) {
+        for(int i = 0; i < this.mNodesNum; i++) {
             modulator = new BigInteger(ModulatorBits, srand);
             this.mTree.add(new Node(modulator, Node.Remain));
         }
-        this.mSegmentsNum = segmentsNum;
     }
 
     /**
@@ -59,8 +70,8 @@ public class ModulationTree implements Serializable{
         List<BigInteger> hashChains = new ArrayList<BigInteger>();
         List<BigInteger> keys = new ArrayList<BigInteger>();
 
-        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
-        int startIndex = Assist.pow(2, depth - 1) - 1; // the index of the first node at the bottom level.
+//        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
+//        int startIndex = Assist.pow(2, depth - 1) - 1; // the index of the first node at the bottom level.
 
         MessageDigest digest;
         try {
@@ -69,12 +80,12 @@ public class ModulationTree implements Serializable{
             BigInteger xorTem = mTree.get(0).mModulator.xor(new BigInteger(digest.digest(masterKey.toByteArray())));
             hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
 //			for(int i = 1; i < mTree.size(); i++) {
-            for(int i = 1; i < startIndex + mSegmentsNum; i++) {
+            for(int i = 1; i < this.mLeavesStart + mSegmentsNum; i++) {
                 int fidx = father(i);
                 xorTem = mTree.get(i).mModulator.xor(hashChains.get(fidx));
                 hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
 
-                if(i >= startIndex) {
+                if(i >= this.mLeavesStart) {
                     if(mTree.get(i).mStatus == Node.Deleted) {
                         keys.add(null);
                     }else {
@@ -92,11 +103,11 @@ public class ModulationTree implements Serializable{
     public List<Boolean> getLeafNodesStatus(){
         List<Boolean> statuses= new ArrayList<Boolean>();
 
-        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
-        int startIndex = Assist.pow(2, depth - 1) - 1;
+//          int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
+//        int startIndex = Assist.pow(2, depth - 1) - 1; // the index of the first node at the bottom level.
 
         for(int i = 0; i < mSegmentsNum; i++) {
-            if(mTree.get(i + startIndex).mStatus == Node.Deleted) {
+            if(mTree.get(i + this.mLeavesStart).mStatus == Node.Deleted) {
                 statuses.add(Node.Unrecoverable);
             }else {
                 statuses.add(Node.Recoverable);
@@ -111,8 +122,8 @@ public class ModulationTree implements Serializable{
      * - indexes of segments to be deleted. The index starts with one
      */
     public void obtainSubTree(SegmentList segmentsToDelete) {
-        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
-        int startIndex = Assist.pow(2, depth - 1) - 1; // the index of the first node at the bottom level
+//        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
+//        int startIndex = Assist.pow(2, depth - 1) - 1; // the index of the first node at the bottom level
 
         for(int i = 0; i < segmentsToDelete.size(); i++) {
             int segIdx = segmentsToDelete.get(i);
@@ -122,7 +133,7 @@ public class ModulationTree implements Serializable{
 //				System.exit(-1);
                 continue;
             }
-            int treeIdx = segIdx + startIndex - 1; // index of segment starts with one
+            int treeIdx = segIdx + this.mLeavesStart - 1; // index of segment starts with one
 
             if(mTree.get(treeIdx).mStatus == Node.Deleted) {
                 helper.print("Segment(" + segIdx + ") has been deleted before.");
@@ -328,18 +339,33 @@ public class ModulationTree implements Serializable{
         return (2 * fidx + 1) == index ? (index + 1): (index - 1);
     }
 
-    /**
-     * Get the nodes number of the minimum complete binary tree that has no less than segmentsNum leaf nodes.
-     * @param segmentsNum
-     * - the number of segments of the corresponding file. The number of leaf nodes of the tree must be equal or larger than segmentsNum.
-     * @return
-     * - the nodes number of the minimum complete binary tree.
-     */
-    private int getNodesNum(int segmentsNum) {
+//    /**
+//     * Get the nodes number of the minimum complete binary tree that has no less than segmentsNum leaf nodes.
+//     * @param segmentsNum
+//     * - the number of segments of the corresponding file. The number of leaf nodes of the tree must be equal or larger than segmentsNum.
+//     * @return
+//     * - the nodes number of the minimum complete binary tree.
+//     */
+//    private int getNodesNum(int segmentsNum) {
+//        int nBits = 31 - Integer.numberOfLeadingZeros(segmentsNum);
+//        int leavesNum = Assist.pow(2, nBits);
+//        if(leavesNum < segmentsNum) leavesNum = Assist.pow(2, nBits + 1);
+//
+//        int nodesNum = 0;
+//        while(leavesNum > 0) {
+//            nodesNum += leavesNum;
+//            leavesNum /= 2;
+//        }
+//        return nodesNum;
+//    }
+
+    private int calLeavesNum(int segmentsNum){
         int nBits = 31 - Integer.numberOfLeadingZeros(segmentsNum);
         int leavesNum = Assist.pow(2, nBits);
         if(leavesNum < segmentsNum) leavesNum = Assist.pow(2, nBits + 1);
-
+        return leavesNum;
+    }
+    private int calNodesNum(int leavesNum){
         int nodesNum = 0;
         while(leavesNum > 0) {
             nodesNum += leavesNum;
@@ -348,19 +374,31 @@ public class ModulationTree implements Serializable{
         return nodesNum;
     }
 
+    private int pow(int base, int power){
+        int res = 1;
+        for (int i = 0; i < power; i++) {
+            res *= base;
+        }
+        return  res;
+    }
+
     /**
      * Dump the details of the key modulation tree.
      */
     public void dump() {
-        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
-        int leavesNum = mTree.size() - Assist.pow(2, depth - 1) + 1;
+//        int depth = 32 - Integer.numberOfLeadingZeros(mTree.size());
+//        int leavesNum = mTree.size() - Assist.pow(2, depth - 1) + 1;
+        int depth = 32 - Integer.numberOfLeadingZeros(this.mNodesNum);
 
         helper.print("----------------------------------------------------------------"
                 + "\nKey Modulation Tree information:");
         helper.print("depth: " + depth);
-        helper.print("segmentsNum: " + this.mSegmentsNum);
-        helper.print("leavesNum: " + leavesNum);
-        helper.print("nodesNum: " + mTree.size());
+        helper.print("mSegmentsNum: " + this.mSegmentsNum);
+//        helper.print("leavesNum: " + leavesNum);
+//        helper.print("nodesNum: " + mTree.size());
+        helper.print("mLeavesStart: " + this.mLeavesStart);
+        helper.print("leavesNum: " + (this.mNodesNum - this.mLeavesStart));
+        helper.print("mNodesNum: " + this.mNodesNum);
 
         int idx = 0;
         for(Node kn: mTree) {
@@ -370,9 +408,16 @@ public class ModulationTree implements Serializable{
         helper.print("----------------------------------------------------------------");
     }
 
-
     public int getmSegmentsNum() {
         return mSegmentsNum;
+    }
+
+    public int getmNodesNum() {
+        return mNodesNum;
+    }
+
+    public int getmLeavesStart() {
+        return mLeavesStart;
     }
 
     public List<Node> getmTree() {
@@ -381,6 +426,14 @@ public class ModulationTree implements Serializable{
 
     public void setmSegmentsNum(int mSegmentsNum) {
         this.mSegmentsNum = mSegmentsNum;
+    }
+
+    public void setmNodesNum(int mNodesNum) {
+        this.mNodesNum = mNodesNum;
+    }
+
+    public void setmLeavesStart(int mLeavesStart) {
+        this.mLeavesStart = mLeavesStart;
     }
 
     public void setmTree(List<Node> mTree) {
