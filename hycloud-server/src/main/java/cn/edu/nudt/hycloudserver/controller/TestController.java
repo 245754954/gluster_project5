@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudserver.controller;
 
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
+import cn.edu.nudt.hycloudinterface.entity.utils.helper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,11 +17,15 @@ public class TestController {
 
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
 //    public JSONObject saveModulation(String student1, String student2) {
-    public void saveModulation(String modulationTree) {
+    public void saveModulation(String modulationTree, String filename) {
 
         System.out.println("recv segmentList: " + modulationTree);
         ModulationTree restoreTree = JSON.parseObject(modulationTree, ModulationTree.class);
         restoreTree.dump();
+
+        System.out.println("recv filename: " + filename);
+        String restoreFilename = JSON.parseObject(filename, String.class);
+        helper.print("restoreFilename: " + restoreFilename);
 
 //        JSONObject jsonObject = JSONObject.fromObject(segmentList);
 //        SegmentList recvList = (SegmentList) JSONObject.toBean(jsonObject, SegmentList.class);
