@@ -35,6 +35,10 @@ import java.util.Set;
 public class TestClient {
 
     public static void main(String[] args) throws Exception {
+        addTree();
+//        addNode();
+//        addSegmentList();
+
 
 //        URL url = new URL("http://127.0.0.1:8080/add");
 //        JSONObject jsonObject = doGet(url);
@@ -51,9 +55,6 @@ public class TestClient {
 //
 //        System.out.print(rvstudent.toString());
 
-        addTree();
-//        addNode();
-//        addSegmentList();
     }
 
 
@@ -120,6 +121,14 @@ public class TestClient {
         restoreTree.dump();
 
         param.put("modulationTree", treeString);
+
+        String filename = "testfile.txt";
+        helper.print("filename: " + filename);
+        String filenameString = JSON.toJSONString(filename);
+        helper.print("filenameString: " + filenameString);
+
+        param.put("filename", filenameString);
+
 
         doPost(url, param);
     }
