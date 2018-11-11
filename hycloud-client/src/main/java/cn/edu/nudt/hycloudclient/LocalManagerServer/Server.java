@@ -153,7 +153,10 @@ public class Server extends Thread{
 				}
 				dis.close();
 				server.close();
-			} catch (IOException | ClassNotFoundException e) {
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {

@@ -20,7 +20,7 @@ public class Transfer {
     public static ModulationTree obtainRemoteTree(String filename) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/tree/obtainRemoteTree");
 
-        Map<String, String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
 
         String recvString = doPost(url, param);
@@ -31,7 +31,7 @@ public class Transfer {
     public static ModulationTree obtainRemoteTree(String filename, SegmentList segmentsToDelete) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/tree/obtainRemoteTreeWithDel");
 
-        Map<String, String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
         param.put("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
 
@@ -43,7 +43,7 @@ public class Transfer {
     public static boolean updateModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
         URL url = new URL("http://127.0.0.1:8080/tree/uploadModulationTree");
 
-        Map<String, String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
         param.put("modulationTree", JSON.toJSONString(tree));
 

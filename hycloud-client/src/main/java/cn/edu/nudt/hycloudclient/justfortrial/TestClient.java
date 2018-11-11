@@ -108,7 +108,7 @@ public class TestClient {
         ModulationTree tree = new ModulationTree(4);
         tree.dump();
 
-        Map<String, String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<String, String>();
 //        JSONObject jsonObject = JSONObject.fromObject(tree);
         String treeString = JSON.toJSONString(tree);
         helper.print(treeString);
