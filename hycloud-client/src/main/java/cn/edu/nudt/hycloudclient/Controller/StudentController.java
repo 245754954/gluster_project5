@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudclient.Controller;
 
 /*
-import cn.edu.nudt.hycloudserver.entity.ModulationTree;
+import cn.edu.nudt.hycloudserver.ModulationTree;
 import cn.edu.nudt.hycloudserver.service.StudentService;
 import cn.edu.nudt.hycloudserver.service.serviceimpl.ModularServiceImpl;
 import com.alibaba.dubbo.config.annotation.Reference;

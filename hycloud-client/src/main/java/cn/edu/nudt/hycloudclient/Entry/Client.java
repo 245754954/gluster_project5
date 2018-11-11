@@ -34,7 +34,7 @@ public class Client {
 
 
     public static void main(String ... argv) throws IOException, IllegalBlockSizeException, BadPaddingException {
-//        System.out.println(System.getProperty("user.dir"));
+        System.out.println(System.getProperty("user.dir"));
 
         Client client = new Client();
         Builder builder = JCommander.newBuilder();

@@ -11,7 +11,7 @@ import java.util.Properties;
 public class Config {
     private static Config mConfig;
 
-    private final String PropertiesFilePath = ".\\hycloud-client\\src\\main\\resources\\client.properties";
+    private final String PropertiesFilePath = "./client.properties";
 //    \hycloud-client\src\main\resources
 
     /**
