@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudserver.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 public class TreeTable implements Serializable {
     @Id
     private String filename;
+    @Column(columnDefinition = "LongText")
     private String modulationTree;
 
     public TreeTable() {

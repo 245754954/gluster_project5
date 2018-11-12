@@ -9,7 +9,6 @@ spring:
       #我们常用update，update启动时会给我们创建表，但是如果已经存在，就只是跟新
       ddl-auto: update
     show-sql: true
-
 ---
 spring:
   profiles: zfc
