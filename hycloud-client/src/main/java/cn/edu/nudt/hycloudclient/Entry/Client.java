@@ -3,7 +3,7 @@ package cn.edu.nudt.hycloudclient.Entry;
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;

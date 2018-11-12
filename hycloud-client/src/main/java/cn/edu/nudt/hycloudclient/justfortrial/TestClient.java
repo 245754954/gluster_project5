@@ -14,15 +14,14 @@ package cn.edu.nudt.hycloudclient.justfortrial;
 
 
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static cn.edu.nudt.hycloudclient.network.Transfer.doPost;
 
 /**
  * @author: xphi
@@ -126,7 +125,7 @@ public class TestClient {
         param.put("filename", filenameString);
 
 
-        doPost(url, param);
+        BasicTransfer.doPost(url, param);
 //        doPost2(url, param);
     }
 

@@ -1,4 +1,4 @@
-package cn.edu.nudt.hycloudinterface.entity.utils;
+package cn.edu.nudt.hycloudinterface.utils;
 
 public class helper {
 

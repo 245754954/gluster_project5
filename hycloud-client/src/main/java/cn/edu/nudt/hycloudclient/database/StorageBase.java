@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudclient.database;
 
 import cn.edu.nudt.hycloudclient.config.Config;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.IOException;
 import java.sql.*;

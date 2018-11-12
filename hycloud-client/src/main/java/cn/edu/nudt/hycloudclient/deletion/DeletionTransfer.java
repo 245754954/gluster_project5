@@ -5,8 +5,7 @@ import cn.edu.nudt.hycloudclient.crypto.AES;
 import cn.edu.nudt.hycloudclient.network.Transfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
-import org.apache.hadoop.conf.Configuration;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 

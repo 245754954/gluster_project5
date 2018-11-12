@@ -15,7 +15,8 @@
 		<module>hycloud-server</module>
 		<module>hycloud-client</module>
 		<module>hycloud-interface</module>
-	</modules>
+        <module>hycloud-hdfs</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

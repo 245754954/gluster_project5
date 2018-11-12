@@ -4,8 +4,8 @@ import cn.edu.nudt.hycloudclient.crypto.AES;
 import cn.edu.nudt.hycloudclient.deletion.DeletionTransfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import cn.edu.nudt.hycloudinterface.entity.utils.Assist;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.Assist;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.*;
 import java.net.ServerSocket;
