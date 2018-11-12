@@ -1,15 +1,57 @@
 spring:
-    datasource:
-        driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.6.173:3306/hycloud
-        username: root
-        password: 123456
-#配置spring-jpa
-    jpa:
-        hibernate:
-#create代表每次启动都会创建一个新的表，如果该表中有数据也会删除该数据
-#我们常用update，update启动时会给我们创建表，但是如果已经存在，就只是跟新
-            ddl-auto: update
+  profiles:
+    active: lyc
 
-        show-sql: true
+  #配置spring-jpa
+  jpa:
+    hibernate:
+      #create代表每次启动都会创建一个新的表，如果该表中有数据也会删除该数据
+      #我们常用update，update启动时会给我们创建表，但是如果已经存在，就只是跟新
+      ddl-auto: update
+    show-sql: true
+
+---
+spring:
+  profiles: zfc
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hycloud
+    username: root
+    password: 123456
+
+---
+spring:
+  profiles: lyc
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.6.173:3306/hycloud
+    username: root
+    password: 123456
+
+---
+spring:
+  profiles: xphi
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:33062/hycloud
+    username: root
+    password: 123456
+
+
+
+
+#spring:
+#    datasource:
+#        driver-class-name: com.mysql.jdbc.Driver
+#        url: jdbc:mysql://192.168.6.173:3306/hycloud
+#        username: root
+#        password: 123456
+##配置spring-jpa
+#    jpa:
+#        hibernate:
+##create代表每次启动都会创建一个新的表，如果该表中有数据也会删除该数据
+##我们常用update，update启动时会给我们创建表，但是如果已经存在，就只是跟新
+#            ddl-auto: update
+#
+#        show-sql: true
 
