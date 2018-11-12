@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class Client {
+    @Parameter(names= {"--config","-c"}, description = "path to config file")
+    private String configPath = null;
+
     @Parameter(names= {"--help","-h"}, help=false, description = "action to perform")
     private boolean help = false;
 
@@ -33,8 +36,8 @@ public class Client {
     //////////////////////////////////////////////
 
 
-    public static void main(String ... argv) throws IOException, IllegalBlockSizeException, BadPaddingException {
-//        System.out.println(System.getProperty("user.dir"));
+    public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        System.out.println(System.getProperty("user.dir"));
 
         Client client = new Client();
         Builder builder = JCommander.newBuilder();
@@ -44,7 +47,7 @@ public class Client {
         jcmd.parse(argv);
         jcmd.setProgramName("hycloud-client");
 
-        Config conf = Config.getConfig();
+        Config conf = Config.getConfig(client.configPath);
         conf.dump();
 
         client.run(jcmd);

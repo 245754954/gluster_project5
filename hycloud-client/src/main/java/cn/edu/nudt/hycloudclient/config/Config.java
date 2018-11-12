@@ -11,8 +11,10 @@ import java.util.Properties;
 public class Config {
     private static Config mConfig;
 
-    private final String PropertiesFilePath = ".\\hycloud-client\\src\\main\\resources\\client.properties";
+    private final String PropertiesFilePath = "./hycloud-client/src/main/resources/client.properties";
 //    \hycloud-client\src\main\resources
+
+    private String mConfigPath;
 
     /**
      * domain name or IP of the manager server
@@ -41,15 +43,30 @@ public class Config {
         }
         return mConfig;
     }
+    public static Config getConfig(String configPath) throws IOException {
+        if(mConfig == null) {
+            mConfig = new Config(configPath);
+        }
+        return mConfig;
+    }
 
     private Config() throws IOException {
+        this.mConfigPath = this.PropertiesFilePath;
+        loadConfig();
+    }
+
+    private Config(String configPath) throws IOException {
+        this.mConfigPath = this.PropertiesFilePath;
+        if (configPath != null){
+            this.mConfigPath = configPath;
+        }
         loadConfig();
     }
 
     private void loadConfig() throws IOException {
         Properties props = new Properties();
 
-        FileReader freader = new FileReader(PropertiesFilePath);
+        FileReader freader = new FileReader(this.mConfigPath);
 
         props.load(freader);
 
