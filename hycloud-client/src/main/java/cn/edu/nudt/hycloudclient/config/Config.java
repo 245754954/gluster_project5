@@ -147,8 +147,13 @@ public class Config {
         return  this.mHdfsVerifyHome;
     }
 
+    /**
+     *
+     * @return
+     * - block size in B
+     */
     public int getBlockSize() {
-        return mBlockSize;
+        return mBlockSize * 1024 * 1024;
     }
 
     public void dump() {

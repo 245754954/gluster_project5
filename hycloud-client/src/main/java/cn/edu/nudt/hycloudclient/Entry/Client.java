@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudclient.Entry;
 
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
+import cn.edu.nudt.hycloudclient.Storage.StorageTransfer;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
 import cn.edu.nudt.hycloudinterface.utils.helper;
@@ -35,6 +36,9 @@ public class Client {
     private int granularity = 64;
     @Parameter(names= {"--delete", "-d"}, variableArity = true, description = "list of segments to be deleted")
     private List<String> deletes = null;
+
+    @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify")
+    private List<String> blocks = null;
     //////////////////////////////////////////////
 
 
@@ -74,6 +78,7 @@ public class Client {
                 break;
             case Action.VERIFY:
                 // check args inside your action
+                StorageHandler.verify(sourcefile, blocks);
                 break;
             case Action.SPUT:
                 DeletionHandler.sput(sourcefile, granularity);
