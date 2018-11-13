@@ -2,6 +2,7 @@ package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
+import cn.edu.nudt.hycloudinterface.entity.BlockStatus;
 import cn.edu.nudt.hycloudinterface.entity.FileInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
@@ -31,7 +32,7 @@ public class StorageHandler {
 
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-        FileInfo fileInfo = new FileInfo(sourcefilename);
+//        FileInfo fileInfo = new FileInfo(sourcefilename);
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
 		FileInputStream fis = new FileInputStream(sourcefilepath);
 		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
@@ -56,12 +57,13 @@ public class StorageHandler {
             osToHdfsForTag.write(hash, 0, hash.length);
             osToHdfsForTag.close();
 
-            fileInfo.addBlock(blockIdx, hash);
+//            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
+            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
 		}
 		fis.close();
 
-        StorageTransfer.updateFileInfo(fileInfo);
+//        StorageTransfer.updateFileInfo(fileInfo);
 		StorageBase sbase = new StorageBase();
 		sbase.insert(sourcefilename, blockNum, hdfsPathPrefix);
 		sbase.close();
@@ -115,8 +117,8 @@ public class StorageHandler {
             helper.print("Checking statuses of blocks from " + filename);
             for (String strIdx : blocks) {
                 int blockIdx = Integer.parseInt(strIdx);
-                boolean rv = StorageTransfer.verifyBlock(filename, blockIdx);
-                helper.print("status of block " + blockIdx + ": " + rv);
+                int status = StorageTransfer.verifyBlock(filename, blockIdx);
+                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
             }
         }
     }

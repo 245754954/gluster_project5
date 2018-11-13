@@ -37,7 +37,7 @@ public class Client {
     @Parameter(names= {"--delete", "-d"}, variableArity = true, description = "list of segments to be deleted")
     private List<String> deletes = null;
 
-    @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify")
+    @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify, starts with 0")
     private List<String> blocks = null;
     //////////////////////////////////////////////
 

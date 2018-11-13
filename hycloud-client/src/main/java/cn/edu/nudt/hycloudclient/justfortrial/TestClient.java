@@ -18,6 +18,7 @@ import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -30,7 +31,18 @@ import java.util.Map;
 public class TestClient {
 
     public static void main(String[] args) throws Exception {
-        addTree();
+        addBlock("file-1", 0, "1231");
+        addBlock("file-1", 1, "1273231");
+        addBlock("file-1", 2, "1823231");
+        addBlock("file-2", 0, "1234331");
+
+        verifyBlock("file-1",0);
+        verifyBlock("file-2",0);
+        verifyBlock("file-1",2);
+        verifyBlock("file-2",2);
+
+
+//        addTree();
 //        addNode();
 //        addSegmentList();
 
@@ -50,6 +62,32 @@ public class TestClient {
 //
 //        System.out.print(rvstudent.toString());
 
+    }
+
+    public static void addBlock(String filename, int blockIdx, String hashStr) throws MalformedURLException {
+        URL url = new URL("http://127.0.0.1:8080/block/add");
+
+        BigInteger hash = new BigInteger(hashStr);
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+        param.put("hashKey", JSON.toJSONString(hash));
+
+        BasicTransfer.doPost(url, param);
+    }
+
+    public static int verifyBlock(String filename, int blockIdx) throws MalformedURLException {
+        URL url = new URL("http://127.0.0.1:8080/block/verify");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+
+        String recvStr = BasicTransfer.doPost(url, param);
+        Integer status = JSON.parseObject(recvStr, Integer.class);
+        helper.print(filename + ", " + blockIdx + ", status = " + status);
+        return status;
     }
 
 
