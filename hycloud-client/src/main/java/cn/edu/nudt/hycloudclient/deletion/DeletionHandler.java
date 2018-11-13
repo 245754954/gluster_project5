@@ -102,6 +102,7 @@ public class DeletionHandler {
 			SegmentList segmentList = new SegmentList(segStrList);
 			DeletionHandler.sdel(filename, segmentList);
 		}
+		sdump(filename);
 	}
 	
 	/**

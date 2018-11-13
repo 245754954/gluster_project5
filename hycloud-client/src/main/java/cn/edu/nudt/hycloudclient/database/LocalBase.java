@@ -190,7 +190,7 @@ public class LocalBase {
 	}
 	
 	public void update(String filename, BigInteger masterKey, String remoteTreePath) {
-		String sqlUpdate = "UPDATE deletionTable SET masterKey = ?, "
+		String sqlUpdate = "UPDATE deletionTable SET masterKey = ? "
 				+ "remoteTreePath = ?"
 				+ "WHERE filename is ?";
 		
@@ -209,8 +209,7 @@ public class LocalBase {
 	}
 	
 	public void update(String filename, BigInteger masterKey) {
-		String sqlUpdate = "UPDATE deletionTable SET masterKey = ?, "
-				+ "WHERE filename is ?";
+		String sqlUpdate = "UPDATE deletionTable SET masterKey = ? WHERE filename is ?";
 		
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlUpdate);

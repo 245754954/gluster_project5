@@ -41,7 +41,7 @@ public class Transfer {
     }
 
     public static boolean updateModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/tree/uploadModulationTree");
+        URL url = new URL("http://127.0.0.1:8080/tree/updateModulationTree");
 
         Map<String, String> param = new HashMap<>();
         param.put("filename", JSON.toJSONString(filename));

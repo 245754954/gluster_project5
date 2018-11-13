@@ -5,7 +5,6 @@ import cn.edu.nudt.hycloudclient.crypto.AES;
 import cn.edu.nudt.hycloudclient.network.Transfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
@@ -136,7 +135,7 @@ public class DeletionTransfer {
 		Config conf = Config.getConfig();
 		
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
-		InputStream input = hdfs.open(new Path(remotePath));
+		BufferedInputStream input = new BufferedInputStream(hdfs.open(new Path(remotePath)));
 		FileOutputStream fos = new FileOutputStream(localPath);
 		
 		int segmentSize = granularity * 1024;
@@ -177,8 +176,8 @@ public class DeletionTransfer {
 					currBlockSize += nread;
 					
 					if(nread < inBufferSize) {
-						helper.print("nread: " + nread);
-						helper.print("currBlockSize: " + currBlockSize);
+//						helper.print("nread: " + nread);
+//						helper.print("currBlockSize: " + currBlockSize);
 						if( (nread = input.read(inBuffer, 0, inBufferSize - nread)) != -1) {
 							outBuffer = cipher.update(inBuffer, 0, nread);
 							fos.write(outBuffer, 0, outBuffer.length);
