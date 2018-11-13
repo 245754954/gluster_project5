@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudinterface.entity;
 
-import cn.edu.nudt.hycloudinterface.entity.utils.Assist;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.Assist;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.*;
 import java.math.BigInteger;

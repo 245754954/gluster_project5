@@ -4,8 +4,8 @@ import cn.edu.nudt.hycloudclient.crypto.AES;
 import cn.edu.nudt.hycloudclient.deletion.DeletionTransfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import cn.edu.nudt.hycloudinterface.entity.utils.Assist;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.Assist;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -153,7 +153,10 @@ public class Server extends Thread{
 				}
 				dis.close();
 				server.close();
-			} catch (IOException | ClassNotFoundException e) {
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {

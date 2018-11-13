@@ -3,7 +3,7 @@ package cn.edu.nudt.hycloudclient.Entry;
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;
@@ -11,13 +11,18 @@ import com.beust.jcommander.Parameter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class Client {
+    @Parameter(names= {"--config","-c"}, description = "path to config file")
+    private String configPath = null;
+
     @Parameter(names= {"--help","-h"}, help=false, description = "action to perform")
     private boolean help = false;
 
-    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
+//    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
+    @Parameter(required = true, description = "action to perform")
     private String strAction = null;
 
     //////////////////////////////////////////////
@@ -33,7 +38,7 @@ public class Client {
     //////////////////////////////////////////////
 
 
-    public static void main(String ... argv) throws IOException, IllegalBlockSizeException, BadPaddingException {
+    public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
         System.out.println(System.getProperty("user.dir"));
 
         Client client = new Client();
@@ -44,13 +49,13 @@ public class Client {
         jcmd.parse(argv);
         jcmd.setProgramName("hycloud-client");
 
-        Config conf = Config.getConfig();
+        Config conf = Config.getConfig(client.configPath);
         conf.dump();
 
         client.run(jcmd);
     }
 
-    public void run(JCommander jcmd) throws IOException, IllegalBlockSizeException, BadPaddingException {
+    public void run(JCommander jcmd) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
         if(help) {
             jcmd.usage();
             System.exit(0);

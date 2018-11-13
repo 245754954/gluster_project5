@@ -2,7 +2,7 @@ package cn.edu.nudt.hycloudclient.justfortrial;
 
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.Node;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.math.BigInteger;

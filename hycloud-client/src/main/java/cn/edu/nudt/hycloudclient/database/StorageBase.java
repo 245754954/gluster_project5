@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudclient.database;
 
 import cn.edu.nudt.hycloudclient.config.Config;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.IOException;
 import java.sql.*;
@@ -16,6 +16,7 @@ public class StorageBase {
 			String sqlCreateTable = "CREATE TABLE IF NOT EXISTS storgeTable ("
 					+ "fid INTEGER PRIMARY kEY AUTOINCREMENT,"
 					+ "filename text NOT NULL UNIQUE,"
+					+ "blockNum integer NOT NULL,"
 					+ "hdfsPath text NOT NULL UNIQUE)";
 			
 			Statement st = conn.createStatement();
@@ -44,18 +45,19 @@ public class StorageBase {
 		}
 	}
 	
-	public void insert(String filename, 
+	public void insert(String filename, long blockNum,
 			String hdfsPath) {
 		
 		delete(filename);
 		
 		String sqlInsert = "INSERT INTO storgeTable "
-				+ "(filename, hdfsPath) "
-				+ "VALUES (?, ?)";
+				+ "(filename, blockNum, hdfsPath) "
+				+ "VALUES (?, ?, ?)";
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlInsert);
 			pst.setString(1, filename);
-			pst.setString(2, hdfsPath);
+			pst.setLong(2, blockNum);
+			pst.setString(3, hdfsPath);
 			
 			pst.executeUpdate();
 			pst.close();
@@ -86,6 +88,28 @@ public class StorageBase {
 			e.printStackTrace();
 		}
 		return hdfsPath;
+	}
+
+	public long getBlockNum(String filename) {
+		String sqlQuery = "SELECT blockNum FROM storgeTable WHERE filename is ?";
+
+		long blockNum = 0;
+		try {
+			PreparedStatement pst = conn.prepareStatement(sqlQuery);
+			pst.setString(1, filename);
+
+			ResultSet rs = pst.executeQuery();
+
+			rs.next();
+			blockNum = rs.getLong("blockNum");
+
+			rs.close();
+			pst.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return blockNum;
 	}
 	
 //	public void update(String filename, BigInteger masterKey) {

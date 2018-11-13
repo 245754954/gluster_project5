@@ -1,6 +1,6 @@
 package cn.edu.nudt.hycloudclient.Entry;
 
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 public class Action {
 	public final static int SPUT = 1;

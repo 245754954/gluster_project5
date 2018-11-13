@@ -11,5 +11,5 @@
 -a sdump -f testfile.txt
 -a sdel -f testfile.txt -d 2 3
 
--a put -f E:\CodeHub\TestDir\LocalDir\testfile.txt
+-a put -f E:\CodeHub\TestDir\LocalDir\testfile.txt -c E:\CodeHub\yhcloud-home\hycloud\hycloud-client\src\main\resources\client.properties
 -a get -f testfile.txt -l E:\CodeHub\TestDir\LocalDir\getfile.txt

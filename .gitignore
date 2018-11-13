@@ -33,3 +33,6 @@ mvnw
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### shade ###
+dependency-reduced-pom.xml

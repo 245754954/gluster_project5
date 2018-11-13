@@ -3,7 +3,7 @@ package cn.edu.nudt.hycloudclient.deletion;
 import cn.edu.nudt.hycloudclient.database.LocalBase;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

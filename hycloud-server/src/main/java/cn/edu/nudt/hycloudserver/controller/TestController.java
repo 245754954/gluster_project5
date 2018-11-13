@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudserver.controller;
 
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
-import cn.edu.nudt.hycloudinterface.entity.utils.helper;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
