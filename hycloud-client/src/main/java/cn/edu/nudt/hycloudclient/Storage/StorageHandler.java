@@ -9,8 +9,10 @@ import org.apache.hadoop.fs.Path;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class StorageHandler {
 
@@ -40,18 +42,20 @@ public class StorageHandler {
 			byte[] buffer = new byte[1024];
             int currBlockSize = 0;
             int nread = 0;
-            while (currBlockSize < blockSize &&  (nread = fis.read(buffer, 0,  (blockSize - currBlockSize))) != -1){
+            while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1){
                 digest.update(buffer, 0, nread);
                 osToHdfs.write(buffer, 0, nread);
                 currBlockSize += nread;
             }
+            osToHdfs.close();
             byte[] hash = digest.digest();
-            String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
-            OutputStream osToHdfsForTag = hdfs.create(new Path(blockHdfsPath));
-            osToHdfsForTag.write(hash, 0, hash.length);
 
-			osToHdfs.close();
+            String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
+            OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
+            osToHdfsForTag.write(hash, 0, hash.length);
             osToHdfsForTag.close();
+
+            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
 		}
 		fis.close();
 
@@ -101,6 +105,18 @@ public class StorageHandler {
         }
         fos.close();
 	}
+
+
+	public static void verify(String filename, List<String> blocks) throws MalformedURLException {
+	    if(blocks != null) {
+            helper.print("Checking statuses of blocks from " + filename);
+            for (String strIdx : blocks) {
+                int blockIdx = Integer.parseInt(strIdx);
+                boolean rv = StorageTransfer.verifyBlock(filename, blockIdx);
+                helper.print("status of block " + blockIdx + ": " + rv);
+            }
+        }
+    }
 
 	private static String getBlockHdfsPath(String hdfsPathPrefix, int blockIdx){
         return hdfsPathPrefix+ "_block_" + blockIdx;
