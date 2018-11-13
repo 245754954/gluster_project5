@@ -1,17 +1,16 @@
 package cn.edu.nudt.hycloudserver.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.Objects;
 
 @Entity
 public class VerifyTable {
+    @GeneratedValue(strategy= GenerationType.AUTO)
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+
     private String pkey;
+    @Column(length = 8096)
     private  String filename;
     private Integer blockid;
     private BigInteger hash;
