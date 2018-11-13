@@ -16,6 +16,12 @@ public class Config {
 
     private String mConfigPath;
 
+
+    /**
+     * block size for integrity verification
+     */
+    private int mBlockSize;
+
     /**
      * domain name or IP of the manager server
      */
@@ -35,7 +41,8 @@ public class Config {
 
     private Configuration mHdfsConf;
 
-    private String mHdfsHome;
+    private String mHdfsDeleteHome;
+    private String mHdfsVerifyHome;
 
     public static Config getConfig() throws IOException {
         if(mConfig == null) {
@@ -70,6 +77,9 @@ public class Config {
 
         props.load(freader);
 
+        // block size in MB
+        this.mBlockSize = Integer.parseInt(props.getProperty("BlockSize", "128"));
+
         mManagerServerName = props.getProperty("ManagerServerName", "localhost");
         mManagerServerPort = Integer.parseInt(props.getProperty("ManagerServerPort", "8080"));
         mClientDatabasePath = props.getProperty("ClientDatabasePath", "./yhbdclient.db");
@@ -78,7 +88,8 @@ public class Config {
         this.mHdfsConf = new Configuration();
         mHdfsConf.set("fs.default.name",
                 props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
-        mHdfsHome = props.getProperty("HdfsHome", "hdfs://192.168.6.173:9000/yhbd/");
+        mHdfsDeleteHome = props.getProperty("HdfsDeleteHome", "hdfs://192.168.6.173:9000/yhbd/delete/");
+        this.mHdfsVerifyHome= props.getProperty("HdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
         freader.close();
     }
 
@@ -128,8 +139,16 @@ public class Config {
         return this.mHdfsConf;
     }
 
-    public String getHdfsHome() {
-        return this.mHdfsHome;
+    public String getHdfsDeleteHome() {
+        return this.mHdfsDeleteHome;
+    }
+
+    public String getHdfsVerifyHome(){
+        return  this.mHdfsVerifyHome;
+    }
+
+    public int getBlockSize() {
+        return mBlockSize;
     }
 
     public void dump() {
@@ -138,7 +157,9 @@ public class Config {
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
 //        helper.print("mModulatorBits: " + this.mModulatorBits);
         helper.print("mHdfsConf: " + this.mHdfsConf);
-        helper.print("mHdfsHome: " + this.mHdfsHome);
+        helper.print("mHdfsDeleteHome: " + this.mHdfsDeleteHome);
+        helper.print("mHdfsVerifyHome: " + this.mHdfsVerifyHome);
+        helper.print("mBlockSize: " + this.mBlockSize);
     }
 
     public static void main(String ... argv) throws IOException {

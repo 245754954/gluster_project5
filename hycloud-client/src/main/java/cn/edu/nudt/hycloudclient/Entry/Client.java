@@ -11,6 +11,7 @@ import com.beust.jcommander.Parameter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class Client {
@@ -36,7 +37,7 @@ public class Client {
     //////////////////////////////////////////////
 
 
-    public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException {
+    public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
         System.out.println(System.getProperty("user.dir"));
 
         Client client = new Client();
@@ -53,7 +54,7 @@ public class Client {
         client.run(jcmd);
     }
 
-    public void run(JCommander jcmd) throws IOException, IllegalBlockSizeException, BadPaddingException {
+    public void run(JCommander jcmd) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
         if(help) {
             jcmd.usage();
             System.exit(0);

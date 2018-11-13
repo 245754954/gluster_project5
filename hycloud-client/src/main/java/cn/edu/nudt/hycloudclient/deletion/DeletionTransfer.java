@@ -96,8 +96,8 @@ public class DeletionTransfer {
 		
 		String filename = inputFile.getName();
 		
-		String hdfsHome = conf.getHdfsHome();
-		String remotePath = hdfsHome + "del_" + filename;
+		String hdfsHome = conf.getHdfsDeleteHome();
+		String remotePath = hdfsHome + filename;
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
 		
 		OutputStream output = hdfs.create(new Path(remotePath));
