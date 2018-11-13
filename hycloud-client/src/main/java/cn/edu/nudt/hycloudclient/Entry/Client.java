@@ -21,7 +21,8 @@ public class Client {
     @Parameter(names= {"--help","-h"}, help=false, description = "action to perform")
     private boolean help = false;
 
-    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
+//    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
+    @Parameter(required = true, description = "action to perform")
     private String strAction = null;
 
     //////////////////////////////////////////////
