@@ -7,5 +7,5 @@ public interface VerifyService {
 
     public VerifyTable saveBlockInfo(VerifyTable verifyTable);
 
-    public VerifyTable findVerifyTableByFilenameEqualsAndBlockidEquals(String filename, Integer blockid);
+    public VerifyTable findVerifyTableByMFilename(String filename);
 }

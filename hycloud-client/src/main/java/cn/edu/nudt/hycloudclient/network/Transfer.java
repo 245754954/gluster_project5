@@ -1,22 +1,15 @@
 package cn.edu.nudt.hycloudclient.network;
 
-import cn.edu.nudt.hycloudinterface.entity.BlockInfo;
+import cn.edu.nudt.hycloudinterface.entity.FileInfo;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import com.alibaba.fastjson.JSON;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class Transfer {
 
@@ -32,11 +25,11 @@ public class Transfer {
         return  JSON.parseObject(recvStr, Boolean.class);
 
     }
-    public static void addBlock(BlockInfo blockInfo) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/verify/addBlock");
+    public static void updateFileInfo(FileInfo fileInfo) throws MalformedURLException {
+        URL url = new URL("http://127.0.0.1:8080/verify/updateFileInfo");
 
         Map<String, String> param = new HashMap<String, String>();
-        param.put("blockInfo", JSON.toJSONString(blockInfo));
+        param.put("fileInfo", JSON.toJSONString(fileInfo));
 
         BasicTransfer.doPost(url, param);
     }

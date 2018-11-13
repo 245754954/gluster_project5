@@ -1,79 +1,49 @@
 package cn.edu.nudt.hycloudserver.entity;
 
+import cn.edu.nudt.hycloudinterface.entity.BlockInfo;
+
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class VerifyTable {
-    @GeneratedValue(strategy= GenerationType.AUTO)
     @Id
-
-    private String pkey;
-    @Column(length = 8096)
-    private  String filename;
-    private Integer blockid;
-    private BigInteger hash;
-    private Boolean status;
+    private String mFilename;
+    @OneToMany(cascade={CascadeType.ALL},fetch= FetchType.EAGER)
+    private List<BlockInfoServer> mBlockList;
 
     public VerifyTable() {
     }
 
-    public String getFilename() {
-        return filename;
+    public VerifyTable(String mFilename, List<BlockInfoServer> mBlockList) {
+        this.mFilename = mFilename;
+        this.mBlockList = mBlockList;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public String getmFilename() {
+        return mFilename;
     }
 
-    public VerifyTable(String filename, Integer blockid, BigInteger hash, Boolean status) {
-        this.filename = filename;
-        this.blockid = blockid;
-        this.hash = hash;
-        this.status = status;
+    public void setmFilename(String mFilename) {
+        this.mFilename = mFilename;
     }
 
-    public String getPkey() {
-        return pkey;
+    public List<BlockInfoServer> getmBlockList() {
+        return mBlockList;
     }
 
-    public void setPkey(String pkey) {
-        this.pkey = pkey;
-    }
-
-    public Integer getBlockid() {
-        return blockid;
-    }
-
-    public void setBlockid(Integer blockid) {
-        this.blockid = blockid;
-    }
-
-    public BigInteger getHash() {
-        return hash;
-    }
-
-    public void setHash(BigInteger hash) {
-        this.hash = hash;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setmBlockList(List<BlockInfoServer> mBlockList) {
+        this.mBlockList = mBlockList;
     }
 
     @Override
     public String toString() {
         return "VerifyTable{" +
-                "pkey='" + pkey + '\'' +
-                ", filename='" + filename + '\'' +
-                ", blockid=" + blockid +
-                ", hash=" + hash +
-                ", status=" + status +
+                "mFilename='" + mFilename + '\'' +
+                ", mBlockList=" + mBlockList +
                 '}';
     }
 }

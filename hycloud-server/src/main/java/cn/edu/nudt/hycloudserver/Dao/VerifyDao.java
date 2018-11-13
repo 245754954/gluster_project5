@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VerifyDao extends JpaRepository<VerifyTable,String> {
 
-   public VerifyTable findVerifyTableByFilenameEqualsAndBlockidEquals(String filename,Integer blockid);
+  public VerifyTable findVerifyTableByMFilename(String filename);
+
 }

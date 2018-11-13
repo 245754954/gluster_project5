@@ -3,31 +3,30 @@ package cn.edu.nudt.hycloudinterface.entity;
 import java.math.BigInteger;
 
 public class BlockInfo {
-    private String mFilename;
+
     private int mBlockIdx;
     private BigInteger mHash;
+    private Boolean mStatus;
 
     public BlockInfo(){
         this.mBlockIdx = -1;
-        this.mFilename = null;
         this.mHash = null;
+        this.mStatus = true;
     }
 
-    public BlockInfo(String filename, int blockIdx, BigInteger hash){
-        this.mFilename = filename;
+    public BlockInfo(int blockIdx, BigInteger hash){
         this.mBlockIdx = blockIdx;
         this.mHash = hash;
+        this.mStatus = true;
+
     }
 
-    public BlockInfo(String filename, int blockIdx, byte[] hashBytes){
-        this.mFilename = filename;
+    public BlockInfo(int blockIdx, byte[] hashBytes){
         this.mBlockIdx = blockIdx;
         this.mHash = new BigInteger(hashBytes);
+        this.mStatus = true;
     }
 
-    public String getmFilename() {
-        return mFilename;
-    }
 
     public int getmBlockIdx() {
         return mBlockIdx;
@@ -37,9 +36,6 @@ public class BlockInfo {
         return mHash;
     }
 
-    public void setmFilename(String mFilename) {
-        this.mFilename = mFilename;
-    }
 
     public void setmBlockIdx(int mBlockIdx) {
         this.mBlockIdx = mBlockIdx;
@@ -48,4 +44,15 @@ public class BlockInfo {
     public void setmHash(BigInteger mHash) {
         this.mHash = mHash;
     }
+
+    public Boolean getmStatus() {
+        return mStatus;
+    }
+
+    public void setmStatus(Boolean mStatus) {
+        this.mStatus = mStatus;
+    }
+
+
+
 }

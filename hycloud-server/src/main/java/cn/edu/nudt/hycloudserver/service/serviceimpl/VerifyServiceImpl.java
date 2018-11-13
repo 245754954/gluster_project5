@@ -24,8 +24,12 @@ public class VerifyServiceImpl implements VerifyService {
     }
 
     @Override
-    public VerifyTable findVerifyTableByFilenameEqualsAndBlockidEquals(String filename, Integer blockid) {
+    public VerifyTable findVerifyTableByMFilename(String filename) {
 
-        return verifyDao.findVerifyTableByFilenameEqualsAndBlockidEquals(filename,blockid);
+        return verifyDao.findVerifyTableByMFilename(filename);
     }
+
+
+
+
 }
