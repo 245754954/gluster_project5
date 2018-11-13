@@ -40,6 +40,8 @@ public class VerifyController {
         v.setHash(v.getHash());
         v.setStatus(true);
 
+        verifyService.saveBlockInfo(v);
+
         System.out.println(restoredBlockInfo.getmFilename());
         System.out.println(restoredBlockInfo.getmBlockIdx());
         System.out.println(restoredBlockInfo.getmHash());

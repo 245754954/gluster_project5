@@ -13,3 +13,5 @@
 
 -a put -f E:\CodeHub\TestDir\LocalDir\testfile.txt -c E:\CodeHub\yhcloud-home\hycloud\hycloud-client\src\main\resources\client.properties
 -a get -f testfile.txt -l E:\CodeHub\TestDir\LocalDir\getfile.txt
+
+java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c client.properties put -f /Users/roger/Works/CodeHub/hycloud-home/testdir/youkumac_1.5.1.06202.dmg
