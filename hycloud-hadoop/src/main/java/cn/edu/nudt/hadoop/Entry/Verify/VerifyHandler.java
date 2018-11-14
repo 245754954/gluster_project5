@@ -30,12 +30,11 @@ import org.apache.hadoop.io.IntWritable;
 import java.lang.Integer;
 
 public class VerifyHandler {
-    public static final String INPUT_PATH="hdfs://192.168.6.129:9000/chal/chal.txt";
-    public static String localChalName = "/home/dky/test/chal.txt";
-    public static String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
-    public static String OUTPUT_PATH="hdfs://192.168.6.129:9000/output";
-    public static int postFileStatus = -1;
-    public static final String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
+//    public static final String INPUT_PATH="hdfs://192.168.6.129:9000/chal/chal.txt";
+//    public static String localChalName = "/home/dky/test/chal.txt";
+//    public static String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
+//    public static String OUTPUT_PATH="hdfs://192.168.6.129:9000/output";
+//    public static final String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
     public static final String blockPathMid = "_block_";
 //    public static List<BlockVerifyResult> blockRequestList = new ArrayList<BlockVerifyResult>();
     private BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList();
@@ -126,7 +125,7 @@ public class VerifyHandler {
         return tag;
     }
 
-    public int readOutput(String blockPath) {
+    public void readOutput(String blockPath) {
         try {
             Configuration conf = new Configuration();
 
@@ -154,7 +153,6 @@ public class VerifyHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return postFileStatus;
     }
 
     public static String getTagHdfsPath(String HdfsPath){
@@ -174,7 +172,7 @@ public class VerifyHandler {
         Configuration conf=new Configuration();
         conf.setBoolean("fs.hdfs.impl.disable.cache", true);
 
-        Path outputpath=new Path(OUTPUT_PATH);    //输出路径
+        Path outputpath=new Path(ProgConfig.getConfig().getOutputPath());    //输出路径
         FileSystem filesystem = outputpath.getFileSystem(conf);
         if (filesystem.exists(outputpath)) {
             filesystem.delete(outputpath,true);
@@ -188,10 +186,10 @@ public class VerifyHandler {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         FileInputFormat.setInputPaths(job, challengeFile);
-        FileOutputFormat.setOutputPath(job,new Path(OUTPUT_PATH));
+        FileOutputFormat.setOutputPath(job,new Path(ProgConfig.getConfig().getOutputPath()));
         job.waitForCompletion(true);
 
-        readOutput(OUTPUT_PATH + "/part-r-00000");
+        readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
         //System.out.println(status);
 
 //        for(Iterator iterators = mBlockVerifyResultList.iterator(); iterators.hasNext();){
@@ -216,16 +214,16 @@ public class VerifyHandler {
         long blocknum = challenge.getBlockNum();
         long i = 0;
         PrintWriter writer = null;
-        writer = new PrintWriter(localChalName, "UTF-8");
+        writer = new PrintWriter(ProgConfig.getConfig().getLocalChalName(), "UTF-8");
         while (i < blocknum) {
             String line = "";
-            fileHdfsPath = blockPathPrefix + filename + blockPathMid + i;
+            fileHdfsPath = ProgConfig.getConfig().getBlockPathPrefix() + filename + blockPathMid + i;
             line += fileHdfsPath;
             writer.println(line);
             i++;
         }
         writer.close();
-        putToHDFS(localChalName,chalHdfsPath,conf);
+        putToHDFS(ProgConfig.getConfig().getLocalChalName(),ProgConfig.getConfig().getChalHdfsPath(),conf);
     }
 
     public boolean putToHDFS(String src , String dst , Configuration conf){

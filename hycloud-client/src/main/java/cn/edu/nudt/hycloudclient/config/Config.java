@@ -168,11 +168,13 @@ public class Config {
         helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
         helper.print("mManagerServerName: " + this.mManagerServerName);
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
+        helper.print("getManagerServerUrl: " + getManagerServerUrl());
 //        helper.print("mModulatorBits: " + this.mModulatorBits);
         helper.print("mHdfsConf: " + this.mHdfsConf);
         helper.print("mHdfsDeleteHome: " + this.mHdfsDeleteHome);
         helper.print("mHdfsVerifyHome: " + this.mHdfsVerifyHome);
         helper.print("mBlockSize: " + this.mBlockSize);
+
     }
 
     public static void main(String ... argv) throws IOException {
@@ -180,6 +182,6 @@ public class Config {
 
         Config cfg = Config.getConfig();
         cfg.dump();
-        helper.print(cfg.getManagerServerUrl());
+
     }
 }

@@ -116,7 +116,7 @@ public class StorageHandler {
 	}
 
 
-	public static void verifyBlock(String filename, List<String> blocks) throws MalformedURLException {
+	public static void verifyBlock(String filename, List<String> blocks) throws IOException {
 	    if(blocks != null) {
             helper.print("Checking statuses of blocks from " + filename);
             for (String strIdx : blocks) {
@@ -127,7 +127,7 @@ public class StorageHandler {
         }
     }
 
-    public static void verifyFile(List<String> veifyFiles) throws MalformedURLException {
+    public static void verifyFile(List<String> veifyFiles) throws IOException {
 	    if(veifyFiles != null) {
             helper.print("Checking statuses of files ");
             for (String filename: veifyFiles) {

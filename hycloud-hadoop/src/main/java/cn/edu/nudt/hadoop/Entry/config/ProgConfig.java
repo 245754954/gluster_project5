@@ -18,11 +18,12 @@ public class ProgConfig {
     private String mConfigPath = null;
 
     // your configuration
+    private String managerServer ="127.0.0.1";
+    private String managerServerPort = "8080";
     private String inputPath ="hdfs://192.168.6.129:9000/chal/chal.txt";
     private String localChalName = "/home/dky/test/chal.txt";
     private String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
     private String outputPath ="hdfs://192.168.6.129:9000/output";
-    private int postFileStatus = -1;
     private String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
 
     public static ProgConfig getConfig() throws IOException {
@@ -63,24 +64,25 @@ public class ProgConfig {
         }
         FileReader freader = new FileReader(temConfigPath);
         props.load(freader);
+        this.managerServer = props.getProperty("managerServer", "127.0.0.1");
+        this.managerServerPort = props.getProperty("managerServerPort", "8080");
         this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
         this.blockPathPrefix = props.getProperty("blockPathPrefix", "hdfs://192.168.6.129:9000/yhbd/verify/");
         this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
         this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
         this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.129:9000/output");
-        this.postFileStatus = Integer.parseInt(props.getProperty("postFileStatus", "-1"));
         freader.close();
     }
 
     public static void initConfig() throws IOException {
         Properties props = new Properties();
-
+        props.setProperty("managerServer", "127.0.0.1");
+        props.setProperty("managerServerPort", "8080");
         props.setProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
         props.setProperty("blockPathPrefix", "hdfs://192.168.6.129:9000/yhbd/verify/");
         props.setProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
         props.setProperty("localChalName", "/home/dky/test/chal.txt");
         props.setProperty("outputPath", "hdfs://192.168.6.129:9000/output");
-        props.setProperty("postFileStatus", "-1");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
@@ -119,13 +121,6 @@ public class ProgConfig {
         this.outputPath = outputPath;
     }
 
-    public int getPostFileStatus() {
-        return postFileStatus;
-    }
-
-    public void setPostFileStatus(int postFileStatus) {
-        this.postFileStatus = postFileStatus;
-    }
 
     public String getBlockPathPrefix() {
         return blockPathPrefix;
@@ -135,14 +130,35 @@ public class ProgConfig {
         this.blockPathPrefix = blockPathPrefix;
     }
 
+    public String getManagerServer() {
+        return managerServer;
+    }
+
+    public void setManagerServer(String managerServer) {
+        this.managerServer = managerServer;
+    }
+
+    public String getManagerServerPort() {
+        return managerServerPort;
+    }
+
+    public void setManagerServerPort(String managerServerPort) {
+        this.managerServerPort = managerServerPort;
+    }
+
+    public String getManagerServerUrl(){
+        return "http://" + this.managerServer + ":" + this.managerServerPort + "/";
+    }
+
     public void dump() {
         helper.print("outputPath: " + this.outputPath);
-        helper.print("postFileStatus: " + this.postFileStatus);
+        helper.print("managerServer: " + this.managerServer);
+        helper.print("managerServerPort: " + this.managerServerPort);
         helper.print("localChalName: " + this.localChalName);
         helper.print("chalHdfsPath: " + this.chalHdfsPath);
         helper.print("blockPathPrefix: " + this.blockPathPrefix);
         helper.print("inputPath: " + this.inputPath);
-
+        helper.print("getManagerServerUrl: " + this.getManagerServerUrl());
     }
 
     public static void main(String ... argv) throws IOException {

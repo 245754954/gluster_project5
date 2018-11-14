@@ -1,10 +1,12 @@
 package cn.edu.nudt.hadoop.Entry.Verify;
 
+import cn.edu.nudt.hadoop.Entry.config.ProgConfig;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.entity.Challenge;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import com.alibaba.fastjson.JSON;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -13,8 +15,8 @@ import java.util.Map;
 public class VerifyTransfer {
 
 
-    public static Challenge fetchChallenge() throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/hdfs/fetchChallenge");
+    public static Challenge fetchChallenge() throws IOException {
+        URL url = new URL(ProgConfig.getConfig().getManagerServerUrl() + "hdfs/fetchChallenge");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("fetchChallenge", JSON.toJSONString("fetchChallenge"));
@@ -43,8 +45,8 @@ public class VerifyTransfer {
 //        BasicTransfer.doPost(url, param);
 //    }
 
-    public static void submitResult(String filename, BlockVerifyResultList blockVerifyResultList) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/submitBlockVerifyResult");
+    public static void submitResult(String filename, BlockVerifyResultList blockVerifyResultList) throws IOException {
+        URL url = new URL(ProgConfig.getConfig().getManagerServerUrl() + "block/submitBlockVerifyResult");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));

@@ -29,7 +29,7 @@ public class Starter {
     }
 
     public void run() throws Exception{
-//        ProgConfig.getConfig(configfile);
+        ProgConfig.getConfig(configfile);
         // TO DO
 //        while (true) {
 //            VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
@@ -37,7 +37,7 @@ public class Starter {
         VerifyHandler verifyHandler = new VerifyHandler();
 
         long beginTime = System.currentTimeMillis();
-        verifyHandler.startVerify(VerifyHandler.INPUT_PATH);
+        verifyHandler.startVerify(ProgConfig.getConfig().getInputPath());
         long endTime = System.currentTimeMillis();
         System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
     }
