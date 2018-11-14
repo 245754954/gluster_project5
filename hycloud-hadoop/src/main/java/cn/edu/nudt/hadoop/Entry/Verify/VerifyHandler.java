@@ -67,9 +67,6 @@ public class VerifyHandler {
                 context.write(name,intWritable);
             }
         }
-
-
-
     }
 
     static class MyReduce extends Reducer<Text,IntWritable,Text,IntWritable>{     //定义继承reducer类
@@ -127,8 +124,7 @@ public class VerifyHandler {
         return tag;
     }
 
-    public static int readOutput(String blockPath) {
-
+    public int readOutput(String blockPath) {
         try {
             Configuration conf = new Configuration();
 
@@ -163,7 +159,10 @@ public class VerifyHandler {
         return HdfsPath.replaceAll("_block_","_tag_");
     }
 
-    public static void startVerify(String challengeFile) throws Exception{
+    public VerifyHandler() {
+    }
+
+    public void startVerify(String challengeFile) throws Exception{
       Challenge challenge = VerifyTransfer.fetchChallenge();
 //        Challenge challenge = new Challenge();
 //        challenge.setBlockNum(new Long((long)30));
@@ -178,6 +177,7 @@ public class VerifyHandler {
         if (filesystem.exists(outputpath)) {
             filesystem.delete(outputpath,true);
         }
+
         Job job=Job.getInstance(conf);     //定义一个job，启动任务
         job.setJobName("sha-256");
         job.setJarByClass(VerifyHandler.class);
@@ -189,8 +189,7 @@ public class VerifyHandler {
         FileOutputFormat.setOutputPath(job,new Path(OUTPUT_PATH));
         job.waitForCompletion(true);
 
-
-        int status = readOutput(OUTPUT_PATH + "/part-r-00000");
+        readOutput(OUTPUT_PATH + "/part-r-00000");
         //System.out.println(status);
 
 //        for(Iterator iterators = mBlockVerifyResultList.iterator(); iterators.hasNext();){
@@ -208,7 +207,7 @@ public class VerifyHandler {
         VerifyTransfer.submitResult(challenge.getFilename(), mBlockVerifyResultList);
     }
 
-    public static void storeChallenge(Challenge challenge) throws Exception{
+    public void storeChallenge(Challenge challenge) throws Exception{
         Configuration conf=new Configuration();
         String filename = challenge.getFilename();
         String fileHdfsPath = null;
@@ -239,7 +238,6 @@ public class VerifyHandler {
         }
         return true ;
     }
-
 }
 
 

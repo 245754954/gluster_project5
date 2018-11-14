@@ -25,7 +25,7 @@ put -f E:\CodeHub\TestDir\jdk.tar.gz
 
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties put -f E:\CodeHub\TestDir\jdk.tar.gz
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties get -f jdk.tar.gz -l E:\CodeHub\TestDir\get.jdk.tar.gz
-java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties verify -f jdk.tar.gz -b 1 3 5 
+java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties verify -f jdk.tar.gz -b 1 3 5
 
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sput -f E:\CodeHub\TestDir\LocalDir\testfile.txt -g 64
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sget -f testfile.txt -l E:\CodeHub\TestDir\LocalDir\sgetfile.txt
