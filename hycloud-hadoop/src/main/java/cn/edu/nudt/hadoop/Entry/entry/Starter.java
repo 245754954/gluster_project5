@@ -1,18 +1,17 @@
-package cn.edu.nudt.hadoop;
+package cn.edu.nudt.hadoop.Entry.entry;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-
+import cn.edu.nudt.hadoop.Entry.Verify.VerifyHandler;
 public class Starter {
+    private String strAction = null;
 
 
-    @Parameter(names= {"--filename","-f"}, required = true, description = "filename")
-    private String filename;
+    @Parameter(names= {"--help","-h"}, description = "help")
+    private boolean help;
 
-    @Parameter(names= {"--size","-s"}, required = true, description = "size of file")
-    private int size;
 
-    public static void main(String ... argv){
+    public static void main(String ... argv) throws Exception{
 
         Starter starter = new Starter();
         JCommander.Builder builder = JCommander.newBuilder();
@@ -25,8 +24,8 @@ public class Starter {
         starter.run();
     }
 
-    public void run(){
+    public void run() throws Exception{
         // TO DO
-
+        VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
     }
 }
