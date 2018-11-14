@@ -12,8 +12,8 @@ import java.util.Properties;
 public class ProgConfig {
     private static ProgConfig mProgConfig;
 
-    private final String propertiesFilename = "namenode.properties";
-    private final String PropertiesFilePath = "./hycloud-client/src/main/resources/" + propertiesFilename;
+    private static final String propertiesFilename = "namenode.properties";
+    private static final String PropertiesFilePath = "./hycloud-hadoop/" + propertiesFilename;
 //    \hycloud-client\src\main\resources
     private String mConfigPath = null;
 
@@ -68,15 +68,19 @@ public class ProgConfig {
         this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
         this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
         this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.129:9000/output");
-        this.postFileStatus = Integer.parseInt(props.getProperty("outputPath", "-1"));
+        this.postFileStatus = Integer.parseInt(props.getProperty("postFileStatus", "-1"));
         freader.close();
     }
 
-    private void initConfig() throws IOException {
+    public static void initConfig() throws IOException {
         Properties props = new Properties();
 
-        props.setProperty("ManagerServerName", "localhost");
-        props.setProperty("ManagerServerPort", "8080");
+        props.setProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
+        props.setProperty("blockPathPrefix", "hdfs://192.168.6.129:9000/yhbd/verify/");
+        props.setProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
+        props.setProperty("localChalName", "/home/dky/test/chal.txt");
+        props.setProperty("outputPath", "hdfs://192.168.6.129:9000/output");
+        props.setProperty("postFileStatus", "-1");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
@@ -132,14 +136,19 @@ public class ProgConfig {
     }
 
     public void dump() {
-//        helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
+        helper.print("outputPath: " + this.outputPath);
+        helper.print("postFileStatus: " + this.postFileStatus);
+        helper.print("localChalName: " + this.localChalName);
+        helper.print("chalHdfsPath: " + this.chalHdfsPath);
+        helper.print("blockPathPrefix: " + this.blockPathPrefix);
+        helper.print("inputPath: " + this.inputPath);
 
     }
 
     public static void main(String ... argv) throws IOException {
+//        ProgConfig.initConfig();
+
         ProgConfig cfg = ProgConfig.getConfig();
-        cfg.initConfig();
-        cfg.loadConfig();
         cfg.dump();
     }
 }

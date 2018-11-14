@@ -40,6 +40,8 @@ public class DeletionTransfer {
 			tree = Transfer.obtainRemoteTree(filename, segmentsToDelete);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return tree;
 	}
@@ -55,6 +57,8 @@ public class DeletionTransfer {
 		try {
 			tree = Transfer.obtainRemoteTree(filename);
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return tree;
@@ -73,6 +77,8 @@ public class DeletionTransfer {
 		try {
 			rv = Transfer.updateModulationTree(filename, tree);
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return  rv;

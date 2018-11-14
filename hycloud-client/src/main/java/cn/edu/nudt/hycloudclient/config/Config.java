@@ -12,7 +12,8 @@ import java.util.Properties;
 public class Config {
     private static Config mConfig;
 
-    private final String PropertiesFilePath = "./hycloud-client/src/main/resources/client.properties";
+    private static final String clientConfigFileName = "client.properties";
+    private static final String PropertiesFilePath = "./hycloud-client/" + clientConfigFileName;
 //    \hycloud-client\src\main\resources
 
     private String mConfigPath = null;
@@ -76,9 +77,9 @@ public class Config {
         if(this.mConfigPath != null){
             temConfigPath = this.mConfigPath;
         }else{
-            File temfile = new File("./client.properties");
+            File temfile = new File("./" + clientConfigFileName);
             if (temfile.exists() && temfile.isFile()){
-                temConfigPath = "./client.properties";
+                temConfigPath = "./" + clientConfigFileName;
             }
         }
         FileReader freader = new FileReader(temConfigPath);
@@ -101,25 +102,20 @@ public class Config {
         freader.close();
     }
 
-    private void initConfig() throws IOException {
+    public static void initConfig() throws IOException {
         Properties props = new Properties();
+
+        // block size in MB
+        props.setProperty("BlockSize", "128");
 
         props.setProperty("ManagerServerName", "localhost");
         props.setProperty("ManagerServerPort", "8080");
+
         props.setProperty("ClientDatabasePath", "./yhbdclient.db");
-//        props.setProperty("ModulatorBits", "160");
 
-
-        props.setProperty("fs.default.name", "hdfs://192.168.6.173:9000");
-//		props.setProperty("fs.defaultFS", "hdfs://nameservice1");
-//		props.setProperty("dfs.Nameservices","nameservice1");
-//		props.setProperty("dfs.ha.namenodes.nameservice1","nn1,nn2");
-//		props.setProperty("dfs.namenode.rpc-address.nameservice1.nn1","8020");
-//		props.setProperty("dfs.namenode.rpc-address.nameservice1.nn2","8020");
-//		props.setProperty("dfs.client.failover.proxy.provider.nameservice1",
-//        		"org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
-
-        props.setProperty("HdfsHome", "hdfs://192.168.6.173:9000/yhbd");
+        props.setProperty("fs.default.name", "hdfs://192.168.6.129:9000");
+        props.setProperty("HdfsDeleteHome", "hdfs://192.168.6.129:9000/yhbd/delete/");
+        props.setProperty("HdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
@@ -164,6 +160,10 @@ public class Config {
         return mBlockSize * 1024 * 1024;
     }
 
+    public String getManagerServerUrl(){
+        return "http://" +this.mManagerServerName + ":" + this.mManagerServerPort + "/";
+    }
+
     public void dump() {
         helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
         helper.print("mManagerServerName: " + this.mManagerServerName);
@@ -176,9 +176,10 @@ public class Config {
     }
 
     public static void main(String ... argv) throws IOException {
+//        Config.initConfig();
+
         Config cfg = Config.getConfig();
-        cfg.initConfig();
-        cfg.loadConfig();
         cfg.dump();
+        helper.print(cfg.getManagerServerUrl());
     }
 }

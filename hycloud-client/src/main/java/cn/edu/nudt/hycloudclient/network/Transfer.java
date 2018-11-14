@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudclient.network;
 
+import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudinterface.entity.FileInfo;
 import cn.edu.nudt.hycloudinterface.entity.FileStatus;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
@@ -8,6 +9,7 @@ import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,8 +18,9 @@ import java.util.Map;
 
 public class Transfer {
 
-    public static void updateFileInfo(String filename, long blockNum) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/file/addFile");
+    public static void updateFileInfo(String filename, long blockNum) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "file/addFile");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -26,8 +29,9 @@ public class Transfer {
         BasicTransfer.doPost(url, param);
     }
 
-    public static int verifyFile(String filename) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/file/verifyFile");
+    public static int verifyFile(String filename) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "file/verifyFile");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -38,8 +42,9 @@ public class Transfer {
         return status;
     }
 
-    public static void updateBlockInfo(String filename, int blockIdx, BigInteger hash) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/addBlock");
+    public static void updateBlockInfo(String filename, int blockIdx, BigInteger hash) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "block/addBlock");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -49,8 +54,9 @@ public class Transfer {
         BasicTransfer.doPost(url, param);
     }
 
-    public static int verifyBlock(String filename, int blockIdx) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/verifyBlock");
+    public static int verifyBlock(String filename, int blockIdx) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "block/verifyBlock");
 
         Map<String, String> param = new HashMap<>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -62,8 +68,9 @@ public class Transfer {
         return status;
     }
 
-    public static int deleteFileBlocks(String filename) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/deleteFileBlocks");
+    public static int deleteFileBlocks(String filename) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "block/deleteFileBlocks");
 
         Map<String, String> param = new HashMap<>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -74,8 +81,9 @@ public class Transfer {
         return cnt;
     }
 
-    public static int deleteFile(String filename) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/file/deleteFile");
+    public static int deleteFile(String filename) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "file/deleteFile");
 
         Map<String, String> param = new HashMap<>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -109,8 +117,9 @@ public class Transfer {
 //        BasicTransfer.doPost(url, param);
 //    }
 
-    public static ModulationTree obtainRemoteTree(String filename) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/tree/obtainRemoteTree");
+    public static ModulationTree obtainRemoteTree(String filename) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "tree/obtainRemoteTree");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
@@ -120,8 +129,9 @@ public class Transfer {
         return tree;
     }
 
-    public static ModulationTree obtainRemoteTree(String filename, SegmentList segmentsToDelete) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/tree/obtainRemoteTreeWithDel");
+    public static ModulationTree obtainRemoteTree(String filename, SegmentList segmentsToDelete) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "tree/obtainRemoteTreeWithDel");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
@@ -132,8 +142,9 @@ public class Transfer {
         return tree;
     }
 
-    public static boolean updateModulationTree(String filename, ModulationTree tree) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/tree/uploadModulationTree");
+    public static boolean updateModulationTree(String filename, ModulationTree tree) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "tree/uploadModulationTree");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filename", JSON.toJSONString(filename));
