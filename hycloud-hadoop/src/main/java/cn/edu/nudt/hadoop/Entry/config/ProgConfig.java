@@ -26,6 +26,8 @@ public class ProgConfig {
     private String outputPath ="hdfs://192.168.6.129:9000/output";
     private String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
 
+    private int sleepTime = 30000;
+
     public static ProgConfig getConfig() throws IOException {
         if(mProgConfig == null) {
             mProgConfig = new ProgConfig();
@@ -64,6 +66,7 @@ public class ProgConfig {
         }
         FileReader freader = new FileReader(temConfigPath);
         props.load(freader);
+        this.sleepTime = Integer.parseInt(props.getProperty("sleepTime", "30000"));
         this.managerServer = props.getProperty("managerServer", "127.0.0.1");
         this.managerServerPort = props.getProperty("managerServerPort", "8080");
         this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
@@ -76,6 +79,7 @@ public class ProgConfig {
 
     public static void initConfig() throws IOException {
         Properties props = new Properties();
+        props.setProperty("sleepTime", "30000");
         props.setProperty("managerServer", "127.0.0.1");
         props.setProperty("managerServerPort", "8080");
         props.setProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
@@ -87,6 +91,14 @@ public class ProgConfig {
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
         fwriter.close();
+    }
+
+    public int getSleepTime() {
+        return sleepTime;
+    }
+
+    public void setSleepTime(int sleepTime) {
+        this.sleepTime = sleepTime;
     }
 
     public String getInputPath() {

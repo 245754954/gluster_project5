@@ -192,18 +192,10 @@ public class VerifyHandler {
         readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
         //System.out.println(status);
 
-//        for(Iterator iterators = mBlockVerifyResultList.iterator(); iterators.hasNext();){
-//            BlockVerifyResult example = (BlockVerifyResult) iterators.next();//获取当前遍历的元素，指定为Example对象
-//            int bid = example.getBlockIdx();
-//            int bstatus = example.getStatus();
-//            System.out.println("BlockID:" + bid);
-//            System.out.println("BlockStatus:" + bstatus);
+//        for (int i = 0; i < this.mBlockVerifyResultList.size(); i++) {
+//            BlockVerifyResult blockVerifyResult = this.mBlockVerifyResultList.getBlockVerifyResult(i);
+//            helper.print(blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
 //        }
-//        BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList(blockRequestList);
-        for (int i = 0; i < this.mBlockVerifyResultList.size(); i++) {
-            BlockVerifyResult blockVerifyResult = this.mBlockVerifyResultList.getBlockVerifyResult(i);
-            helper.print(blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
-        }
         VerifyTransfer.submitResult(challenge.getFilename(), mBlockVerifyResultList);
     }
 

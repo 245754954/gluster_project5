@@ -34,11 +34,16 @@ public class Starter {
 //        while (true) {
 //            VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
 //        }
-        VerifyHandler verifyHandler = new VerifyHandler();
+        while (true){
+            VerifyHandler verifyHandler = new VerifyHandler();
 
-        long beginTime = System.currentTimeMillis();
-        verifyHandler.startVerify(ProgConfig.getConfig().getInputPath());
-        long endTime = System.currentTimeMillis();
-        System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
+            long beginTime = System.currentTimeMillis();
+            verifyHandler.startVerify(ProgConfig.getConfig().getInputPath());
+            long endTime = System.currentTimeMillis();
+            System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
+
+            Thread.sleep(ProgConfig.getConfig().getSleepTime());
+        }
+
     }
 }
