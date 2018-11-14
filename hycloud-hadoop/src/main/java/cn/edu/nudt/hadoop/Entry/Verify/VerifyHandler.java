@@ -2,6 +2,7 @@ package cn.edu.nudt.hadoop.Entry.Verify;
 import java.math.BigInteger;
 import java.net.URI;
 
+import cn.edu.nudt.hadoop.Entry.config.ProgConfig;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.entity.Challenge;
@@ -81,7 +82,8 @@ public class VerifyHandler {
         }
     }
     public static BigInteger getBlockHash(String blockPath) throws NoSuchAlgorithmException, IOException{
-        Configuration conf = new Configuration();
+       Configuration conf = new Configuration();
+//        Configuration conf = ProgConfig.getConfig();
         FileSystem fs = null;
         FSDataInputStream hdfsInStream = null;
 //	    fs = FileSystem.get(conf);
@@ -144,7 +146,7 @@ public class VerifyHandler {
                     mblockRequest.setStatus(Integer.parseInt(status));
 //                    mblockRequest.setBlockID(Integer.parseInt(blockID));
 //                    mblockRequest.setBlockStatus(Integer.parseInt(status));
-                    mBlockVerifyResultList.add(mblockRequest);
+                    this.mBlockVerifyResultList.addBlockVerifyResult(mblockRequest);
                 }
             }
             reader.close();

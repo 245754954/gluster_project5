@@ -1,11 +1,13 @@
 package cn.edu.nudt.hycloudinterface.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockVerifyResultList {
-    List<BlockVerifyResult> blockVerifyResultList;
+    private List<BlockVerifyResult> blockVerifyResultList;
 
     public BlockVerifyResultList() {
+        blockVerifyResultList = new ArrayList<BlockVerifyResult>();
     }
 
     public BlockVerifyResultList(List<BlockVerifyResult> blockVerifyResultList) {

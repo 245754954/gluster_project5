@@ -44,7 +44,7 @@ public class VerifyTransfer {
 //    }
 
     public static void submitResult(String filename, BlockVerifyResultList blockVerifyResultList) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/hdfs/submitBlockVerifyResult");
+        URL url = new URL("http://127.0.0.1:8080/block/submitBlockVerifyResult");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
