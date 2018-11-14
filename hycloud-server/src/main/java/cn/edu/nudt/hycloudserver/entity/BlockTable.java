@@ -1,9 +1,7 @@
 package cn.edu.nudt.hycloudserver.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigInteger;
 
 @Entity
 @Table(name = "BlockTable")

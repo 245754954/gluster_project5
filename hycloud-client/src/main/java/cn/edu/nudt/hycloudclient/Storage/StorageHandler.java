@@ -4,6 +4,7 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudinterface.entity.BlockStatus;
 import cn.edu.nudt.hycloudinterface.entity.FileInfo;
+import cn.edu.nudt.hycloudinterface.entity.FileStatus;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -32,7 +33,6 @@ public class StorageHandler {
 
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-//        FileInfo fileInfo = new FileInfo(sourcefilename);
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
 		FileInputStream fis = new FileInputStream(sourcefilepath);
 		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
@@ -59,11 +59,11 @@ public class StorageHandler {
 
 //            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
+//            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
 		}
 		fis.close();
 
-//        StorageTransfer.updateFileInfo(fileInfo);
+        StorageTransfer.updateFileInfo(sourcefilename, blockNum);
 		StorageBase sbase = new StorageBase();
 		sbase.insert(sourcefilename, blockNum, hdfsPathPrefix);
 		sbase.close();
@@ -111,14 +111,24 @@ public class StorageHandler {
         fos.close();
 	}
 
+//
+//	public static void verifyBlock(String filename, List<String> blocks) throws MalformedURLException {
+//	    if(blocks != null) {
+//            helper.print("Checking statuses of blocks from " + filename);
+//            for (String strIdx : blocks) {
+//                int blockIdx = Integer.parseInt(strIdx);
+//                int status = StorageTransfer.verifyBlock(filename, blockIdx);
+//                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
+//            }
+//        }
+//    }
 
-	public static void verify(String filename, List<String> blocks) throws MalformedURLException {
-	    if(blocks != null) {
-            helper.print("Checking statuses of blocks from " + filename);
-            for (String strIdx : blocks) {
-                int blockIdx = Integer.parseInt(strIdx);
-                int status = StorageTransfer.verifyBlock(filename, blockIdx);
-                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
+    public static void verify(List<String> veifyFiles) throws MalformedURLException {
+	    if(veifyFiles != null) {
+            helper.print("Checking statuses of files ");
+            for (String filename: veifyFiles) {
+                int status = StorageTransfer.verifyFile(filename);
+                helper.print(filename + " status: " + FileStatus.getStatusString(status));
             }
         }
     }

@@ -16,6 +16,14 @@ public class StorageTransfer {
 //        return Transfer.verifyBlock(filename, blockIdx);
 //    }
 
+    public static void updateFileInfo(String filename, long blockNum) throws MalformedURLException {
+        Transfer.updateFileInfo(filename, blockNum);
+    }
+
+    public static int verifyFile(String filename) throws MalformedURLException {
+        return Transfer.verifyFile(filename);
+    }
+
     public static void updateBlockInfo(String filename, int blockIdx, byte[] hashBytes) throws MalformedURLException {
         BigInteger hash = new BigInteger(hashBytes);
         Transfer.updateBlockInfo(filename, blockIdx, hash);
