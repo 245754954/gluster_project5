@@ -1,5 +1,7 @@
 package cn.edu.nudt.hycloudserver.entity;
 
+import cn.edu.nudt.hycloudinterface.entity.FileStatus;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -18,7 +20,7 @@ public class FileTable {
     private Long blockNum;
 
     @NotNull
-    private Boolean status = true;
+    private Integer status = FileStatus.INTACT;
 
 
     public FileTable() {
@@ -32,10 +34,10 @@ public class FileTable {
     public FileTable(@NotNull String filename, @NotNull Long blockNum) {
         this.filename = filename;
         this.blockNum = blockNum;
-        this.status = true;
+        this.status = FileStatus.INTACT;
     }
 
-    public FileTable(@NotNull String filename, @NotNull Long blockNum, @NotNull Boolean status) {
+    public FileTable(@NotNull String filename, @NotNull Long blockNum, @NotNull Integer status) {
         this.filename = filename;
         this.blockNum = blockNum;
         this.status = status;
@@ -57,11 +59,11 @@ public class FileTable {
         this.blockNum = blockNum;
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 }

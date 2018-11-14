@@ -22,7 +22,7 @@ public class FileController {
         String filename = JSON.parseObject(filenameKey, String.class);
         Long blockNum = JSON.parseObject(blockNumKey, Long.class);
 
-        fileTableDao.save(new FileTable(filename, blockNum, true));
+        fileTableDao.save(new FileTable(filename, blockNum, FileStatus.INTACT));
     }
 
     @RequestMapping(value = "/verify", method = {RequestMethod.POST})
@@ -32,11 +32,7 @@ public class FileController {
         FileTable fileTable = fileTableDao.findByFilename(filename);
         int rv = FileStatus.NOFOUND;
         if(fileTable != null){
-            if(fileTable.getStatus() == false){
-                rv = FileStatus.DAMAGED;
-            }else{
-                rv = FileStatus.INTACT;
-            }
+            rv = fileTable.getStatus();
         }
         return rv;
     }
