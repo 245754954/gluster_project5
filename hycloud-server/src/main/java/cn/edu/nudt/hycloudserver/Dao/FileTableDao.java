@@ -10,5 +10,6 @@ import javax.validation.constraints.Max;
 @Transactional
 public interface FileTableDao extends JpaRepository<FileTable, Long> {
     public FileTable findByFilename(String filename);
+    public int deleteByFilename(String filename);
 
 }

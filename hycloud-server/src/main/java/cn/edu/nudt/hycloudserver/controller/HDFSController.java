@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudserver.controller;
 
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
 import cn.edu.nudt.hycloudinterface.entity.Challenge;
 import cn.edu.nudt.hycloudinterface.entity.FileStatus;
 import cn.edu.nudt.hycloudserver.Dao.FileTableDao;
@@ -33,19 +34,4 @@ public class HDFSController {
         return  challenge;
     }
 
-    @RequestMapping(value = "/verify", method = {RequestMethod.POST})
-    public int submitResult(String filenameKey, String resultKey){
-        String filename = JSON.parseObject(filenameKey, String.class);
-        Integer result = JSON.parseObject(resultKey, Integer.class);
-
-        FileTable fileTable = fileTableDao.findByFilename(filename);
-
-        int rv = 0;
-        if(fileTable != null){
-            fileTable.setStatus(result);
-            fileTableDao.save(fileTable);
-            rv = 1;
-        }
-        return rv;
-    }
 }

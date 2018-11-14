@@ -13,15 +13,20 @@
 package cn.edu.nudt.hycloudclient.justfortrial;
 
 
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
+import org.junit.Test;
 
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +34,26 @@ import java.util.Map;
  * @version: 1.0 2018/11/8
  */
 public class TestClient {
+
+    //New test case .Added by zfc
+    @Test
+    public void test1()throws  Exception{
+        URL url = new URL("http://127.0.0.1:8080/block//submitBlockVerifyResult");
+        String filename = "jdk.tar.gz";
+        Integer blockIdx =8;
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        BlockVerifyResultList lis = new BlockVerifyResultList();
+        BlockVerifyResult b = new BlockVerifyResult();
+        b.setBlockIdx(8);
+        b.setStatus(1);
+        List<BlockVerifyResult> b1 = new ArrayList<BlockVerifyResult>();
+        b1.add(b);
+        lis.setBlockVerifyResultList(b1);
+        param.put("blockVerifyResultListKey", JSON.toJSONString(lis));
+
+        BasicTransfer.doPost(url, param);
+    }
 
     public static void main(String[] args) throws Exception {
         addBlock("file-1", 0, "1231");

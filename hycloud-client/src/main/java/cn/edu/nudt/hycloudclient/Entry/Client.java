@@ -37,10 +37,11 @@ public class Client {
     @Parameter(names= {"--delete", "-d"}, variableArity = true, description = "list of segments to be deleted")
     private List<String> deletes = null;
 
-//    @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify, starts with 0")
-//    private List<String> blocks = null;
-    @Parameter(names= {"--verify", "-y"}, variableArity = true, description = "list of files to verify")
-    private List<String> veifyFiles = null;
+    @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify, starts with 0")
+    private List<String> blocks = null;
+//
+//    @Parameter(names= {"--verify", "-y"}, variableArity = true, description = "list of files to verify")
+//    private List<String> veifyFiles = null;
     //////////////////////////////////////////////
 
 
@@ -80,7 +81,8 @@ public class Client {
                 break;
             case Action.VERIFY:
                 // check args inside your action
-                StorageHandler.verify(veifyFiles);
+                StorageHandler.verifyBlock(sourcefile, blocks);
+//                StorageHandler.verifyFile(veifyFiles);
                 break;
             case Action.SPUT:
                 DeletionHandler.sput(sourcefile, granularity);

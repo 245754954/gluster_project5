@@ -3,6 +3,7 @@ package cn.edu.nudt.hycloudclient.config;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.conf.Configuration;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class Config {
     private final String PropertiesFilePath = "./hycloud-client/src/main/resources/client.properties";
 //    \hycloud-client\src\main\resources
 
-    private String mConfigPath;
+    private String mConfigPath = null;
 
 
     /**
@@ -58,22 +59,29 @@ public class Config {
     }
 
     private Config() throws IOException {
-        this.mConfigPath = this.PropertiesFilePath;
+//        this.mConfigPath = this.PropertiesFilePath;
         loadConfig();
     }
 
     private Config(String configPath) throws IOException {
-        this.mConfigPath = this.PropertiesFilePath;
-        if (configPath != null){
-            this.mConfigPath = configPath;
-        }
+//        this.mConfigPath = this.PropertiesFilePath;
+        this.mConfigPath = configPath;
         loadConfig();
     }
 
     private void loadConfig() throws IOException {
         Properties props = new Properties();
 
-        FileReader freader = new FileReader(this.mConfigPath);
+        String temConfigPath = this.PropertiesFilePath;
+        if(this.mConfigPath != null){
+            temConfigPath = this.mConfigPath;
+        }else{
+            File temfile = new File("./client.properties");
+            if (temfile.exists() && temfile.isFile()){
+                temConfigPath = "./client.properties";
+            }
+        }
+        FileReader freader = new FileReader(temConfigPath);
 
         props.load(freader);
 

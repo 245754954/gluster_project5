@@ -17,7 +17,7 @@ import java.util.Map;
 public class Transfer {
 
     public static void updateFileInfo(String filename, long blockNum) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/file/add");
+        URL url = new URL("http://127.0.0.1:8080/file/addFile");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -27,7 +27,7 @@ public class Transfer {
     }
 
     public static int verifyFile(String filename) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/file/verify");
+        URL url = new URL("http://127.0.0.1:8080/file/verifyFile");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -39,7 +39,7 @@ public class Transfer {
     }
 
     public static void updateBlockInfo(String filename, int blockIdx, BigInteger hash) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/add");
+        URL url = new URL("http://127.0.0.1:8080/block/addBlock");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -50,7 +50,7 @@ public class Transfer {
     }
 
     public static int verifyBlock(String filename, int blockIdx) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080/block/verify");
+        URL url = new URL("http://127.0.0.1:8080/block/verifyBlock");
 
         Map<String, String> param = new HashMap<>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -60,6 +60,30 @@ public class Transfer {
         Integer status = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(filename + ", " + blockIdx + ", status = " + status);
         return status;
+    }
+
+    public static int deleteFileBlocks(String filename) throws MalformedURLException {
+        URL url = new URL("http://127.0.0.1:8080/block/deleteFileBlocks");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+
+        String recvStr = BasicTransfer.doPost(url, param);
+        Integer cnt = JSON.parseObject(recvStr, Integer.class);
+//        helper.print(cnt + "number of blocks deleted");
+        return cnt;
+    }
+
+    public static int deleteFile(String filename) throws MalformedURLException {
+        URL url = new URL("http://127.0.0.1:8080/file/deleteFile");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+
+        String recvStr = BasicTransfer.doPost(url, param);
+        Integer cnt = JSON.parseObject(recvStr, Integer.class);
+//        helper.print(cnt + "number of files deleted");
+        return cnt;
     }
 
 

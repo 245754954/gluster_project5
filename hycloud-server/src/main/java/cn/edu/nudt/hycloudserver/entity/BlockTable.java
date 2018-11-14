@@ -4,7 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "BlockTable")
+@Table(name = "BlockInfo")
 public class BlockTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +21,12 @@ public class BlockTable {
     // hash = JSON.toJSONString(new BigInteger(hashBytes))
 
     @NotNull
-    private Boolean status = true;
+    private Integer status = 0;
 
     public BlockTable() {
     }
 
-    public BlockTable(@NotNull String filename, @NotNull Integer blockIdx, @NotNull String hash, @NotNull Boolean status) {
+    public BlockTable(@NotNull String filename, @NotNull Integer blockIdx, @NotNull String hash, @NotNull Integer status) {
         this.filename = filename;
         this.blockIdx = blockIdx;
         this.hash = hash;
@@ -65,11 +65,11 @@ public class BlockTable {
         this.hash = hash;
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 }

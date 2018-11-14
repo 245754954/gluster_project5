@@ -29,3 +29,16 @@ Content-Type: application/json
 #测试通过年龄查询
 GET http://localhost:8081/getGirls/age?age=18
 ###
+
+
+####
+
+POST http://localhost:8080/obtainRemoteTree
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "filename": "jdk.tar.gz",
+    ""
+}

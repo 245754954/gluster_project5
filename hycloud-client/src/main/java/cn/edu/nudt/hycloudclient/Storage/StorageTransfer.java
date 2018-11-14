@@ -33,4 +33,12 @@ public class StorageTransfer {
         return Transfer.verifyBlock(filename, blockIdx);
     }
 
+    public static int deleteFileBlocks(String filename) throws MalformedURLException {
+        return Transfer.deleteFileBlocks(filename);
+    }
+
+    public static int deleteFile(String filename) throws MalformedURLException {
+        return Transfer.deleteFile(filename);
+    }
+
 }

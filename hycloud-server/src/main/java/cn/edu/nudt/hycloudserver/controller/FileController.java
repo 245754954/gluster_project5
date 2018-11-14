@@ -17,7 +17,7 @@ public class FileController {
     @Autowired
     private FileTableDao fileTableDao;
 
-    @RequestMapping(value = "/add", method = {RequestMethod.POST})
+    @RequestMapping(value = "/addFile", method = {RequestMethod.POST})
     public void addFile(String filenameKey, String blockNumKey){
         String filename = JSON.parseObject(filenameKey, String.class);
         Long blockNum = JSON.parseObject(blockNumKey, Long.class);
@@ -25,7 +25,7 @@ public class FileController {
         fileTableDao.save(new FileTable(filename, blockNum, FileStatus.INTACT));
     }
 
-    @RequestMapping(value = "/verify", method = {RequestMethod.POST})
+    @RequestMapping(value = "/verifyFile", method = {RequestMethod.POST})
     public int verifyFile(String filenameKey){
         String filename = JSON.parseObject(filenameKey, String.class);
 
@@ -36,4 +36,11 @@ public class FileController {
         }
         return rv;
     }
+
+    @RequestMapping(value = "/deleteFile", method = {RequestMethod.POST})
+    public int deleteFile(String filenameKey){
+        String filename = JSON.parseObject(filenameKey, String.class);
+        return fileTableDao.deleteByFilename(filename);
+    }
+
 }

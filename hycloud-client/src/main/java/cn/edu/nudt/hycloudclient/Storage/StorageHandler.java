@@ -33,6 +33,11 @@ public class StorageHandler {
 
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
+		// delete duplicate files anb blocks
+        StorageTransfer.deleteFile(sourcefilename);
+        StorageTransfer.deleteFileBlocks(sourcefilename);
+
+
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
 		FileInputStream fis = new FileInputStream(sourcefilepath);
 		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
@@ -59,7 +64,7 @@ public class StorageHandler {
 
 //            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-//            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
+            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
 		}
 		fis.close();
 
@@ -78,7 +83,6 @@ public class StorageHandler {
         sbase.close();
 
         FileOutputStream fos = new FileOutputStream(localpath);
-
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
         for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
@@ -111,19 +115,19 @@ public class StorageHandler {
         fos.close();
 	}
 
-//
-//	public static void verifyBlock(String filename, List<String> blocks) throws MalformedURLException {
-//	    if(blocks != null) {
-//            helper.print("Checking statuses of blocks from " + filename);
-//            for (String strIdx : blocks) {
-//                int blockIdx = Integer.parseInt(strIdx);
-//                int status = StorageTransfer.verifyBlock(filename, blockIdx);
-//                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
-//            }
-//        }
-//    }
 
-    public static void verify(List<String> veifyFiles) throws MalformedURLException {
+	public static void verifyBlock(String filename, List<String> blocks) throws MalformedURLException {
+	    if(blocks != null) {
+            helper.print("Checking statuses of blocks from " + filename);
+            for (String strIdx : blocks) {
+                int blockIdx = Integer.parseInt(strIdx);
+                int status = StorageTransfer.verifyBlock(filename, blockIdx);
+                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
+            }
+        }
+    }
+
+    public static void verifyFile(List<String> veifyFiles) throws MalformedURLException {
 	    if(veifyFiles != null) {
             helper.print("Checking statuses of files ");
             for (String filename: veifyFiles) {
