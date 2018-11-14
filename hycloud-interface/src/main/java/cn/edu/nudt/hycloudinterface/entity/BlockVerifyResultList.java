@@ -31,4 +31,8 @@ public class BlockVerifyResultList {
     public int size(){
         return  this.blockVerifyResultList.size();
     }
+
+    public void add(BlockVerifyResult blockVerifyResult){
+        this.blockVerifyResultList.add(blockVerifyResult) ;
+    }
 }

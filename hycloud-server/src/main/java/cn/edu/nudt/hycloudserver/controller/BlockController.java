@@ -59,6 +59,8 @@ public class BlockController {
         int blockNum = blockVerifyResultList.size();
         for (int index = 0; index < blockNum; index++){
             BlockVerifyResult blockVerifyResult = blockVerifyResultList.getBlockVerifyResult(index);
+            System.out.println(blockVerifyResult.getBlockIdx() + ",  " + blockVerifyResult.getStatus());
+
             blockTableDao.updateBlockInfo( blockVerifyResult.getStatus(),filename,blockVerifyResult.getBlockIdx());
         }
     }

@@ -26,6 +26,12 @@ public class Starter {
 
     public void run() throws Exception{
         // TO DO
+//        while (true) {
+//            VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
+//        }
+        long beginTime = System.currentTimeMillis();
         VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
+        long endTime = System.currentTimeMillis();
+        System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
     }
 }

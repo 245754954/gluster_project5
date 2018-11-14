@@ -1,6 +1,11 @@
 package cn.edu.nudt.hadoop.Entry.Verify;
 import java.math.BigInteger;
 import java.net.URI;
+
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
+import cn.edu.nudt.hycloudinterface.entity.Challenge;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -12,14 +17,29 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.hadoop.io.IntWritable;
+
+import java.lang.Integer;
+
 public class VerifyHandler {
-    public static String INPUT_PATH="hdfs://192.168.6.129:9000/chal/chal.txt";
+    public static final String INPUT_PATH="hdfs://192.168.6.129:9000/chal/chal.txt";
+    public static String localChalName = "/home/dky/test/chal.txt";
+    public static String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
     public static String OUTPUT_PATH="hdfs://192.168.6.129:9000/output";
+    public static int postFileStatus = -1;
+    public static final String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
+    public static final String blockPathMid = "_block_";
+//    public static List<BlockVerifyResult> blockRequestList = new ArrayList<BlockVerifyResult>();
+    private BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList();
+
+
 
     static class MyMapper extends Mapper <Object,Text,Text,IntWritable> {     //定义继承mapper类
         //	public IntWritable one = new IntWritable(1);
@@ -30,7 +50,7 @@ public class VerifyHandler {
             while (tokenizer.hasMoreElements()) {
                 StringTokenizer stringTokenizer = new StringTokenizer(tokenizer.nextToken());
                 String blockPath = stringTokenizer.nextToken();
-                String filename = blockPath.substring(0,blockPath.indexOf("_block_"));
+                //String filename = blockPath.substring(0,blockPath.indexOf("_block_"));
                 int val = 0;
                 try {
                     BigInteger hash = getBlockHash(blockPath);
@@ -42,7 +62,7 @@ public class VerifyHandler {
                     e.printStackTrace();
                 }
 
-                Text name = new Text(filename);
+                Text name = new Text(blockPath);
                 IntWritable intWritable = new IntWritable(val);
                 context.write(name,intWritable);
             }
@@ -107,11 +127,49 @@ public class VerifyHandler {
         return tag;
     }
 
+    public static int readOutput(String blockPath) {
+
+        try {
+            Configuration conf = new Configuration();
+
+            FileSystem fs = FileSystem.get(URI.create(blockPath), conf);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fs.open(new Path(blockPath))));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                StringTokenizer tokenizer = new StringTokenizer(line,"\n");
+                while (tokenizer.hasMoreElements()) {
+                    StringTokenizer stringTokenizer = new StringTokenizer(tokenizer.nextToken());
+                    String filePath = stringTokenizer.nextToken();
+                    String status = stringTokenizer.nextToken();
+                    String blockID = filePath.substring(filePath.indexOf("_block_")+7);
+                    BlockVerifyResult mblockRequest = new BlockVerifyResult();
+                    mblockRequest.setBlockIdx(Integer.parseInt(blockID));
+                    mblockRequest.setStatus(Integer.parseInt(status));
+//                    mblockRequest.setBlockID(Integer.parseInt(blockID));
+//                    mblockRequest.setBlockStatus(Integer.parseInt(status));
+                    mBlockVerifyResultList.add(mblockRequest);
+                }
+            }
+            reader.close();
+            fs.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return postFileStatus;
+    }
+
     public static String getTagHdfsPath(String HdfsPath){
         return HdfsPath.replaceAll("_block_","_tag_");
     }
 
     public static void startVerify(String challengeFile) throws Exception{
+      Challenge challenge = VerifyTransfer.fetchChallenge();
+//        Challenge challenge = new Challenge();
+//        challenge.setBlockNum(new Long((long)30));
+//        challenge.setFilename("jdk.tar.gz");
+        storeChallenge(challenge);
+
         Configuration conf=new Configuration();
         conf.setBoolean("fs.hdfs.impl.disable.cache", true);
 
@@ -130,5 +188,58 @@ public class VerifyHandler {
         FileInputFormat.setInputPaths(job, challengeFile);
         FileOutputFormat.setOutputPath(job,new Path(OUTPUT_PATH));
         job.waitForCompletion(true);
+
+
+        int status = readOutput(OUTPUT_PATH + "/part-r-00000");
+        //System.out.println(status);
+
+//        for(Iterator iterators = mBlockVerifyResultList.iterator(); iterators.hasNext();){
+//            BlockVerifyResult example = (BlockVerifyResult) iterators.next();//获取当前遍历的元素，指定为Example对象
+//            int bid = example.getBlockIdx();
+//            int bstatus = example.getStatus();
+//            System.out.println("BlockID:" + bid);
+//            System.out.println("BlockStatus:" + bstatus);
+//        }
+//        BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList(blockRequestList);
+        for (int i = 0; i < this.mBlockVerifyResultList.size(); i++) {
+            BlockVerifyResult blockVerifyResult = this.mBlockVerifyResultList.getBlockVerifyResult(i);
+            helper.print(blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
+        }
+        VerifyTransfer.submitResult(challenge.getFilename(), mBlockVerifyResultList);
     }
+
+    public static void storeChallenge(Challenge challenge) throws Exception{
+        Configuration conf=new Configuration();
+        String filename = challenge.getFilename();
+        String fileHdfsPath = null;
+        long blocknum = challenge.getBlockNum();
+        long i = 0;
+        PrintWriter writer = null;
+        writer = new PrintWriter(localChalName, "UTF-8");
+        while (i < blocknum) {
+            String line = "";
+            fileHdfsPath = blockPathPrefix + filename + blockPathMid + i;
+            line += fileHdfsPath;
+            writer.println(line);
+            i++;
+        }
+        writer.close();
+        putToHDFS(localChalName,chalHdfsPath,conf);
+    }
+
+    public boolean putToHDFS(String src , String dst , Configuration conf){
+        Path dstPath = new Path(dst) ;
+        try{
+            FileSystem hdfs = dstPath.getFileSystem(conf) ;
+            hdfs.copyFromLocalFile(false, new Path(src), dstPath) ;
+        }
+        catch(IOException ie){
+            ie.printStackTrace() ;
+            return false ;
+        }
+        return true ;
+    }
+
 }
+
+
