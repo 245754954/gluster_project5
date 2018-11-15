@@ -24,6 +24,8 @@ public class ProgConfig {
     private String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
     private String outputPath ="hdfs://192.168.6.129:9000/output";
     private String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
+    private String copyOnePrefix = "hdfs://192.168.6.129:9000/yhbd/copyone/";
+    private String copyTwoPrefix = "hdfs://192.168.6.129:9000/yhbd/copytwo/";
 
     private int sleepTime = 30000;
 
@@ -73,6 +75,10 @@ public class ProgConfig {
         this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
         this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
         this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.129:9000/output");
+
+        this.copyOnePrefix = props.getProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
+        this.copyTwoPrefix = props.getProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+
         freader.close();
     }
 
@@ -86,6 +92,8 @@ public class ProgConfig {
         props.setProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
         props.setProperty("localChalName", "/home/dky/test/chal.txt");
         props.setProperty("outputPath", "hdfs://192.168.6.129:9000/output");
+        props.setProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
+        props.setProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
@@ -159,6 +167,14 @@ public class ProgConfig {
 
     public String getManagerServerUrl(){
         return "http://" + this.managerServer + ":" + this.managerServerPort + "/";
+    }
+
+    public String getCopyOnePrefix() {
+        return copyOnePrefix;
+    }
+
+    public String getCopyTwoPrefix() {
+        return copyTwoPrefix;
     }
 
     public void dump() {

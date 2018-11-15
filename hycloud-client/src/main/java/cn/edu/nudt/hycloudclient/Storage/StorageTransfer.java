@@ -30,6 +30,16 @@ public class StorageTransfer {
         Transfer.updateBlockInfo(filename, blockIdx, copyNum, hash);
     }
 
+//    public static void updateBlockCopyOne(String filename, int blockIdx, byte[] hashBytes) throws IOException {
+//        BigInteger hash = new BigInteger(hashBytes);
+//        Transfer.updateBlockCopyOne(filename, blockIdx, hash);
+//    }
+//
+//    public static void updateBlockCopyTwo(String filename, int blockIdx, byte[] hashBytes) throws IOException {
+//        BigInteger hash = new BigInteger(hashBytes);
+//        Transfer.updateBlockCopyTwo(filename, blockIdx, hash);
+//    }
+
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
         return Transfer.verifyBlock(filename, blockIdx);
     }

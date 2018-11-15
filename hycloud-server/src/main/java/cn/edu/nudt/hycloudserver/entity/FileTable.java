@@ -19,6 +19,12 @@ public class FileTable {
     @NotNull
     private Long blockNum;
 
+//    /**
+//     * number of copies, not include the origin
+//     */
+//    @NotNull
+//    private Integer copyNum = 0;
+
     @NotNull
     private Integer status = FileStatus.INTACT;
 
@@ -26,22 +32,20 @@ public class FileTable {
     public FileTable() {
     }
 
+
     /**
-     * status is set to true in default
+     *
      * @param filename
      * @param blockNum
+     * @param status
+     * - default intact
      */
-    public FileTable(@NotNull String filename, @NotNull Long blockNum) {
-        this.filename = filename;
-        this.blockNum = blockNum;
-        this.status = FileStatus.INTACT;
-    }
-
     public FileTable(@NotNull String filename, @NotNull Long blockNum, @NotNull Integer status) {
         this.filename = filename;
         this.blockNum = blockNum;
         this.status = status;
     }
+
 
     public String getFilename() {
         return filename;

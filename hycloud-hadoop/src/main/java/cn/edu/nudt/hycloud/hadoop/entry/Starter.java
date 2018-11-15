@@ -38,7 +38,7 @@ public class Starter {
             VerifyHandler verifyHandler = new VerifyHandler();
 
             long beginTime = System.currentTimeMillis();
-            verifyHandler.startVerify(ProgConfig.getConfig().getInputPath());
+            verifyHandler.startVerify();
             long endTime = System.currentTimeMillis();
             System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
 

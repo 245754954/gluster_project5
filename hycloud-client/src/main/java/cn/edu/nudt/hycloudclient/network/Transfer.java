@@ -44,7 +44,7 @@ public class Transfer {
 
     public static void updateBlockInfo(String filename, int blockIdx, int copyNum, BigInteger hash) throws IOException {
         Config config = Config.getConfig();
-        URL url = new URL(config.getManagerServerUrl() + "block/addBlock");
+        URL url = new URL(config.getManagerServerUrl() + "block/updateBlockInfo");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
@@ -54,6 +54,30 @@ public class Transfer {
 
         BasicTransfer.doPost(url, param);
     }
+//
+//    public static void updateBlockCopyOne(String filename, int blockIdx, BigInteger hash) throws IOException {
+//        Config config = Config.getConfig();
+//        URL url = new URL(config.getManagerServerUrl() + "block/updateBlockCopyOne");
+//
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        param.put("hashKey", JSON.toJSONString(hash));
+//
+//        BasicTransfer.doPost(url, param);
+//    }
+//
+//    public static void updateBlockCopyTwo(String filename, int blockIdx, BigInteger hash) throws IOException {
+//        Config config = Config.getConfig();
+//        URL url = new URL(config.getManagerServerUrl() + "block/updateBlockCopyTwo");
+//
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        param.put("hashKey", JSON.toJSONString(hash));
+//
+//        BasicTransfer.doPost(url, param);
+//    }
 
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
         Config config = Config.getConfig();
