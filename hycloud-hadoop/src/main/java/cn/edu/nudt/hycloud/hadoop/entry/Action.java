@@ -1,4 +1,4 @@
-package cn.edu.nudt.hadoop.Entry.entry;
+package cn.edu.nudt.hycloud.hadoop.entry;
 
 
 

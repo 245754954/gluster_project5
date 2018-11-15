@@ -18,7 +18,6 @@ public class Config {
 
     private String mConfigPath = null;
 
-
     /**
      * block size for integrity verification
      */
@@ -45,6 +44,10 @@ public class Config {
 
     private String mHdfsDeleteHome;
     private String mHdfsVerifyHome;
+
+    private int copyNum;
+    private String hdfsVerifyCopyOneHome;
+    private String hdfsVerifyCopyTwoHome;
 
     public static Config getConfig() throws IOException {
         if(mConfig == null) {
@@ -97,8 +100,12 @@ public class Config {
         this.mHdfsConf = new Configuration();
         mHdfsConf.set("fs.default.name",
                 props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
-        mHdfsDeleteHome = props.getProperty("HdfsDeleteHome", "hdfs://192.168.6.173:9000/yhbd/delete/");
+        this.mHdfsDeleteHome = props.getProperty("HdfsDeleteHome", "hdfs://192.168.6.173:9000/yhbd/delete/");
         this.mHdfsVerifyHome= props.getProperty("HdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
+
+        this.copyNum = Integer.parseInt(props.getProperty("copyNum", "3"));
+        this.hdfsVerifyCopyOneHome= props.getProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
+        this.hdfsVerifyCopyTwoHome = props.getProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
         freader.close();
     }
 
@@ -117,11 +124,27 @@ public class Config {
         props.setProperty("HdfsDeleteHome", "hdfs://192.168.6.129:9000/yhbd/delete/");
         props.setProperty("HdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
 
+        props.setProperty("copyNum", "3");
+        props.setProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
+        props.setProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
+
+
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
         fwriter.close();
     }
 
+    public int getCopyNum() {
+        return copyNum;
+    }
+
+    public String getHdfsVerifyCopyOneHome() {
+        return hdfsVerifyCopyOneHome;
+    }
+
+    public String getHdfsVerifyCopyTwoHome() {
+        return hdfsVerifyCopyTwoHome;
+    }
 
     public String getManagerServerName() {
         return mManagerServerName;
@@ -170,11 +193,15 @@ public class Config {
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
         helper.print("getManagerServerUrl: " + getManagerServerUrl());
 //        helper.print("mModulatorBits: " + this.mModulatorBits);
+
+        helper.print("mBlockSize: " + this.mBlockSize);
         helper.print("mHdfsConf: " + this.mHdfsConf);
         helper.print("mHdfsDeleteHome: " + this.mHdfsDeleteHome);
         helper.print("mHdfsVerifyHome: " + this.mHdfsVerifyHome);
-        helper.print("mBlockSize: " + this.mBlockSize);
 
+        helper.print("copyNum: " + this.copyNum);
+        helper.print("hdfsVerifyCopyOneHome: " + this.hdfsVerifyCopyOneHome);
+        helper.print("hdfsVerifyCopyTwoHome: " + this.hdfsVerifyCopyTwoHome);
     }
 
     public static void main(String ... argv) throws IOException {

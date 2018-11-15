@@ -9,4 +9,8 @@ public class helper {
     public static void print(String info) {
         System.out.println(info);
     }
+
+    public static void timing(String label, long tstart, long tend){
+        System.out.println(label + ": " + (tend - tstart) + " ms");
+    }
 }

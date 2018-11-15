@@ -4,7 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "BlockInfo")
+@Table(name = "BlockTable")
 public class BlockTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,9 @@ public class BlockTable {
     private Integer blockIdx;
 
     @NotNull
+    private Integer copyNum;
+
+    @NotNull
     private String hash;
     // hash = JSON.toJSONString(new BigInteger(hashBytes))
 
@@ -26,9 +29,10 @@ public class BlockTable {
     public BlockTable() {
     }
 
-    public BlockTable(@NotNull String filename, @NotNull Integer blockIdx, @NotNull String hash, @NotNull Integer status) {
+    public BlockTable(@NotNull String filename, @NotNull Integer blockIdx, @NotNull Integer copyNum, @NotNull String hash, @NotNull Integer status) {
         this.filename = filename;
         this.blockIdx = blockIdx;
+        this.copyNum = copyNum;
         this.hash = hash;
         this.status = status;
     }
@@ -71,5 +75,13 @@ public class BlockTable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getCopyNum() {
+        return copyNum;
+    }
+
+    public void setCopyNum(Integer copyNum) {
+        this.copyNum = copyNum;
     }
 }

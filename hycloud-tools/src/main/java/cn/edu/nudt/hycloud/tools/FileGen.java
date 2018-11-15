@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloud.tools;
 
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -27,7 +28,12 @@ public class FileGen {
         jcmd.parse(argv);
         jcmd.setProgramName("FileGen");
 
+        long tstart = System.currentTimeMillis();
+
         fileGen.run();
+
+        long tend = System.currentTimeMillis();
+        helper.timing("FileGen", tstart, tend);
     }
 
     public void run() throws IOException {

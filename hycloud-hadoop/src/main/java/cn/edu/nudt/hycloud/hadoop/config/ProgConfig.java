@@ -1,7 +1,6 @@
-package cn.edu.nudt.hadoop.Entry.config;
+package cn.edu.nudt.hycloud.hadoop.config;
 
 import cn.edu.nudt.hycloudinterface.utils.helper;
-import org.apache.hadoop.conf.Configuration;
 
 import java.io.File;
 import java.io.FileReader;

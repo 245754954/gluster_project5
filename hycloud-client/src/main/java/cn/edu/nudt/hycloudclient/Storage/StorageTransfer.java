@@ -25,9 +25,9 @@ public class StorageTransfer {
         return Transfer.verifyFile(filename);
     }
 
-    public static void updateBlockInfo(String filename, int blockIdx, byte[] hashBytes) throws IOException {
+    public static void updateBlockInfo(String filename, int blockIdx, int copyNum, byte[] hashBytes) throws IOException {
         BigInteger hash = new BigInteger(hashBytes);
-        Transfer.updateBlockInfo(filename, blockIdx, hash);
+        Transfer.updateBlockInfo(filename, blockIdx, copyNum, hash);
     }
 
     public static int verifyBlock(String filename, int blockIdx) throws IOException {

@@ -69,32 +69,65 @@ public class Client {
         }
 //		dumpArgs();
 
+        long tstart, tend;
         // check args inside your action
         switch(Action.get(strAction)) {
             case Action.PUT:
-                // check args inside your action
+                tstart = System.currentTimeMillis();
+
                 StorageHandler.put(sourcefile);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart, tend);
                 break;
             case Action.GET:
-                // check args inside your action
+                tstart = System.currentTimeMillis();
+
                 StorageHandler.get(sourcefile, localpath);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.VERIFY:
-                // check args inside your action
+                tstart = System.currentTimeMillis();
+
                 StorageHandler.verifyBlock(sourcefile, blocks);
 //                StorageHandler.verifyFile(veifyFiles);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.SPUT:
+                tstart = System.currentTimeMillis();
+
                 DeletionHandler.sput(sourcefile, granularity);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.SGET:
+                tstart = System.currentTimeMillis();
+
                 DeletionHandler.sget(sourcefile, localpath);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.SDEL:
+                tstart = System.currentTimeMillis();
+
                 DeletionHandler.sdel(sourcefile, deletes);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.SDUMP:
+                tstart = System.currentTimeMillis();
+
                 DeletionHandler.sdump(sourcefile);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             default:
                 helper.err("Error: wrong action");

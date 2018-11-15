@@ -55,6 +55,12 @@
             <artifactId>jcommander</artifactId>
             <version>1.72</version>
         </dependency>
+
+        <dependency>
+            <groupId>cn.edu.nudt</groupId>
+            <artifactId>hycloud-interface</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 

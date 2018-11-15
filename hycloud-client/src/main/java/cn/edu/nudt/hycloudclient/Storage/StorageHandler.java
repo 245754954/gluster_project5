@@ -25,6 +25,8 @@ public class StorageHandler {
 		File sourcefile = new File(sourcefilepath);
 		String sourcefilename = sourcefile.getName();
         String hdfsPathPrefix = conf.getHdfsVerifyHome() + sourcefilename;
+        String copyOnePathPrefix = conf.getHdfsVerifyCopyOneHome() + sourcefilename;
+        String copyTwoPathPrefix = conf.getHdfsVerifyCopyTwoHome() + sourcefilename;
 
         int blockSize = conf.getBlockSize();
 		long filesize = sourcefile.length();
@@ -46,6 +48,12 @@ public class StorageHandler {
 			String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
 			OutputStream osToHdfs = hdfs.create(new Path(blockHdfsPath));
 
+            String blockCopyOnePath = getBlockHdfsPath(copyOnePathPrefix, blockIdx);
+            OutputStream copyOneOs = hdfs.create(new Path(blockCopyOnePath));
+
+            String blockCopyTwoPath = getBlockHdfsPath(copyTwoPathPrefix, blockIdx);
+            OutputStream copyTwoOs = hdfs.create(new Path(blockCopyTwoPath));
+
 			byte[] buffer = new byte[1024];
             int currBlockSize = 0;
             int nread = 0;
@@ -53,8 +61,13 @@ public class StorageHandler {
                 digest.update(buffer, 0, nread);
                 osToHdfs.write(buffer, 0, nread);
                 currBlockSize += nread;
+
+                copyOneOs.write(buffer, 0, nread);
+                copyTwoOs.write(buffer, 0, nread);
             }
             osToHdfs.close();
+            copyOneOs.close();
+            copyTwoOs.close();
             byte[] hash = digest.digest();
 
             String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
@@ -64,7 +77,7 @@ public class StorageHandler {
 
 //            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, hash);
+            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, conf.getCopyNum(), hash);
 		}
 		fis.close();
 

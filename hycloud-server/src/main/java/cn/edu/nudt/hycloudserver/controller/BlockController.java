@@ -20,12 +20,13 @@ public class BlockController {
     private BlockTableDao blockTableDao;
 
     @RequestMapping(value = "/addBlock", method = {RequestMethod.POST})
-    public void addBlock(String filenameKey, String blockIdxKey, String hashKey){
+    public void addBlock(String filenameKey, String blockIdxKey, String copyNumKey, String hashKey){
         String filename = JSON.parseObject(filenameKey, String.class);
         Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+        Integer copyNum = JSON.parseObject(copyNumKey, Integer.class);
 //        BigInteger hash = JSON.parseObject(hashKey, BigInteger.class);
 
-        blockTableDao.save(new BlockTable(filename, blockIdx, hashKey, BlockStatus.INTACT));
+        blockTableDao.save(new BlockTable(filename, blockIdx, copyNum, hashKey, BlockStatus.INTACT));
     }
 
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})

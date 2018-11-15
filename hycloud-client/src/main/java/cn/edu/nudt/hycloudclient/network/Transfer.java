@@ -42,13 +42,14 @@ public class Transfer {
         return status;
     }
 
-    public static void updateBlockInfo(String filename, int blockIdx, BigInteger hash) throws IOException {
+    public static void updateBlockInfo(String filename, int blockIdx, int copyNum, BigInteger hash) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "block/addBlock");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));
         param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+        param.put("copyNumKey", JSON.toJSONString(copyNum));
         param.put("hashKey", JSON.toJSONString(hash));
 
         BasicTransfer.doPost(url, param);
