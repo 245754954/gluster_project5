@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author: xphi
@@ -39,7 +40,14 @@ import java.util.Map;
 public class TestClient {
 
     public static void main(String[] args) throws Exception {
-        testSubmitBlockVerifyResult();
+        long fid = 0;
+        for (int i = 0; i < 100; i++) {
+            fid = ThreadLocalRandom.current().nextLong(10);
+            if(fid < 0){
+                helper.print("fid: " + fid);
+            }
+        }
+        //        testSubmitBlockVerifyResult();
 
 //        addBlock("file-1", 0, "1231");
 //        addBlock("file-1", 1, "1273231");

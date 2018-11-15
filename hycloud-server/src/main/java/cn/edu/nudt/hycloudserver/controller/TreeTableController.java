@@ -4,6 +4,7 @@ package cn.edu.nudt.hycloudserver.controller;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.Node;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.entity.ModulationTreeServer;
 import cn.edu.nudt.hycloudserver.entity.NodeServer;
 import cn.edu.nudt.hycloudserver.entity.TreeTable;
@@ -54,7 +55,7 @@ public class TreeTableController {
 
     }
     //上传文件保存
-    @RequestMapping(value = "/uploadModulationTree",method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "/uploadModulationTree",method = {RequestMethod.POST})
     public Boolean uploadModulationTree(String filename, String modulationTree) {
         TreeTable tree = new TreeTable();
         tree.setFilename(filename);
