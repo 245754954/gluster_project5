@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudserver.controller;
 
+import cn.edu.nudt.hycloudinterface.Constants.*;
 import cn.edu.nudt.hycloudinterface.entity.*;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyOneDao;
@@ -9,11 +10,14 @@ import cn.edu.nudt.hycloudserver.Dao.FileTableDao;
 import cn.edu.nudt.hycloudserver.entity.BlockCopyOne;
 import cn.edu.nudt.hycloudserver.entity.BlockCopyTwo;
 import cn.edu.nudt.hycloudserver.entity.BlockTable;
+import cn.edu.nudt.hycloudserver.entity.FileTable;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/block")
@@ -56,6 +60,35 @@ public class BlockController {
         return rv;
     }
 
+    @RequestMapping(value = "/recoverBlock", method = {RequestMethod.POST})
+    public int recoverBlock(String filenameKey, String blockIdxKey){
+        int rv = RecoverResult.UNKNOWN;
+
+        String filename = JSON.parseObject(filenameKey, String.class);
+        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+
+        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
+        if(blockTable != null) {
+            // to recover in hdfs
+
+            blockTable.setStatus(BlockStatus.INTACT);
+            blockTableDao.save(blockTable);
+
+            // set file to intact if its blocks are all intact
+            List<BlockTable> blockTableList = blockTableDao.findByFilenameAndStatus(filename, BlockStatus.DAMAGED);
+            if (blockTableList == null){
+                FileTable fileTable = fileTableDao.findByFilename(filename);
+                fileTable.setStatus(FileStatus.INTACT);
+                fileTableDao.save(fileTable);
+            }
+
+            rv = RecoverResult.SUCCESS;
+        }else{
+            rv = RecoverResult.NOTFOUND;
+        }
+        return 1;
+    }
+
     @RequestMapping(value = "/deleteFileBlocks", method = {RequestMethod.POST})
     public int deleteFileBlocks(String filenameKey){
         String filename = JSON.parseObject(filenameKey, String.class);
@@ -69,6 +102,8 @@ public class BlockController {
         return cnt;
     }
 
+
+
     // receive response from hadoop and update database
     @RequestMapping(value = "/submitBlockVerifyResult", method = {RequestMethod.POST})
     public void submitBlockVerifyResult(String copyIDKey, String filenameKey, String blockVerifyResultListKey){
@@ -80,27 +115,33 @@ public class BlockController {
         for (int index = 0; index < blockNum; index++){
             BlockVerifyResult blockVerifyResult = blockVerifyResultList.getBlockVerifyResult(index);
 //            System.out.println(blockVerifyResult.getBlockIdx() + ",  " + blockVerifyResult.getStatus());
+            BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
             switch (copyID){
                 case CopyID.Origin:
-                    blockTableDao.updateBlockStatus( blockVerifyResult.getStatus(), filename, blockVerifyResult.getBlockIdx());
+                    blockTable.setStatus(blockVerifyResult.getStatus());
+                    blockTableDao.save(blockTable);
                     if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        fileTableDao.updateFileStatus(FileStatus.DAMAGED, filename);
+                        FileTable fileTable = fileTableDao.findByFilename(filename);
+                        fileTable.setStatus(FileStatus.DAMAGED);
+                        fileTableDao.save(fileTable);
                     }
                     break;
                 case CopyID.CopyONE:
-                    blockCopyOneDao.updateBlockStatus( blockVerifyResult.getStatus(), filename, blockVerifyResult.getBlockIdx());
+                    BlockCopyOne blockCopyOne = blockCopyOneDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
+                    blockCopyOne.setStatus(blockVerifyResult.getStatus());
+                    blockCopyOneDao.save(blockCopyOne);
                     if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
-                        int temCopyNum = (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0;
-                        blockTableDao.updateBlockCopyNum(temCopyNum, filename, blockVerifyResult.getBlockIdx());
+                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+                        blockTableDao.save(blockTable);
                     }
                     break;
                 case CopyID.CopyTWO:
-                    blockCopyTwoDao.updateBlockStatus( blockVerifyResult.getStatus(), filename, blockVerifyResult.getBlockIdx());
+                    BlockCopyTwo blockCopyTwo = blockCopyTwoDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
+                    blockCopyTwo.setStatus(blockVerifyResult.getStatus());
+                    blockCopyTwoDao.save(blockCopyTwo);
                     if(blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
-                        int temCopyNum = (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0;
-                        blockTableDao.updateBlockCopyNum(temCopyNum, filename, blockVerifyResult.getBlockIdx());
+                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+                        blockTableDao.save(blockTable);
                     }
                     break;
             }

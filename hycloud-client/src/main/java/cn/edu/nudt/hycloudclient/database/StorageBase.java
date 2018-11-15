@@ -45,9 +45,7 @@ public class StorageBase {
 		}
 	}
 	
-	public void insert(String filename, long blockNum,
-			String hdfsPath) {
-		
+	public void insert(String filename, long blockNum, String hdfsPath) {
 		delete(filename);
 		
 		String sqlInsert = "INSERT INTO storgeTable "

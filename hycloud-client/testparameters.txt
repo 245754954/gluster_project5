@@ -27,7 +27,7 @@ java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties put -f E:\te
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties get -f test.txt -l E:\test.txt
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties verify -f test.txt -b 0
 
-java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sput -f E:\test.txt -g 64
+java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sput -f E:\test.txt -g 32
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sget -f test.txt -l E:\test.txt
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sdel -f test.txt -d 0
 java -jar hycloud-client-0.0.1-SNAPSHOT.jar -c ../client.properties sdump -f test.txt

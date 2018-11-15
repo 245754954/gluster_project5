@@ -97,6 +97,15 @@ public class Client {
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
                 break;
+            case Action.RECOVER:
+                tstart = System.currentTimeMillis();
+
+                StorageHandler.recoverBlock(sourcefile, blocks);
+//                StorageHandler.verifyFile(veifyFiles);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
+                break;
             case Action.SPUT:
                 tstart = System.currentTimeMillis();
 

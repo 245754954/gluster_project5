@@ -2,16 +2,14 @@ package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
-import cn.edu.nudt.hycloudinterface.entity.BlockStatus;
-import cn.edu.nudt.hycloudinterface.entity.FileInfo;
-import cn.edu.nudt.hycloudinterface.entity.FileStatus;
+import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
+import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -32,8 +30,9 @@ public class StorageHandler {
 		long filesize = sourcefile.length();
 		long blockNum = filesize / blockSize;
 		if(blockNum * blockSize < filesize) blockNum++;
+        helper.print("Uploading " + sourcefilename + " (size = " + filesize + ", blocks: " + blockNum + ")");
 
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
 		// delete duplicate files anb blocks
         StorageTransfer.deleteFile(sourcefilename);
@@ -43,6 +42,7 @@ public class StorageHandler {
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
 		FileInputStream fis = new FileInputStream(sourcefilepath);
 		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
+		    helper.print("handling block: " + blockIdx);
             digest.reset();
 
 			String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
@@ -80,8 +80,10 @@ public class StorageHandler {
             StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, conf.getCopyNum(), hash);
 		}
 		fis.close();
-
         StorageTransfer.updateFileInfo(sourcefilename, blockNum);
+
+        helper.print(sourcefilename + " Uploaded");
+
 		StorageBase sbase = new StorageBase();
 		sbase.insert(sourcefilename, blockNum, hdfsPathPrefix);
 		sbase.close();
@@ -128,6 +130,16 @@ public class StorageHandler {
         fos.close();
 	}
 
+    public static void recoverBlock(String filename, List<String> blocks) throws IOException {
+        if(blocks != null) {
+            helper.print("Recovering blocks of " + filename);
+            for (String strIdx : blocks) {
+                int blockIdx = Integer.parseInt(strIdx);
+                int rv = StorageTransfer.verifyBlock(filename, blockIdx);
+                helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
+            }
+        }
+    }
 
 	public static void verifyBlock(String filename, List<String> blocks) throws IOException {
 	    if(blocks != null) {

@@ -40,6 +40,10 @@ public class StorageTransfer {
 //        Transfer.updateBlockCopyTwo(filename, blockIdx, hash);
 //    }
 
+    public static int recoverBlock(String filename, int blockIdx) throws IOException {
+        return Transfer.recoverBlock(filename, blockIdx);
+    }
+
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
         return Transfer.verifyBlock(filename, blockIdx);
     }

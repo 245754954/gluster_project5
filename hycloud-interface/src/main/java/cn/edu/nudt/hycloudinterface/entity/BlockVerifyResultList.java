@@ -1,5 +1,7 @@
 package cn.edu.nudt.hycloudinterface.entity;
 
+import cn.edu.nudt.hycloudinterface.Constants.BlockVerifyResult;
+
 import java.util.ArrayList;
 import java.util.List;
 

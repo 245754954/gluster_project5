@@ -1,4 +1,4 @@
-package cn.edu.nudt.hycloudinterface.entity;
+package cn.edu.nudt.hycloudinterface.Constants;
 
 public class BlockVerifyResult {
     private int blockIdx;

@@ -13,14 +13,17 @@
 package cn.edu.nudt.hycloudclient.justfortrial;
 
 
-import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
-import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
-import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
+import cn.edu.nudt.hycloudclient.config.Config;
+import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
+import cn.edu.nudt.hycloudinterface.Constants.BlockVerifyResult;
+import cn.edu.nudt.hycloudinterface.Constants.CopyID;
+import cn.edu.nudt.hycloudinterface.entity.*;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,36 +38,19 @@ import java.util.Map;
  */
 public class TestClient {
 
-    //New test case .Added by zfc
-    @Test
-    public void test1()throws  Exception{
-        URL url = new URL("http://127.0.0.1:8080/block//submitBlockVerifyResult");
-        String filename = "jdk.tar.gz";
-        Integer blockIdx =8;
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        BlockVerifyResultList lis = new BlockVerifyResultList();
-        BlockVerifyResult b = new BlockVerifyResult();
-        b.setBlockIdx(8);
-        b.setStatus(1);
-        List<BlockVerifyResult> b1 = new ArrayList<BlockVerifyResult>();
-        b1.add(b);
-        lis.setBlockVerifyResultList(b1);
-        param.put("blockVerifyResultListKey", JSON.toJSONString(lis));
-
-        BasicTransfer.doPost(url, param);
-    }
-
     public static void main(String[] args) throws Exception {
-        addBlock("file-1", 0, "1231");
-        addBlock("file-1", 1, "1273231");
-        addBlock("file-1", 2, "1823231");
-        addBlock("file-2", 0, "1234331");
+        testSubmitBlockVerifyResult();
 
-        verifyBlock("file-1",0);
-        verifyBlock("file-2",0);
-        verifyBlock("file-1",2);
-        verifyBlock("file-2",2);
+//        addBlock("file-1", 0, "1231");
+//        addBlock("file-1", 1, "1273231");
+//        addBlock("file-1", 2, "1823231");
+//        addBlock("file-2", 0, "1234331");
+//
+//        verifyBlock("file-1",0);
+//        verifyBlock("file-2",0);
+//        verifyBlock("file-1",2);
+//        verifyBlock("file-2",2);
+
 
 
 //        addTree();
@@ -87,6 +73,45 @@ public class TestClient {
 //
 //        System.out.print(rvstudent.toString());
 
+    }
+
+    public static void testSubmitBlockVerifyResult() throws IOException {
+        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/submitBlockVerifyResult");
+//        String copyIDKey, String filenameKey, String blockVerifyResultListKey
+        int copyID = CopyID.Origin;
+        String filename = "test.txt";
+        BlockVerifyResultList blockVerifyResultList = new BlockVerifyResultList();
+        blockVerifyResultList.addBlockVerifyResult(new BlockVerifyResult(0, BlockStatus.INTACT));
+//        blockVerifyResultList.addBlockVerifyResult(new BlockVerifyResult(0, BlockStatus.DAMAGED));
+
+        Map<String, String> param = new HashMap<>();
+        param.put("copyIDKey", JSON.toJSONString(copyID));
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("blockVerifyResultListKey", JSON.toJSONString(blockVerifyResultList));
+
+        BasicTransfer.doPost(url, param);
+    }
+
+
+
+    //New test case .Added by zfc
+    @Test
+    public void test1()throws  Exception{
+        URL url = new URL("http://127.0.0.1:8080/block//submitBlockVerifyResult");
+        String filename = "jdk.tar.gz";
+        Integer blockIdx =8;
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        BlockVerifyResultList lis = new BlockVerifyResultList();
+        BlockVerifyResult b = new BlockVerifyResult();
+        b.setBlockIdx(8);
+        b.setStatus(1);
+        List<BlockVerifyResult> b1 = new ArrayList<BlockVerifyResult>();
+        b1.add(b);
+        lis.setBlockVerifyResultList(b1);
+        param.put("blockVerifyResultListKey", JSON.toJSONString(lis));
+
+        BasicTransfer.doPost(url, param);
     }
 
     public static void addBlock(String filename, int blockIdx, String hashStr) throws MalformedURLException {

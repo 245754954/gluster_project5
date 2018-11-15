@@ -3,10 +3,10 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import cn.edu.nudt.hycloud.hadoop.config.ProgConfig;
-import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
+import cn.edu.nudt.hycloudinterface.Constants.BlockVerifyResult;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.entity.Challenge;
-import cn.edu.nudt.hycloudinterface.entity.CopyID;
+import cn.edu.nudt.hycloudinterface.Constants.CopyID;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;

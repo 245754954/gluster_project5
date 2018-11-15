@@ -183,8 +183,8 @@ public class DeletionTransfer {
 					currBlockSize += nread;
 					
 					if(nread < inBufferSize) {
-						helper.print("nread: " + nread);
-						helper.print("currBlockSize: " + currBlockSize);
+//						helper.print("nread: " + nread);
+//						helper.print("currBlockSize: " + currBlockSize);
 						if( (nread = input.read(inBuffer, 0, inBufferSize - nread)) != -1) {
 							outBuffer = cipher.update(inBuffer, 0, nread);
 							fos.write(outBuffer, 0, outBuffer.length);

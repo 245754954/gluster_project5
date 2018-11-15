@@ -1,6 +1,6 @@
 package cn.edu.nudt.hycloudserver.entity;
 
-import cn.edu.nudt.hycloudinterface.entity.FileStatus;
+import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

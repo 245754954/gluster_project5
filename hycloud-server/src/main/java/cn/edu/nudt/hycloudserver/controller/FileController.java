@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudserver.controller;
 
 
-import cn.edu.nudt.hycloudinterface.entity.FileStatus;
+import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 import cn.edu.nudt.hycloudserver.Dao.FileTableDao;
 import cn.edu.nudt.hycloudserver.entity.FileTable;
 import com.alibaba.fastjson.JSON;

@@ -1,17 +1,13 @@
 package cn.edu.nudt.hycloudclient.network;
 
 import cn.edu.nudt.hycloudclient.config.Config;
-import cn.edu.nudt.hycloudinterface.entity.FileInfo;
-import cn.edu.nudt.hycloudinterface.entity.FileStatus;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
-import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +74,19 @@ public class Transfer {
 //
 //        BasicTransfer.doPost(url, param);
 //    }
+
+    public static int recoverBlock(String filename, int blockIdx) throws IOException {
+        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/recoverBlock");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+
+        String recvStr = BasicTransfer.doPost(url, param);
+        Integer rv = JSON.parseObject(recvStr, Integer.class);
+//        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
+        return  rv;
+    }
 
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
         Config config = Config.getConfig();
