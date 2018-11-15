@@ -3,6 +3,7 @@ package cn.edu.nudt.hycloudserver.controller;
 import cn.edu.nudt.hycloudinterface.Constants.*;
 import cn.edu.nudt.hycloudinterface.entity.*;
 import cn.edu.nudt.hycloudinterface.utils.helper;
+import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyOneDao;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyTwoDao;
 import cn.edu.nudt.hycloudserver.Dao.BlockTableDao;
@@ -12,11 +13,18 @@ import cn.edu.nudt.hycloudserver.entity.BlockCopyTwo;
 import cn.edu.nudt.hycloudserver.entity.BlockTable;
 import cn.edu.nudt.hycloudserver.entity.FileTable;
 import com.alibaba.fastjson.JSON;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileContext;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.UnsupportedFileSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -61,32 +69,56 @@ public class BlockController {
     }
 
     @RequestMapping(value = "/recoverBlock", method = {RequestMethod.POST})
-    public int recoverBlock(String filenameKey, String blockIdxKey){
-        int rv = RecoverResult.UNKNOWN;
+    public int recoverBlock(String filenameKey, String blockIdxKey) throws IOException {
+        int rv;
 
         String filename = JSON.parseObject(filenameKey, String.class);
         Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
 
         BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
-        if(blockTable != null) {
-            // to recover in hdfs
-
-            blockTable.setStatus(BlockStatus.INTACT);
-            blockTableDao.save(blockTable);
-
-            // set file to intact if its blocks are all intact
-            List<BlockTable> blockTableList = blockTableDao.findByFilenameAndStatus(filename, BlockStatus.DAMAGED);
-            if (blockTableList == null){
-                FileTable fileTable = fileTableDao.findByFilename(filename);
-                fileTable.setStatus(FileStatus.INTACT);
-                fileTableDao.save(fileTable);
-            }
-
+        if (blockTable == null){
+            rv = RecoverResult.NOTFOUND;
+        }else if(blockTable.getStatus() == BlockStatus.INTACT){
             rv = RecoverResult.SUCCESS;
         }else{
-            rv = RecoverResult.NOTFOUND;
+            // to recover in hdfs
+            int copyID = -1;
+            BlockCopyOne blockCopyOne = blockCopyOneDao.findByFilenameAndBlockIdx(filename, blockIdx);
+            if (blockCopyOne != null && blockCopyOne.getStatus() == BlockStatus.INTACT){
+                copyID = CopyID.CopyONE;
+            }else{
+                BlockCopyTwo blockCopyTwo = blockCopyTwoDao.findByFilenameAndBlockIdx(filename, blockIdx);
+                if (blockCopyTwo != null && blockCopyTwo.getStatus() == BlockStatus.INTACT){
+                    copyID = CopyID.CopyTWO;
+                }
+            }
+
+            if (copyID == CopyID.CopyONE || copyID == CopyID.CopyTWO){
+                String srcBlock = getBlockPath(filename, blockIdx);
+                String dstBlock = getBlockPath(filename, blockIdx, copyID);
+                boolean res = copyBlock(srcBlock, dstBlock);
+
+                if(res){
+                    blockTable.setStatus(BlockStatus.INTACT);
+                    blockTableDao.save(blockTable);
+
+                    // set file to intact if its blocks are all intact
+                    List<BlockTable> blockTableList = blockTableDao.findByFilenameAndStatus(filename, BlockStatus.DAMAGED);
+                    if (blockTableList == null){
+                        FileTable fileTable = fileTableDao.findByFilename(filename);
+                        fileTable.setStatus(FileStatus.INTACT);
+                        fileTableDao.save(fileTable);
+                    }
+                    rv = RecoverResult.SUCCESS;
+                }else{
+                    rv = RecoverResult.FAILED;
+                }
+            }else{
+                rv = RecoverResult.FAILED;
+            }
+
         }
-        return 1;
+        return rv;
     }
 
     @RequestMapping(value = "/deleteFileBlocks", method = {RequestMethod.POST})
@@ -146,5 +178,52 @@ public class BlockController {
                     break;
             }
         }
+    }
+
+    public String getBlockPath(String filename, int blockIdx) throws IOException {
+        return ServerConfig.getConfig().getHdfsVerifyHome() + filename + "_block_" + blockIdx;
+    }
+
+    public String getBlockPath(String filename, int blockIdx, int copyID) throws IOException {
+        if(!CopyID.isValid(copyID)){
+            throw new IOException("getBlockPath: copyID Error");
+        }
+        ServerConfig serverConfig = ServerConfig.getConfig();
+        String pathPrefix = serverConfig.getHdfsVerifyHome();
+        if(copyID == CopyID.CopyONE){
+            pathPrefix = serverConfig.getHdfsVerifyCopyOneHome();
+        }else if (copyID == CopyID.CopyTWO){
+            pathPrefix = serverConfig.getHdfsVerifyCopyTwoHome();
+        }
+
+        return pathPrefix + filename + "_block_" + blockIdx;
+    }
+
+    /**
+     *
+     * @param srcBlock
+     * - complete path of the block in HDFS, e.g., "hdfs://master:9000/cptest/srcBlock"
+     * @param dstBlock
+     * - complete path of the block in HDFS, e.g., "hdfs://master:9000/cptest/dstBlock"
+     * @return
+     * @throws IOException
+     */
+    public boolean copyBlock(String srcBlock, String dstBlock) throws IOException {
+//        Configuration conf = new Configuration();
+//        conf.set("fs.default.name", "hdfs://192.168.6.129:9000");
+
+//        FileSystem fs = null;
+//        String path = "hdfs://master:9000/cptest";
+//        fs = FileSystem.get(URI.create(path),conf);
+        FileSystem fs = FileSystem.get(ServerConfig.getConfig().getHdfsConf());
+
+        Path srcBlockPath = new Path(srcBlock);
+        Path dstBlockPath = new Path(dstBlock);
+
+        if(fs.exists(dstBlockPath)){
+            fs.delete(dstBlockPath,true);
+        }
+
+        return FileContext.getFileContext().util().copy(srcBlockPath, dstBlockPath);
     }
 }
