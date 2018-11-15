@@ -44,10 +44,11 @@ public class VerifyTransfer {
 //        BasicTransfer.doPost(url, param);
 //    }
 
-    public static void submitResult(String filename, BlockVerifyResultList blockVerifyResultList) throws IOException {
+    public static void submitResult(int copyID, String filename, BlockVerifyResultList blockVerifyResultList) throws IOException {
         URL url = new URL(ProgConfig.getConfig().getManagerServerUrl() + "block/submitBlockVerifyResult");
 
         Map<String, String> param = new HashMap<String, String>();
+        param.put("copyIDKey", JSON.toJSONString(copyID));
         param.put("filenameKey", JSON.toJSONString(filename));
         param.put("blockVerifyResultListKey", JSON.toJSONString(blockVerifyResultList));
 

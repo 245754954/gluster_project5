@@ -192,7 +192,7 @@ public class VerifyHandler {
 //            BlockVerifyResult blockVerifyResult = this.mBlockVerifyResultList.getBlockVerifyResult(i);
 //            helper.print(blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
 //        }
-        VerifyTransfer.submitResult(challenge.getFilename(), mBlockVerifyResultList);
+        VerifyTransfer.submitResult(1, challenge.getFilename(), mBlockVerifyResultList);
     }
 
     public void storeChallenge(Challenge challenge) throws Exception{

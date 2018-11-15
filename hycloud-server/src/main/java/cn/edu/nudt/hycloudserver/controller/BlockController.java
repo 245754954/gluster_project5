@@ -52,7 +52,7 @@ public class BlockController {
 
     // receive response from hadoop and update database
     @RequestMapping(value = "/submitBlockVerifyResult", method = {RequestMethod.POST})
-    public void submitBlockVerifyResult(String filenameKey, String blockVerifyResultListKey){
+    public void submitBlockVerifyResult(String copyID, String filenameKey, String blockVerifyResultListKey){
         String filename = JSON.parseObject(filenameKey, String.class);
         BlockVerifyResultList blockVerifyResultList = JSON.parseObject(blockVerifyResultListKey, BlockVerifyResultList.class);
 
