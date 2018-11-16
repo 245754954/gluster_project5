@@ -34,13 +34,16 @@ public class Starter {
 //        while (true) {
 //            VerifyHandler.startVerify(VerifyHandler.INPUT_PATH);
 //        }
-        while (true){
+//        int i = 0;
+//        while (i++ < 10){
+        while(true){
             VerifyHandler verifyHandler = new VerifyHandler();
 
             long beginTime = System.currentTimeMillis();
             verifyHandler.startVerify();
             long endTime = System.currentTimeMillis();
             System.out.println("spend time:" + ((endTime - beginTime) ) + "s");
+
 
             Thread.sleep(ProgConfig.getConfig().getSleepTime());
         }
