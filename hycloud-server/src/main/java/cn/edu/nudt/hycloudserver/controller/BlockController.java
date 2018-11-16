@@ -13,11 +13,9 @@ import cn.edu.nudt.hycloudserver.entity.BlockCopyTwo;
 import cn.edu.nudt.hycloudserver.entity.BlockTable;
 import cn.edu.nudt.hycloudserver.entity.FileTable;
 import com.alibaba.fastjson.JSON;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.UnsupportedFileSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,8 +66,27 @@ public class BlockController {
         return rv;
     }
 
-    @RequestMapping(value = "/recoverBlock", method = {RequestMethod.POST})
-    public int recoverBlock(String filenameKey, String blockIdxKey) throws IOException {
+    @RequestMapping(value = "/recoverableBlock", method = {RequestMethod.POST})
+    public boolean recoverableBlock(String filenameKey, String blockIdxKey) throws IOException {
+        boolean rv = false;
+
+        String filename = JSON.parseObject(filenameKey, String.class);
+        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // Scheme 2: query database
+        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
+        if (blockTable != null && blockTable.getCopyNum() > 0){
+            rv = true;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // Scheme 1: query the platform directly, which may not response in time.
+        return rv;
+    }
+
+    @RequestMapping(value = "/restoreBlock", method = {RequestMethod.POST})
+    public int restoreBlock(String filenameKey, String blockIdxKey) throws IOException {
         int rv;
 
         String filename = JSON.parseObject(filenameKey, String.class);
@@ -77,9 +94,9 @@ public class BlockController {
 
         BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
         if (blockTable == null){
-            rv = RecoverResult.NOTFOUND;
+            rv = RestoreResult.NOTFOUND;
         }else if(blockTable.getStatus() == BlockStatus.INTACT){
-            rv = RecoverResult.SUCCESS;
+            rv = RestoreResult.SUCCESS;
         }else{
             // to recover in hdfs
             int copyID = -1;
@@ -94,8 +111,8 @@ public class BlockController {
             }
 
             if (copyID == CopyID.CopyONE || copyID == CopyID.CopyTWO){
-                String srcBlock = getBlockPath(filename, blockIdx);
-                String dstBlock = getBlockPath(filename, blockIdx, copyID);
+                String srcBlock = getBlockPath(filename, blockIdx, copyID);
+                String dstBlock = getBlockPath(filename, blockIdx);
                 boolean res = copyBlock(srcBlock, dstBlock);
 
                 if(res){
@@ -109,12 +126,12 @@ public class BlockController {
                         fileTable.setStatus(FileStatus.INTACT);
                         fileTableDao.save(fileTable);
                     }
-                    rv = RecoverResult.SUCCESS;
+                    rv = RestoreResult.SUCCESS;
                 }else{
-                    rv = RecoverResult.FAILED;
+                    rv = RestoreResult.FAILED;
                 }
             }else{
-                rv = RecoverResult.FAILED;
+                rv = RestoreResult.FAILED;
             }
 
         }
@@ -209,13 +226,12 @@ public class BlockController {
      * @throws IOException
      */
     public boolean copyBlock(String srcBlock, String dstBlock) throws IOException {
-//        Configuration conf = new Configuration();
-//        conf.set("fs.default.name", "hdfs://192.168.6.129:9000");
+//        FileSystem fs = FileSystem.get(URI.create("hdfs://192.168.6.129:9000/cpfile/"), ServerConfig.getConfig().getHdfsConf());
 
-//        FileSystem fs = null;
-//        String path = "hdfs://master:9000/cptest";
-//        fs = FileSystem.get(URI.create(path),conf);
         FileSystem fs = FileSystem.get(URI.create(ServerConfig.getConfig().getHdfsYhbdHome()), ServerConfig.getConfig().getHdfsConf());
+//        helper.print("getHdfsYhbdHome: " + ServerConfig.getConfig().getHdfsYhbdHome());
+//        helper.print("srcBlock: " + srcBlock);
+//        helper.print("dstBlock: " + dstBlock);
 
         Path srcBlockPath = new Path(srcBlock);
         Path dstBlockPath = new Path(dstBlock);

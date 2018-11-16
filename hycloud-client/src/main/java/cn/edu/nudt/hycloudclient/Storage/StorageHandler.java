@@ -4,6 +4,7 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
 import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
+import cn.edu.nudt.hycloudinterface.Constants.RestoreResult;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -130,13 +131,24 @@ public class StorageHandler {
         fos.close();
 	}
 
-    public static void recoverBlock(String filename, List<String> blocks) throws IOException {
+    public static void recoverableBlock(String filename, List<String> blocks) throws IOException {
         if(blocks != null) {
-            helper.print("Recovering blocks of " + filename);
+            helper.print("Recoverable testing of blocks of " + filename);
             for (String strIdx : blocks) {
                 int blockIdx = Integer.parseInt(strIdx);
-                int rv = StorageTransfer.recoverBlock(filename, blockIdx);
-                helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
+                boolean rv = StorageTransfer.recoverableBlock(filename, blockIdx);
+                helper.print(filename + ", " + blockIdx + ", recoverable = " + rv);
+            }
+        }
+    }
+
+    public static void restoreBlock(String filename, List<String> blocks) throws IOException {
+        if(blocks != null) {
+            helper.print("Restoring blocks of " + filename);
+            for (String strIdx : blocks) {
+                int blockIdx = Integer.parseInt(strIdx);
+                int rv = StorageTransfer.restoreBlock(filename, blockIdx);
+                helper.print(filename + ", " + blockIdx + ", restored = " + RestoreResult.getString(rv));
             }
         }
     }

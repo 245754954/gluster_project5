@@ -19,11 +19,13 @@ public class Client {
     @Parameter(names= {"--config","-c"}, description = "path to config file")
     private String configPath = null;
 
-    @Parameter(names= {"--help","-h"}, help=false, description = "action to perform")
+    @Parameter(names= {"--help","-h"}, help=false, description = "help information")
     private boolean help = false;
 
 //    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
-    @Parameter(required = true, description = "action to perform")
+    @Parameter(required = true,
+            description = "action to perform, " +
+                    "including put, get, verify, recoverable, restore, sput, sget, sdel, sdump")
     private String strAction = null;
 
     //////////////////////////////////////////////
@@ -97,10 +99,19 @@ public class Client {
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
                 break;
-            case Action.RECOVER:
+            case Action.RECOVERABLE:
                 tstart = System.currentTimeMillis();
 
-                StorageHandler.recoverBlock(sourcefile, blocks);
+                StorageHandler.recoverableBlock(sourcefile, blocks);
+//                StorageHandler.verifyFile(veifyFiles);
+
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
+                break;
+            case Action.RESTORE:
+                tstart = System.currentTimeMillis();
+
+                StorageHandler.restoreBlock(sourcefile, blocks);
 //                StorageHandler.verifyFile(veifyFiles);
 
                 tend = System.currentTimeMillis();

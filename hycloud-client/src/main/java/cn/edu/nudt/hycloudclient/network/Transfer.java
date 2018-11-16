@@ -75,8 +75,21 @@ public class Transfer {
 //        BasicTransfer.doPost(url, param);
 //    }
 
-    public static int recoverBlock(String filename, int blockIdx) throws IOException {
-        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/recoverBlock");
+    public static boolean recoverableBlock(String filename, int blockIdx) throws IOException {
+        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/recoverableBlock");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+
+        String recvStr = BasicTransfer.doPost(url, param);
+        boolean rv = JSON.parseObject(recvStr, Boolean.class);
+//        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
+        return  rv;
+    }
+
+    public static int restoreBlock(String filename, int blockIdx) throws IOException {
+        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/restoreBlock");
 
         Map<String, String> param = new HashMap<>();
         param.put("filenameKey", JSON.toJSONString(filename));

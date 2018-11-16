@@ -1,6 +1,6 @@
 package cn.edu.nudt.hycloudinterface.Constants;
 
-public class RecoverResult {
+public class RestoreResult {
     public static final int NOTFOUND = 0;
     public static final int SUCCESS = 1;
     public static final int FAILED = 2;

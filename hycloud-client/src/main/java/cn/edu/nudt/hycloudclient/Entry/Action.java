@@ -11,7 +11,8 @@ public class Action {
 	public final static int PUT = 5;
 	public final static int GET = 6;
 	public final static int VERIFY = 7;
-	public final static int RECOVER = 8;
+	public final static int RESTORE = 8;
+    public final static int RECOVERABLE = 9;
 
 	public static int get(String atrAction) {
 		int rv = -1;
@@ -29,8 +30,10 @@ public class Action {
 			rv = Action.GET;
 		}else if(atrAction.equalsIgnoreCase("VERIFY")) {
 			rv = Action.VERIFY;
-		}else if(atrAction.equalsIgnoreCase("RECOVER")) {
-			rv = Action.RECOVER;
+		}else if(atrAction.equalsIgnoreCase("RESTORE")) {
+			rv = Action.RESTORE;
+        }else if(atrAction.equalsIgnoreCase("RECOVERABLE")) {
+            rv = Action.RECOVERABLE;
 		}else{
 			helper.err("Error: wrong action string");
 		}

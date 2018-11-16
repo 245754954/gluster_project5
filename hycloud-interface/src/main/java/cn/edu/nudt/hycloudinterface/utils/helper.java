@@ -11,6 +11,6 @@ public class helper {
     }
 
     public static void timing(String label, long tstart, long tend){
-        System.out.println(label + ": " + (tend - tstart) + " ms");
+        System.out.println("Timing: " + label + " -> " + (tend - tstart) + " ms");
     }
 }
