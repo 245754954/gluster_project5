@@ -215,7 +215,7 @@ public class BlockController {
 //        FileSystem fs = null;
 //        String path = "hdfs://master:9000/cptest";
 //        fs = FileSystem.get(URI.create(path),conf);
-        FileSystem fs = FileSystem.get(ServerConfig.getConfig().getHdfsConf());
+        FileSystem fs = FileSystem.get(URI.create(ServerConfig.getConfig().getHdfsYhbdHome()), ServerConfig.getConfig().getHdfsConf());
 
         Path srcBlockPath = new Path(srcBlock);
         Path dstBlockPath = new Path(dstBlock);
@@ -223,7 +223,6 @@ public class BlockController {
         if(fs.exists(dstBlockPath)){
             fs.delete(dstBlockPath,true);
         }
-
         return FileContext.getFileContext().util().copy(srcBlockPath, dstBlockPath);
     }
 }

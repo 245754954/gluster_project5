@@ -20,6 +20,7 @@ public class ServerConfig {
 
     private Configuration hdfsConf;
 
+    private String hdfsYhbdHome;
     private String hdfsVerifyHome;
 
     private int copyNum;
@@ -70,6 +71,7 @@ public class ServerConfig {
         hdfsConf.set("fs.default.name",
                 props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
 
+        this.hdfsYhbdHome= props.getProperty("hdfsYhbdHome", "hdfs://192.168.6.173:9000/yhbd/");
         this.hdfsVerifyHome= props.getProperty("hdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
 
         this.copyNum = Integer.parseInt(props.getProperty("copyNum", "3"));
@@ -84,6 +86,7 @@ public class ServerConfig {
         // block size in MB
         props.setProperty("fs.default.name", "hdfs://192.168.6.173:9000");
 
+        props.setProperty("hdfsYhbdHome", "hdfs://192.168.6.173:9000/yhbd/");
         props.setProperty("hdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
 
         props.setProperty("copyNum", "3");
@@ -94,6 +97,10 @@ public class ServerConfig {
         FileWriter fwriter = new FileWriter(defaultConfigPath);
         props.store(fwriter, "Configure file for YHBD Manager Server");
         fwriter.close();
+    }
+
+    public String getHdfsYhbdHome() {
+        return hdfsYhbdHome;
     }
 
     public Configuration getHdfsConf() {
@@ -119,7 +126,8 @@ public class ServerConfig {
     public void dump() {
         helper.print("hdfsVerifyCopyOneHome: " + this.hdfsVerifyCopyOneHome);
         helper.print("hdfsVerifyCopyTwoHome: " + this.hdfsVerifyCopyTwoHome);
-        helper.print("getHdfsVerifyHome: " + this.getHdfsVerifyHome());
+        helper.print("hdfsVerifyHome: " + this.hdfsVerifyHome);
+        helper.print("hdfsYhbdHome: " + this.hdfsYhbdHome);
 
         helper.print("copyNum: " + this.copyNum);
         helper.print("hdfsConf: " + this.hdfsConf);

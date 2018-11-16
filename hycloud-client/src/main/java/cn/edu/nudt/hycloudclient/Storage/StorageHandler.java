@@ -135,7 +135,7 @@ public class StorageHandler {
             helper.print("Recovering blocks of " + filename);
             for (String strIdx : blocks) {
                 int blockIdx = Integer.parseInt(strIdx);
-                int rv = StorageTransfer.verifyBlock(filename, blockIdx);
+                int rv = StorageTransfer.recoverBlock(filename, blockIdx);
                 helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
             }
         }
