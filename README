@@ -1,0 +1,137 @@
+###########################################################################
+The project consists of the following modules:
+1) hycloud-server
+2) hycloud-client
+3) hycloud-hadoop
+4) hycloud-tools
+
+
+###########################################################################
+## hycloud-server
+The server provides REST interfaces for the hycloud-client and hycloud-hadoop
+
+## Configuration file
+The server will load the configuration file in the following order:
+1) If configuration file is given from the command line using "-c <configuraionFile>" option, it will be used first;
+2) Try to load "server.properties" in the directory where the client is running
+3) Try "./hycloud-server/server.properites", which is relative to the current running directory
+
+## Usages of the server
+java -jar server.jar [-c <configurationFile>]
+
+
+###########################################################################
+## hycloud-client
+The client module consists of two parts:
+1) storage part for Integrity verification
+2) deletion part for Assured Deletion
+
+## Configuration file
+The client will load the configuration file in the following order:
+1) If configuration file is given from the command line using "-c <configuraionFile>" option, it will be used first;
+2) Try to load "client.properties" in the directory where the client is running
+3) Try "./hycloud-client/client.properites", which is relative to the current running directory
+
+## Usages of the client
+// Integrity verification
+1) put
+Function:
+    upload file to HDFS
+Usage:
+    java -jar client.jar put -f <filepath>
+e.g.,
+    java -jar client.jar put -f /testdir/testfile
+
+2) get
+Function:
+    retrieve file from HDFS
+Usage:
+    java -jar client.jar get -f <filename> -l <localpath>
+e.g.,
+    java -jar client.jar get -f testfile -l /testdir/testfile_get
+
+3) verify
+Function:
+    verify whether the blocks in the given list are intact
+Usage:
+    java -jar client.jar verify -f <filename> -b <blocklist>
+e.g.,
+    java -jar client.jar verify -f testfile -b 1 2 3
+
+4) recoverable
+Function:
+    check whether the blocks in the given list are recoverable
+Usage:
+    java -jar client.jar recoverable -f <filename> -b <blocklist>
+e.g.,
+    java -jar client.jar recoverable -f testfile -b 1 2 3
+
+5) restore
+Function:
+    restore the blocks in the given lsit
+Usage:
+    java -jar client.jar restore -f <filename> -b <blocklist>
+e.g.,
+    java -jar client.jar restore -f testfile -b 1 2 3
+
+
+// Assured deletion
+7) sput
+Function:
+    upload file to HDFS in Assured Deletion mode
+Usage:
+    java -jar client.jar sput -f <filepath> -g <segmentSzie>
+    Notes: segment size in KB
+e.g.,
+    java -jar client.jar sput -f /testdir/testfile -g 64
+
+8) sget
+Function:
+    retrieve file from HDFS in Assured Deletion mode
+Usage:
+    java -jar client.jar sget -f <filename> -l <localpath>
+e.g.,
+    java -jar client.jar sget -f testfile -l /testdir/testfile_sget
+
+9) sdel
+Function:
+    delete the segments in the given list in Assured Deletion mode
+Usage:
+    java -jar client.jar sdel -f <filename> -d <segmentList>
+e.g.,
+    java -jar client.jar sdel -f testfile -d 3 2 4
+
+10) sdump
+Function:
+    show the status of all segments in the file
+Usage:
+    java -jar client.jar sdump -f <filename>
+e.g.,
+    java -jar client.jar sput -f testfile
+
+
+###########################################################################
+## hycloud-hadoop
+The hycloud-hadoop module performs Integrity Checking in background and reports the results to the hycloud-server
+
+## Configuration file
+The server will load the configuration file in the following order:
+1) If configuration file is given from the command line using "-c <configuraionFile>" option, it will be used first;
+2) Try to load "namenode.properties" in the directory where the client is running
+3) Try "./hycloud-hadoop/namenode.properites", which is relative to the current running directory
+
+## Usages of hycloud-hadoop
+java -jar hycloud-hadoop.jar
+
+###########################################################################
+## hycloud-tools
+The tools module provides tools for testing
+
+## FileGen
+Function:
+    generates test file according to the given filename and size
+Usage:
+    java -jar hycloud-hadoop.jar -f <filepath> -s <size>
+e.g.,
+    java -jar hycloud-hadoop.jar -f /testdir/testfile128MB -s 128MB
+    java -jar hycloud-hadoop.jar -f /testdir/testfile1GB -s 1GB
