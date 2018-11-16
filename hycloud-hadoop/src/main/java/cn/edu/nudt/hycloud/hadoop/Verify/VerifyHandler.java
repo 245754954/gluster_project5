@@ -3,10 +3,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import cn.edu.nudt.hycloud.hadoop.config.ProgConfig;
-import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResult;
-import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
-import cn.edu.nudt.hycloudinterface.entity.Challenge;
-import cn.edu.nudt.hycloudinterface.entity.CopyID;
+import cn.edu.nudt.hycloudinterface.entity.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -34,7 +31,7 @@ public class VerifyHandler {
 //    public static final String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
     public static final String blockPathMid = "_block_";
 //    public static List<BlockVerifyResult> blockRequestList = new ArrayList<BlockVerifyResult>();
-    private BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList();
+//    private BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList();
 
 
 
@@ -122,7 +119,8 @@ public class VerifyHandler {
         return tag;
     }
 
-    public void readOutput(String blockPath) {
+    public BlockVerifyResultList readOutput(String blockPath) {
+        BlockVerifyResultList mBlockVerifyResultList = new BlockVerifyResultList();
         try {
             Configuration conf = new Configuration();
 
@@ -139,10 +137,17 @@ public class VerifyHandler {
                     String blockID = filePath.substring(filePath.indexOf("_block_")+7);
                     BlockVerifyResult mblockRequest = new BlockVerifyResult();
                     mblockRequest.setBlockIdx(Integer.parseInt(blockID));
-                    mblockRequest.setStatus(Integer.parseInt(status));
+                    int blockSatus;
+                    if  (Integer.parseInt(status) == 1){
+                        blockSatus = BlockStatus.INTACT;
+                    }
+                    else {
+                        blockSatus = BlockStatus.DAMAGED;
+                    }
+                    mblockRequest.setStatus(blockSatus);
 //                    mblockRequest.setBlockID(Integer.parseInt(blockID));
 //                    mblockRequest.setBlockStatus(Integer.parseInt(status));
-                    this.mBlockVerifyResultList.addBlockVerifyResult(mblockRequest);
+                    mBlockVerifyResultList.addBlockVerifyResult(mblockRequest);
                 }
             }
             reader.close();
@@ -150,16 +155,19 @@ public class VerifyHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return mBlockVerifyResultList;
     }
 
     public static String getTagHdfsPath(String HdfsPath){
-        return HdfsPath.replaceAll("_block_","_tag_");
+        String temp1 = HdfsPath.replaceAll("copyone","verify");
+        String temp2 = temp1.replaceAll("copytwo","verify");
+        return temp2.replaceAll("_block_","_tag_");
     }
 
     public VerifyHandler() {
     }
 
-    public void subStartVerify(Challenge challenge, Configuration conf) throws IOException, ClassNotFoundException, InterruptedException {
+    public void subStartVerify(int copyID, Challenge challenge, Configuration conf) throws IOException, ClassNotFoundException, InterruptedException {
         Path outputpath=new Path(ProgConfig.getConfig().getOutputPath());    //输出路径
         FileSystem filesystem = outputpath.getFileSystem(conf);
         if (filesystem.exists(outputpath)) {
@@ -177,13 +185,18 @@ public class VerifyHandler {
         FileOutputFormat.setOutputPath(job,new Path(ProgConfig.getConfig().getOutputPath()));
         job.waitForCompletion(true);
 
-        readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
-        VerifyTransfer.submitResult(1, challenge.getFilename(), mBlockVerifyResultList);
+        BlockVerifyResultList mBlockVerifyResultList = readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
+        for (int i = 0; i < mBlockVerifyResultList.size(); i++) {
+            BlockVerifyResult blockVerifyResult = mBlockVerifyResultList.getBlockVerifyResult(i);
+            System.out.println(copyID + ",  " + blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
+        }
+        VerifyTransfer.submitResult(copyID, challenge.getFilename(), mBlockVerifyResultList);
 
     }
 
     public void startVerify() throws Exception{
       Challenge challenge = VerifyTransfer.fetchChallenge();
+      System.out.println(challenge.getFilename() + ", " + challenge.getBlockNum());
 //        Challenge challenge = new Challenge();
 //        challenge.setBlockNum(new Long((long)30));
 //        challenge.setFilename("jdk.tar.gz");
@@ -195,7 +208,7 @@ public class VerifyHandler {
         for (int index = 0; index < 3; index++) {
             storeChallenge(CopyID.getCopyID(index), challenge);
 
-            subStartVerify(challenge, conf);
+            subStartVerify(CopyID.getCopyID(index),challenge, conf);
         }
 
 //
