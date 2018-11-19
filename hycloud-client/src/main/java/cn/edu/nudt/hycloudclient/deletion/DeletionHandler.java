@@ -46,7 +46,7 @@ public class DeletionHandler {
 		ModulationTree mTree = new ModulationTree(segmentsNum);
 		BigInteger masterKey = new BigInteger(ModulationTree.ModulatorBits, new SecureRandom());
 		List<BigInteger> segmentKeys = mTree.deriveKeys(masterKey);
-		
+
 		String remotePath = DeletionTransfer.uploadWithEncryption(segmentSize, inputFile, segmentKeys);
 		boolean rv = DeletionTransfer.updateModulationTree(filename, mTree);
 

@@ -4,6 +4,7 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
@@ -191,11 +192,14 @@ public class Transfer {
 
     public static boolean updateModulationTree(String filename, ModulationTree tree) throws IOException {
         Config config = Config.getConfig();
-        URL url = new URL(config.getManagerServerUrl() + "tree/uploadModulationTree");
+        URL url = new URL(config.getManagerServerUrl() + "tree/updateModulationTree");
 
         Map<String, String> param = new HashMap<String, String>();
-        param.put("filename", JSON.toJSONString(filename));
-        param.put("modulationTree", JSON.toJSONString(tree));
+        param.put("filenameKey", JSON.toJSONString(filename));
+        param.put("modulationTreeKey", JSON.toJSONString(tree));
+//
+//        String treeStr = JSON.toJSONString(tree);
+//        helper.print("treeLength: " + treeStr.length());
 
         String recvString = BasicTransfer.doPost(url, param);
         return JSON.parseObject(recvString, Boolean.class);

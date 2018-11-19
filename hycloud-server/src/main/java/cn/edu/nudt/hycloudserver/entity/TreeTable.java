@@ -1,13 +1,21 @@
 package cn.edu.nudt.hycloudserver.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
 @Entity
-public class TreeTable implements Serializable {
+@Table(name = "TreeTable")
+public class TreeTable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotNull
+    @Column(unique = true)
     private String filename;
+
     @Column(columnDefinition = "longtext",nullable = true)
     private String modulationTree;
 

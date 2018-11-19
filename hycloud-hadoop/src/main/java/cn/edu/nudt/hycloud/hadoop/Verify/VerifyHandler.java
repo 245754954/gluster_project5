@@ -3,6 +3,9 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import cn.edu.nudt.hycloud.hadoop.config.ProgConfig;
+import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
+import cn.edu.nudt.hycloudinterface.Constants.BlockVerifyResult;
+import cn.edu.nudt.hycloudinterface.Constants.CopyID;
 import cn.edu.nudt.hycloudinterface.entity.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
