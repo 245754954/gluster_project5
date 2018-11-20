@@ -8,6 +8,7 @@ import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -49,6 +50,9 @@ public class Client {
 
     public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
 //        System.out.println(System.getProperty("user.dir"));
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
+            System.setProperty("hadoop.home.dir", "E:\\CodeHub\\yhcloud-home\\winutils");
+        }
 
         Client client = new Client();
         Builder builder = JCommander.newBuilder();
@@ -59,7 +63,7 @@ public class Client {
         jcmd.setProgramName("hycloud-client");
 
         Config conf = Config.getConfig(client.configPath);
-        conf.dump();
+//        conf.dump();
 
         client.run(jcmd);
     }

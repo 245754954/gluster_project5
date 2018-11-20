@@ -37,3 +37,6 @@ mvnw
 ### shade ###
 dependency-reduced-pom.xml
 yhbdclient.db
+tw7.txt
+logs/spring.log
+tw12.txt

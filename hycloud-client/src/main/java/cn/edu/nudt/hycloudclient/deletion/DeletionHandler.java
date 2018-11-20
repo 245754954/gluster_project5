@@ -2,6 +2,7 @@ package cn.edu.nudt.hycloudclient.deletion;
 
 import cn.edu.nudt.hycloudclient.database.LocalBase;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
+import cn.edu.nudt.hycloudinterface.entity.Node;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 
@@ -97,8 +98,16 @@ public class DeletionHandler {
 		}
 		
 		if(segStrList == null) {
+		    helper.print("assuredly delete the whole file ...");
+
 			DeletionHandler.sdel(filename);
 		}else {
+		    String strDel = "";
+            for (int i = 0; i < segStrList.size(); i++) {
+                strDel += segStrList.get(i) + ", ";
+            }
+            helper.print("assuredly delete segments: " + strDel);
+
 			SegmentList segmentList = new SegmentList(segStrList);
 			DeletionHandler.sdel(filename, segmentList);
 		}
@@ -162,11 +171,19 @@ public class DeletionHandler {
 		ModulationTree tree = DeletionTransfer.obtainRemoteTree(filename);
 		List<Boolean> segStatuses = tree.getLeafNodesStatus();
 		
-		String strStatuses = "||";
-		for(int i = 0; i < segStatuses.size(); i++) {
-			strStatuses += (i+1) + ", " + segStatuses.get(i) + "||";
-		}
-		helper.print(strStatuses);
+//		String strStatuses = "||";
+//		for(int i = 0; i < segStatuses.size(); i++) {
+//			strStatuses += (i+1) + ", " + segStatuses.get(i) + "||";
+//		}
+//		helper.print(strStatuses);
+        String strDeleted = "";
+        for (int i = 0; i < segStatuses.size(); i++) {
+            if (segStatuses.get(i) == Node.Unrecoverable){
+                strDeleted += i + ", ";
+            }
+        }
+        helper.print("total segments: " + segStatuses.size());
+        helper.print("deleted segments: " + strDeleted);
 	}
 	
 }
