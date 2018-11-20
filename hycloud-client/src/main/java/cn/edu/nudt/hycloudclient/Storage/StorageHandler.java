@@ -78,7 +78,7 @@ public class StorageHandler {
 
 //            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-            StorageTransfer.updateBlockInfo(sourcefilename, blockIdx, conf.getCopyNum(), hash);
+            StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
 		}
 		fis.close();
         StorageTransfer.updateFileInfo(sourcefilename, blockNum);
