@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class DestoryTransfer {
 
-    public static void updateBlockInfo(CopyID copyID, String filename, int blockIdx, BlockStatus blockStatus, BigInteger hash) throws IOException {
+    public static void updateBlockInfo(CopyID copyID, String filename, int blockIdx, BlockStatus blockStatus) throws IOException {
         ProgConfig progConfig = ProgConfig.getConfig();
         URL url = new URL(progConfig.getManagerServerUrl() + "block/updateBlock");
 

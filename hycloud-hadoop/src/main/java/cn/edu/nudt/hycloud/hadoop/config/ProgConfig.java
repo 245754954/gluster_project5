@@ -26,6 +26,7 @@ public class ProgConfig {
     private String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
     private String copyOnePrefix = "hdfs://192.168.6.129:9000/yhbd/copyone/";
     private String copyTwoPrefix = "hdfs://192.168.6.129:9000/yhbd/copytwo/";
+    private String damageFilePath = "hdfs://master:9000/cpfile/damageFile";
 
     private int sleepTime = 30000;
 
@@ -79,6 +80,7 @@ public class ProgConfig {
         this.copyOnePrefix = props.getProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
         this.copyTwoPrefix = props.getProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
 
+        this.damageFilePath = props.getProperty("damageFilePath","hdfs://master:9000/cpfile/damageFile");
         freader.close();
     }
 
@@ -94,6 +96,7 @@ public class ProgConfig {
         props.setProperty("outputPath", "hdfs://192.168.6.129:9000/output");
         props.setProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
         props.setProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+        props.setProperty("damageFilePath","hdfs://master:9000/cpfile/damageFile");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
@@ -176,6 +179,8 @@ public class ProgConfig {
     public String getCopyTwoPrefix() {
         return copyTwoPrefix;
     }
+
+    public String getDamageFilePath() {return damageFilePath; }
 
     public void dump() {
         helper.print("outputPath: " + this.outputPath);
