@@ -1,6 +1,5 @@
 package cn.edu.nudt.hycloudserver;
 
-import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HycloudServerApplication {
 
 	public static void main(String[] args)throws Exception {
-		ServerConfig.getConfig();
+//		ServerConfig.getConfig();
 
 		SpringApplication.run(HycloudServerApplication.class, args);
 	}

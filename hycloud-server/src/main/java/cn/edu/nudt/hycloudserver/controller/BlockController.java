@@ -88,7 +88,7 @@ public class BlockController {
     @RequestMapping(value = "/restoreBlock", method = {RequestMethod.POST})
     public int restoreBlock(String filenameKey, String blockIdxKey) throws IOException {
         int rv;
-
+//        long tstart = System.currentTimeMillis();
         String filename = JSON.parseObject(filenameKey, String.class);
         Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
 
@@ -135,6 +135,8 @@ public class BlockController {
             }
 
         }
+//        long tend = System.currentTimeMillis();
+//        helper.timing("restore block: ", tstart, tend);
         return rv;
     }
 
@@ -226,19 +228,14 @@ public class BlockController {
      * @throws IOException
      */
     public boolean copyBlock(String srcBlock, String dstBlock) throws IOException {
-//        FileSystem fs = FileSystem.get(URI.create("hdfs://192.168.6.129:9000/cpfile/"), ServerConfig.getConfig().getHdfsConf());
-
         FileSystem fs = FileSystem.get(URI.create(ServerConfig.getConfig().getHdfsYhbdHome()), ServerConfig.getConfig().getHdfsConf());
-//        helper.print("getHdfsYhbdHome: " + ServerConfig.getConfig().getHdfsYhbdHome());
-//        helper.print("srcBlock: " + srcBlock);
-//        helper.print("dstBlock: " + dstBlock);
 
         Path srcBlockPath = new Path(srcBlock);
         Path dstBlockPath = new Path(dstBlock);
-
         if(fs.exists(dstBlockPath)){
             fs.delete(dstBlockPath,true);
         }
-        return FileContext.getFileContext().util().copy(srcBlockPath, dstBlockPath);
+        boolean rv = FileContext.getFileContext().util().copy(srcBlockPath, dstBlockPath);
+        return rv;
     }
 }

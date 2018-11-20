@@ -15,8 +15,8 @@ public class BasicTransfer {
         HttpURLConnection httpsConn = null;
         try {
             httpsConn = (HttpURLConnection) url.openConnection();
-            httpsConn.setConnectTimeout(10000);
-            httpsConn.setReadTimeout(10000);
+            httpsConn.setConnectTimeout(30000);
+            httpsConn.setReadTimeout(30000);
             String temp = new String();
             String response = new String();
             httpsConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");

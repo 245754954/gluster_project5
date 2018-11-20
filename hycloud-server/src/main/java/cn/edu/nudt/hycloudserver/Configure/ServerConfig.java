@@ -27,6 +27,8 @@ public class ServerConfig {
     private String hdfsVerifyCopyOneHome;
     private String hdfsVerifyCopyTwoHome;
 
+    private String hadoopHomeDir;
+
     public static ServerConfig getConfig() throws IOException {
         if(serverConfig == null) {
             serverConfig = new ServerConfig();
@@ -69,14 +71,16 @@ public class ServerConfig {
 
         this.hdfsConf = new Configuration();
         hdfsConf.set("fs.default.name",
-                props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
+                props.getProperty("fs.default.name", "hdfs://192.168.6.129:9000"));
 
-        this.hdfsYhbdHome= props.getProperty("hdfsYhbdHome", "hdfs://192.168.6.173:9000/yhbd/");
-        this.hdfsVerifyHome= props.getProperty("hdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
+        this.hdfsYhbdHome= props.getProperty("hdfsYhbdHome", "hdfs://192.168.6.129:9000/yhbd/");
+        this.hdfsVerifyHome= props.getProperty("hdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
 
         this.copyNum = Integer.parseInt(props.getProperty("copyNum", "3"));
-        this.hdfsVerifyCopyOneHome= props.getProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
-        this.hdfsVerifyCopyTwoHome = props.getProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
+        this.hdfsVerifyCopyOneHome= props.getProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.129:9000/yhbd/copyone/");
+        this.hdfsVerifyCopyTwoHome = props.getProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+
+        this.hadoopHomeDir = props.getProperty("hadoop.home.dir", null);
         freader.close();
     }
 
@@ -84,14 +88,16 @@ public class ServerConfig {
         Properties props = new Properties();
 
         // block size in MB
-        props.setProperty("fs.default.name", "hdfs://192.168.6.173:9000");
+        props.setProperty("fs.default.name", "hdfs://192.168.6.129:9000");
 
-        props.setProperty("hdfsYhbdHome", "hdfs://192.168.6.173:9000/yhbd/");
-        props.setProperty("hdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
+        props.setProperty("hdfsYhbdHome", "hdfs://192.168.6.129:9000/yhbd/");
+        props.setProperty("hdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
 
         props.setProperty("copyNum", "3");
-        props.setProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
-        props.setProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
+        props.setProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.129:9000/yhbd/copyone/");
+        props.setProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+
+        props.setProperty("hadoop.home.dir", "E:\\CodeHub\\yhcloud-home\\winutils");
 
 
         FileWriter fwriter = new FileWriter(defaultConfigPath);
@@ -123,6 +129,10 @@ public class ServerConfig {
         return hdfsVerifyCopyTwoHome;
     }
 
+    public String getHadoopHomeDir() {
+        return hadoopHomeDir;
+    }
+
     public void dump() {
         helper.print("hdfsVerifyCopyOneHome: " + this.hdfsVerifyCopyOneHome);
         helper.print("hdfsVerifyCopyTwoHome: " + this.hdfsVerifyCopyTwoHome);
@@ -131,6 +141,7 @@ public class ServerConfig {
 
         helper.print("copyNum: " + this.copyNum);
         helper.print("hdfsConf: " + this.hdfsConf);
+        helper.print("hadoopHomeDir: " + this.hadoopHomeDir);
     }
 
     public static void main(String ... argv) throws IOException {

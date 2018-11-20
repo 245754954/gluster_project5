@@ -5,6 +5,24 @@ public class CopyID {
     public static final int CopyONE = 1;
     public static final int CopyTWO = 2;
 
+    private int id;
+
+    public CopyID() {
+    }
+
+    public CopyID(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
     public static boolean isValid(int copyID){
         boolean rv = true;
         if (copyID != Origin && copyID != CopyONE && copyID != CopyTWO){
