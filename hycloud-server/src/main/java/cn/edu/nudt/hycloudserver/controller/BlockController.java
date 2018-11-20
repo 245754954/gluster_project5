@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudserver.controller;
 
 import cn.edu.nudt.hycloudinterface.Constants.*;
-import cn.edu.nudt.hycloudinterface.entity.*;
+import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyOneDao;
