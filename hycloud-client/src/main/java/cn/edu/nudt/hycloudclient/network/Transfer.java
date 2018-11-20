@@ -4,7 +4,6 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
-import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
@@ -39,9 +38,9 @@ public class Transfer {
         return status;
     }
 
-    public static void updateBlockInfo(String filename, int blockIdx, int copyNum, BigInteger hash) throws IOException {
+    public static void addBlock(String filename, int blockIdx, int copyNum, BigInteger hash) throws IOException {
         Config config = Config.getConfig();
-        URL url = new URL(config.getManagerServerUrl() + "block/updateBlockInfo");
+        URL url = new URL(config.getManagerServerUrl() + "block/addBlock");
 
         Map<String, String> param = new HashMap<String, String>();
         param.put("filenameKey", JSON.toJSONString(filename));

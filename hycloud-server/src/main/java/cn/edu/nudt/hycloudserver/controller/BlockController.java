@@ -41,7 +41,7 @@ public class BlockController {
     @Autowired
     private BlockCopyTwoDao blockCopyTwoDao;
 
-    @RequestMapping(value = "/updateBlockInfo", method = {RequestMethod.POST})
+    @RequestMapping(value = "/addBlock", method = {RequestMethod.POST})
     public void addBlock(String filenameKey, String blockIdxKey, String copyNumKey, String hashKey){
         String filename = JSON.parseObject(filenameKey, String.class);
         Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
@@ -52,6 +52,19 @@ public class BlockController {
         blockCopyOneDao.save(new BlockCopyOne(filename, blockIdx, hashKey, BlockStatus.INTACT));
         blockCopyTwoDao.save(new BlockCopyTwo(filename, blockIdx, hashKey, BlockStatus.INTACT));
     }
+
+    @RequestMapping(value = "/updateBlock", method = {RequestMethod.POST})
+    public void updateBlock(String copyIDKey, String filenameKey, String blockIdxKey, String blockStatusKey){
+        CopyID copyID = JSON.parseObject(copyIDKey, CopyID.class);
+        String filename = JSON.parseObject(filenameKey, String.class);
+        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+        BlockStatus blockStatus = JSON.parseObject(blockStatusKey, BlockStatus.class);
+
+        _updateBlock(copyID, filename, blockIdx, blockStatus);
+    }
+
+
+
 
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})
     public int verifyBlock(String filenameKey, String blockIdxKey){
@@ -166,44 +179,47 @@ public class BlockController {
         for (int index = 0; index < blockNum; index++){
             BlockVerifyResult blockVerifyResult = blockVerifyResultList.getBlockVerifyResult(index);
 //            System.out.println(blockVerifyResult.getBlockIdx() + ",  " + blockVerifyResult.getStatus());
-            BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
-            switch (copyID){
-                case CopyID.Origin:
-                    blockTable.setStatus(blockVerifyResult.getStatus());
-                    blockTableDao.save(blockTable);
-                    if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        FileTable fileTable = fileTableDao.findByFilename(filename);
-                        fileTable.setStatus(FileStatus.DAMAGED);
-                        fileTableDao.save(fileTable);
-                    }
-                    break;
-                case CopyID.CopyONE:
-                    BlockCopyOne blockCopyOne = blockCopyOneDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
-                    blockCopyOne.setStatus(blockVerifyResult.getStatus());
-                    blockCopyOneDao.save(blockCopyOne);
-                    if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
-                        blockTableDao.save(blockTable);
-                    }
-                    break;
-                case CopyID.CopyTWO:
-                    BlockCopyTwo blockCopyTwo = blockCopyTwoDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
-                    blockCopyTwo.setStatus(blockVerifyResult.getStatus());
-                    blockCopyTwoDao.save(blockCopyTwo);
-                    if(blockVerifyResult.getStatus() != BlockStatus.INTACT){
-                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
-                        blockTableDao.save(blockTable);
-                    }
-                    break;
-            }
+
+            _updateBlock(new CopyID(copyID), filename, blockVerifyResult.getBlockIdx(), new BlockStatus(blockVerifyResult.getStatus()));
+
+//            BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
+//            switch (copyID){
+//                case CopyID.Origin:
+//                    blockTable.setStatus(blockVerifyResult.getStatus());
+//                    blockTableDao.save(blockTable);
+//                    if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
+//                        FileTable fileTable = fileTableDao.findByFilename(filename);
+//                        fileTable.setStatus(FileStatus.DAMAGED);
+//                        fileTableDao.save(fileTable);
+//                    }
+//                    break;
+//                case CopyID.CopyONE:
+//                    BlockCopyOne blockCopyOne = blockCopyOneDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
+//                    blockCopyOne.setStatus(blockVerifyResult.getStatus());
+//                    blockCopyOneDao.save(blockCopyOne);
+//                    if (blockVerifyResult.getStatus() != BlockStatus.INTACT){
+//                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+//                        blockTableDao.save(blockTable);
+//                    }
+//                    break;
+//                case CopyID.CopyTWO:
+//                    BlockCopyTwo blockCopyTwo = blockCopyTwoDao.findByFilenameAndBlockIdx(filename, blockVerifyResult.getBlockIdx());
+//                    blockCopyTwo.setStatus(blockVerifyResult.getStatus());
+//                    blockCopyTwoDao.save(blockCopyTwo);
+//                    if(blockVerifyResult.getStatus() != BlockStatus.INTACT){
+//                        blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+//                        blockTableDao.save(blockTable);
+//                    }
+//                    break;
+//            }
         }
     }
 
-    public String getBlockPath(String filename, int blockIdx) throws IOException {
+    private String getBlockPath(String filename, int blockIdx) throws IOException {
         return ServerConfig.getConfig().getHdfsVerifyHome() + filename + "_block_" + blockIdx;
     }
 
-    public String getBlockPath(String filename, int blockIdx, int copyID) throws IOException {
+    private String getBlockPath(String filename, int blockIdx, int copyID) throws IOException {
         if(!CopyID.isValid(copyID)){
             throw new IOException("getBlockPath: copyID Error");
         }
@@ -227,7 +243,7 @@ public class BlockController {
      * @return
      * @throws IOException
      */
-    public boolean copyBlock(String srcBlock, String dstBlock) throws IOException {
+    private boolean copyBlock(String srcBlock, String dstBlock) throws IOException {
         FileSystem fs = FileSystem.get(URI.create(ServerConfig.getConfig().getHdfsYhbdHome()), ServerConfig.getConfig().getHdfsConf());
 
         Path srcBlockPath = new Path(srcBlock);
@@ -237,5 +253,56 @@ public class BlockController {
         }
         boolean rv = FileContext.getFileContext().util().copy(srcBlockPath, dstBlockPath);
         return rv;
+    }
+
+    /**
+     * update information of blocks, copies and files correspondingly.
+     * @param copyID
+     * @param filename
+     * @param blockIdx
+     * @param blockStatus
+     */
+    private void _updateBlock(CopyID copyID, String filename, int blockIdx, BlockStatus blockStatus){
+        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
+        if(blockTable == null) return;
+
+        switch (copyID.getId()){
+            case CopyID.Origin:
+                blockTable.setStatus(blockStatus.getStatus());
+                blockTableDao.save(blockTable);
+                if (blockStatus.getStatus() != BlockStatus.INTACT){
+                    FileTable fileTable = fileTableDao.findByFilename(filename);
+                    if (fileTable != null){
+                        fileTable.setStatus(FileStatus.DAMAGED);
+                        fileTableDao.save(fileTable);
+                    }
+                }
+                break;
+            case CopyID.CopyONE:
+                BlockCopyOne blockCopyOne = blockCopyOneDao.findByFilenameAndBlockIdx(filename, blockIdx);
+                if (blockCopyOne == null) return;
+
+                blockCopyOne.setStatus(blockStatus.getStatus());
+                blockCopyOneDao.save(blockCopyOne);
+                if (blockStatus.getStatus() != BlockStatus.INTACT){
+                    blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+                    blockTableDao.save(blockTable);
+                }
+                break;
+            case CopyID.CopyTWO:
+                BlockCopyTwo blockCopyTwo = blockCopyTwoDao.findByFilenameAndBlockIdx(filename, blockIdx);
+                if (blockCopyTwo == null) return;
+
+                blockCopyTwo.setStatus(blockStatus.getStatus());
+                blockCopyTwoDao.save(blockCopyTwo);
+                if (blockStatus.getStatus() != BlockStatus.INTACT){
+                    blockTable.setCopyNum( (blockTable.getCopyNum() > 0) ? (blockTable.getCopyNum() - 1) : 0);
+                    blockTableDao.save(blockTable);
+                }
+                break;
+
+            default:
+                helper.err("Unknown copyID: " + copyID.getId());
+        }
     }
 }

@@ -7,7 +7,6 @@ import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
 import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
