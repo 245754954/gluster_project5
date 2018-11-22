@@ -90,7 +90,7 @@ public class DeletionHandler {
 		
 		DeletionTransfer.retrieve(granularity, segmentsNum, segmentKeys, remotePath, localPath);
 	}
-	
+
 	public static void sdel(String filename, List<String> segStrList) throws IOException {
 		if(filename == null) {
 			helper.err("Error: filename is null");
@@ -102,13 +102,13 @@ public class DeletionHandler {
 
 			DeletionHandler.sdel(filename);
 		}else {
-		    String strDel = "";
-            for (int i = 0; i < segStrList.size(); i++) {
-                strDel += segStrList.get(i) + ", ";
-            }
-            helper.print("assuredly delete segments: " + strDel);
-
+//		    String strDel = "";
+//            for (int i = 0; i < segStrList.size(); i++) {
+//                strDel += segStrList.get(i) + ", ";
+//            }
+//            helper.print("assuredly delete segments: " + strDel);
 			SegmentList segmentList = new SegmentList(segStrList);
+			segmentList.dump();
 			DeletionHandler.sdel(filename, segmentList);
 		}
 	}

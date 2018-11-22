@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloud.hadoop.config;
 
 import cn.edu.nudt.hycloudinterface.utils.helper;
+import org.apache.hadoop.conf.Configuration;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,17 +17,20 @@ public class ProgConfig {
 //    \hycloud-client\src\main\resources
     private String mConfigPath = null;
 
+    private Configuration hdfsConf;
+
     // your configuration
     private String managerServer ="127.0.0.1";
     private String managerServerPort = "8080";
-    private String inputPath ="hdfs://192.168.6.129:9000/chal/chal.txt";
+    private String inputPath ="hdfs://192.168.6.181:9000/chal/chal.txt";
     private String localChalName = "/home/dky/test/chal.txt";
-    private String chalHdfsPath = "hdfs://192.168.6.129:9000/chal/";
-    private String outputPath ="hdfs://192.168.6.129:9000/output";
-    private String blockPathPrefix = "hdfs://192.168.6.129:9000/yhbd/verify/";
-    private String copyOnePrefix = "hdfs://192.168.6.129:9000/yhbd/copyone/";
-    private String copyTwoPrefix = "hdfs://192.168.6.129:9000/yhbd/copytwo/";
+    private String chalHdfsPath = "hdfs://192.168.6.181:9000/chal/";
+    private String outputPath ="hdfs://192.168.6.181:9000/output";
+    private String blockPathPrefix = "hdfs://192.168.6.181:9000/yhbd/verify/";
+    private String copyOnePrefix = "hdfs://192.168.6.181:9000/yhbd/copyone/";
+    private String copyTwoPrefix = "hdfs://192.168.6.181:9000/yhbd/copytwo/";
     private String damageFilePath = "hdfs://master:9000/cpfile/damageFile";
+    private String systemPath = "hdfs://192.168.6.181:9000/";
 
     private int sleepTime = 30000;
 
@@ -68,18 +72,24 @@ public class ProgConfig {
         }
         FileReader freader = new FileReader(temConfigPath);
         props.load(freader);
+
+        String fsDefaultName = props.getProperty("fs.default.name", "hdfs://192.168.6.181:9000");
+        this.hdfsConf = new Configuration();
+        this.hdfsConf.set("fs.default.name", fsDefaultName);
+
         this.sleepTime = Integer.parseInt(props.getProperty("sleepTime", "30000"));
         this.managerServer = props.getProperty("managerServer", "127.0.0.1");
         this.managerServerPort = props.getProperty("managerServerPort", "8080");
-        this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
-        this.blockPathPrefix = props.getProperty("blockPathPrefix", "hdfs://192.168.6.129:9000/yhbd/verify/");
-        this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
+        this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
+        this.blockPathPrefix = props.getProperty("blockPathPrefix", "hdfs://192.168.6.181:9000/yhbd/verify/");
+        this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.181:9000/chal/");
         this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
-        this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.129:9000/output");
+        this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.181:9000/output");
 
-        this.copyOnePrefix = props.getProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
-        this.copyTwoPrefix = props.getProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+        this.copyOnePrefix = props.getProperty("copyOnePrefix", "hdfs://192.168.6.181:9000/yhbd/copyone/");
+        this.copyTwoPrefix = props.getProperty("copyTwoPrefix", "hdfs://192.168.6.181:9000/yhbd/copytwo/");
 
+        this.systemPath = props.getProperty("systemPath","hdfs://192.168.6.181:9000/");
         this.damageFilePath = props.getProperty("damageFilePath","hdfs://master:9000/cpfile/damageFile");
         freader.close();
     }
@@ -89,13 +99,13 @@ public class ProgConfig {
         props.setProperty("sleepTime", "30000");
         props.setProperty("managerServer", "127.0.0.1");
         props.setProperty("managerServerPort", "8080");
-        props.setProperty("inputPath", "hdfs://192.168.6.129:9000/chal/chal.txt");
-        props.setProperty("blockPathPrefix", "hdfs://192.168.6.129:9000/yhbd/verify/");
-        props.setProperty("chalHdfsPath", "hdfs://192.168.6.129:9000/chal/");
+        props.setProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
+        props.setProperty("blockPathPrefix", "hdfs://192.168.6.181:9000/yhbd/verify/");
+        props.setProperty("chalHdfsPath", "hdfs://192.168.6.181:9000/chal/");
         props.setProperty("localChalName", "/home/dky/test/chal.txt");
-        props.setProperty("outputPath", "hdfs://192.168.6.129:9000/output");
-        props.setProperty("copyOnePrefix", "hdfs://192.168.6.129:9000/yhbd/copyone/");
-        props.setProperty("copyTwoPrefix", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
+        props.setProperty("outputPath", "hdfs://192.168.6.181:9000/output");
+        props.setProperty("copyOnePrefix", "hdfs://192.168.6.181:9000/yhbd/copyone/");
+        props.setProperty("copyTwoPrefix", "hdfs://192.168.6.181:9000/yhbd/copytwo/");
         props.setProperty("damageFilePath","hdfs://master:9000/cpfile/damageFile");
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
@@ -181,6 +191,10 @@ public class ProgConfig {
     }
 
     public String getDamageFilePath() {return damageFilePath; }
+
+    public String getSystemPath() { return systemPath; }
+
+    public Configuration getHdfsConf() { return hdfsConf; }
 
     public void dump() {
         helper.print("outputPath: " + this.outputPath);

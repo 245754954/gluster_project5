@@ -1,5 +1,7 @@
 package cn.edu.nudt.hycloudinterface.entity;
 
+import cn.edu.nudt.hycloudinterface.utils.helper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +31,29 @@ public class SegmentList implements Serializable {
 //		this.mSegmentList = segmentList;
 //	}
 
+    /**
+     * input segment id starts with zero, while the output id starts with one to be consistent with the modulation tree
+     * the method lifts the ids by one
+     * @param segmentList
+     */
     public SegmentList(List<String> segmentList) {
-        this.mSegmentList = new ArrayList<Integer>();
-        for(String strIdx: segmentList) {
-            this.mSegmentList.add(Integer.parseInt(strIdx));
+        this.mSegmentList = null;
+        if (segmentList != null){
+            this.mSegmentList = new ArrayList<Integer>();
+            for(String strIdx: segmentList) {
+                this.mSegmentList.add(Integer.parseInt(strIdx) + 1);
+            }
         }
+    }
+
+    public void dump(){
+        String strDel = "";
+        if (this.mSegmentList != null){
+            for (int i = 0; i < this.mSegmentList.size(); i++) {
+                strDel += (mSegmentList.get(i) -1) + ", ";
+            }
+        }
+        helper.print("segments: " + strDel);
     }
 
     public boolean add(int segIdx) {
@@ -45,7 +65,11 @@ public class SegmentList implements Serializable {
     }
 
     public int size() {
-        return this.mSegmentList.size();
+        int rv = 0;
+        if (this.mSegmentList != null){
+            rv = this.mSegmentList.size();
+        }
+        return rv;
     }
 
     public List<Integer> getmSegmentList() {

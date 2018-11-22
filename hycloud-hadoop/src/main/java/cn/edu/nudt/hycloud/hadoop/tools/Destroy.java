@@ -1,13 +1,12 @@
 package cn.edu.nudt.hycloud.hadoop.tools;
 import cn.edu.nudt.hycloud.hadoop.config.ProgConfig;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileContext;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import java.net.URI;
-
-import org.apache.hadoop.fs.FileContext;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.log4j.BasicConfigurator;
 
 
 public class Destroy {
@@ -15,9 +14,8 @@ public class Destroy {
     public static final String blockPathMid = "_block_";
 
     public static void main(String[] args) throws Exception {
+        ProgConfig.getConfig();
 //        BasicConfigurator.configure();
-        Configuration conf = new Configuration();
-        conf.set("fs.default.name", "hdfs://192.168.6.129:9000");
         String order = args[0];
         int copyID = -1;
         String pathPrefix = null;
@@ -46,10 +44,22 @@ public class Destroy {
             String fileNameToDamage = args[2];
             String fileBlocknumToDamage = args[3];
             String damegeBlockPath = pathPrefix + fileNameToDamage + blockPathMid + fileBlocknumToDamage;
-            FileSystem fs = null;
-            String path = "hdfs://master:9000/";
+
+            String path = ProgConfig.getConfig().getSystemPath();
             long beginTime = System.currentTimeMillis();
-            fs = FileSystem.get(URI.create(path), conf);
+
+            helper.print("URI.create(path): " + URI.create(path));
+            helper.print("ProgConfig.getConfig().getHdfsConf(): " + ProgConfig.getConfig().getHdfsConf().toString());
+
+            Configuration configuration = new Configuration();
+            configuration.set("fs.default.name", "hdfs://192.168.6.181:9000");
+//            configuration.set("fs.hdfs.impl",
+//                    org.apache.hadoop.hdfs.DistributedFileSystem.class.getName()
+//            );
+//            configuration.set("fs.file.impl",
+//                    org.apache.hadoop.fs.LocalFileSystem.class.getName()
+//            );
+            FileSystem fs = FileSystem.get(URI.create(path), configuration);
 
             Path file1 = new Path(ProgConfig.getConfig().getDamageFilePath());
 //                      Path file2 =new Path("hdfs://master:9000/cpfile/2.txt_trash");

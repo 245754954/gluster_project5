@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: lyc
+    active: workstation
 
   #配置spring-jpa
   jpa:
@@ -26,6 +26,15 @@ spring:
     url: jdbc:mysql://192.168.6.163:3306/hycloud
     username: root
     password: 111111
+
+---
+spring:
+  profiles: workstation
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.6.181:3306/hycloud
+    username: root
+    password: 123456
 
 ---
 spring:
