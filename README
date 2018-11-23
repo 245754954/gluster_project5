@@ -135,3 +135,6 @@ Usage:
 e.g.,
     java -jar hycloud-hadoop.jar -f /testdir/testfile128MB -s 128MB
     java -jar hycloud-hadoop.jar -f /testdir/testfile1GB -s 1GB
+
+
+java -jar destroy-with-update.jar origin -f testfile -b 0

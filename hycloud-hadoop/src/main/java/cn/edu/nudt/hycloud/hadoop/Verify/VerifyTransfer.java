@@ -8,8 +8,6 @@ import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class VerifyTransfer {
 
@@ -17,10 +15,15 @@ public class VerifyTransfer {
     public static Challenge fetchChallenge() throws IOException {
         URL url = new URL(ProgConfig.getConfig().getManagerServerUrl() + "hdfs/fetchChallenge");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("fetchChallenge", JSON.toJSONString("fetchChallenge"));
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("fetchChallenge", JSON.toJSONString("fetchChallenge"));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        String recvStr = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("fetchChallenge", JSON.toJSONString("fetchChallenge"));
+        String recvStr = basicTransfer.doPost(url);
+
+
         Challenge challenge = JSON.parseObject(recvStr, Challenge.class);
         // store challenge
 //        storeChallenge(challenge);
@@ -47,12 +50,17 @@ public class VerifyTransfer {
     public static void submitResult(int copyID, String filename, BlockVerifyResultList blockVerifyResultList) throws IOException {
         URL url = new URL(ProgConfig.getConfig().getManagerServerUrl() + "block/submitBlockVerifyResult");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("copyIDKey", JSON.toJSONString(copyID));
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockVerifyResultListKey", JSON.toJSONString(blockVerifyResultList));
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("copyIDKey", JSON.toJSONString(copyID));
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockVerifyResultListKey", JSON.toJSONString(blockVerifyResultList));
+//        BasicTransfer.doPost(url, param);
 
-        BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("copyIDKey", JSON.toJSONString(copyID));
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockVerifyResultListKey", JSON.toJSONString(blockVerifyResultList));
+        basicTransfer.doPost(url);
     }
 
 

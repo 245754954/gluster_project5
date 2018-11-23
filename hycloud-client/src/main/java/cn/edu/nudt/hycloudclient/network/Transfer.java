@@ -9,8 +9,6 @@ import com.alibaba.fastjson.JSON;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Transfer {
 
@@ -18,21 +16,26 @@ public class Transfer {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "file/addFile");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockNumKey", JSON.toJSONString(blockNum));
-
-        BasicTransfer.doPost(url, param);
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockNumKey", JSON.toJSONString(blockNum));
+//        BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockNumKey", JSON.toJSONString(blockNum));
+        basicTransfer.doPost(url);
     }
 
     public static int verifyFile(String filename) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "file/verifyFile");
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-
-        String recvStr = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        String recvStr = basicTransfer.doPost(url);
         Integer status = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(filename + " status: " + FileStatus.getStatusString(status));
         return status;
@@ -42,13 +45,18 @@ public class Transfer {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "block/addBlock");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
-        param.put("copyNumKey", JSON.toJSONString(copyNum));
-        param.put("hashKey", JSON.toJSONString(hash));
-
-        BasicTransfer.doPost(url, param);
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        param.put("copyNumKey", JSON.toJSONString(copyNum));
+//        param.put("hashKey", JSON.toJSONString(hash));
+//        BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        basicTransfer.update("copyNumKey", JSON.toJSONString(copyNum));
+        basicTransfer.update("hashKey", JSON.toJSONString(hash));
+        basicTransfer.doPost(url);
     }
 //
 //    public static void updateBlockCopyOne(String filename, int blockIdx, BigInteger hash) throws IOException {
@@ -78,11 +86,16 @@ public class Transfer {
     public static boolean recoverableBlock(String filename, int blockIdx) throws IOException {
         URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/recoverableBlock");
 
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        Map<String, String> param = new HashMap<>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        String recvStr = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        String recvStr = basicTransfer.doPost(url);
+
         boolean rv = JSON.parseObject(recvStr, Boolean.class);
 //        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
         return  rv;
@@ -91,25 +104,48 @@ public class Transfer {
     public static int restoreBlock(String filename, int blockIdx) throws IOException {
         URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/restoreBlock");
 
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        Map<String, String> param = new HashMap<>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        String recvStr = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        String recvStr = basicTransfer.doPost(url);
+
         Integer rv = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
         return  rv;
     }
 
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
-        Config config = Config.getConfig();
-        URL url = new URL(config.getManagerServerUrl() + "block/verifyBlock");
+        URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/verifyBlock");
 
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        Map<String, String> param = new HashMap<>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        String recvStr = BasicTransfer.doPost(url, param);
+//        long tstart, tend;
+//
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        String recvStr = basicTransfer.doPost(url);
+
+
+//        tstart = System.currentTimeMillis();
+//        PlusTransfer plusTransfer = new PlusTransfer();
+//        plusTransfer.update("filenameKey", JSON.toJSONString(filename));
+//        plusTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+//        tend = System.currentTimeMillis();
+//        helper.timing("plusTransfer.update", tstart, tend);
+//
+//        String recvStr = plusTransfer.doPost(url);
+//        tend = System.currentTimeMillis();
+//        helper.timing("plusTransfer.doPost", tstart, tend);
+
         Integer status = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(filename + ", " + blockIdx + ", status = " + status);
         return status;
@@ -118,11 +154,14 @@ public class Transfer {
     public static int deleteFileBlocks(String filename) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "block/deleteFileBlocks");
+//        Map<String, String> param = new HashMap<>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        String recvStr = basicTransfer.doPost(url);
 
-        String recvStr = BasicTransfer.doPost(url, param);
         Integer cnt = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(cnt + "number of blocks deleted");
         return cnt;
@@ -131,11 +170,14 @@ public class Transfer {
     public static int deleteFile(String filename) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "file/deleteFile");
+//        Map<String, String> param = new HashMap<>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        String recvStr = BasicTransfer.doPost(url, param);
 
-        Map<String, String> param = new HashMap<>();
-        param.put("filenameKey", JSON.toJSONString(filename));
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        String recvStr = basicTransfer.doPost(url);
 
-        String recvStr = BasicTransfer.doPost(url, param);
         Integer cnt = JSON.parseObject(recvStr, Integer.class);
 //        helper.print(cnt + "number of files deleted");
         return cnt;
@@ -167,11 +209,14 @@ public class Transfer {
     public static ModulationTree obtainRemoteTree(String filename) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "tree/obtainRemoteTree");
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filename", JSON.toJSONString(filename));
+//        String recvString = BasicTransfer.doPost(url, param);
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filename", JSON.toJSONString(filename));
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filename", JSON.toJSONString(filename));
+        String recvString = basicTransfer.doPost(url);
 
-        String recvString = BasicTransfer.doPost(url, param);
         ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
@@ -180,11 +225,16 @@ public class Transfer {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "tree/obtainRemoteTreeWithDel");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filename", JSON.toJSONString(filename));
-        param.put("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filename", JSON.toJSONString(filename));
+//        param.put("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
+//        String recvString = BasicTransfer.doPost(url, param);
 
-        String recvString = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filename", JSON.toJSONString(filename));
+        basicTransfer.update("segmentsToDelete", JSON.toJSONString(segmentsToDelete));
+        String recvString = basicTransfer.doPost(url);
+
         ModulationTree tree =JSON.parseObject(recvString, ModulationTree.class);
         return tree;
     }
@@ -193,14 +243,16 @@ public class Transfer {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "tree/updateModulationTree");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("modulationTreeKey", JSON.toJSONString(tree));
-//
-//        String treeStr = JSON.toJSONString(tree);
-//        helper.print("treeLength: " + treeStr.length());
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("modulationTreeKey", JSON.toJSONString(tree));
+//        String recvString = BasicTransfer.doPost(url, param);
 
-        String recvString = BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("modulationTreeKey", JSON.toJSONString(tree));
+        String recvString = basicTransfer.doPost(url);
+
         return JSON.parseObject(recvString, Boolean.class);
     }
 

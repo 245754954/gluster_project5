@@ -8,8 +8,6 @@ import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DestoryTransfer {
 
@@ -17,12 +15,18 @@ public class DestoryTransfer {
         ProgConfig progConfig = ProgConfig.getConfig();
         URL url = new URL(progConfig.getManagerServerUrl() + "block/updateBlock");
 
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("copyIDKey", JSON.toJSONString(copyID));
-        param.put("filenameKey", JSON.toJSONString(filename));
-        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
-        param.put("blockStatusKey", JSON.toJSONString(blockStatus));
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("copyIDKey", JSON.toJSONString(copyID));
+//        param.put("filenameKey", JSON.toJSONString(filename));
+//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
+//        param.put("blockStatusKey", JSON.toJSONString(blockStatus));
+//        BasicTransfer.doPost(url, param);
 
-        BasicTransfer.doPost(url, param);
+        BasicTransfer basicTransfer = new BasicTransfer();
+        basicTransfer.update("copyIDKey", JSON.toJSONString(copyID));
+        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        basicTransfer.update("blockStatusKey", JSON.toJSONString(blockStatus));
+        basicTransfer.doPost(url);
     }
 }

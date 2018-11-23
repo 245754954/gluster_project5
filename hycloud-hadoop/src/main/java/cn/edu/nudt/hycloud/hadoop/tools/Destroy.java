@@ -1,85 +1,115 @@
 package cn.edu.nudt.hycloud.hadoop.tools;
+
 import cn.edu.nudt.hycloud.hadoop.config.ProgConfig;
-import cn.edu.nudt.hycloudinterface.utils.helper;
-import org.apache.hadoop.conf.Configuration;
+import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
+import cn.edu.nudt.hycloudinterface.Constants.CopyID;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import java.io.IOException;
 import java.net.URI;
-
+import java.util.List;
 
 public class Destroy {
+    public final String blockPathMid = "_block_";
 
-    public static final String blockPathMid = "_block_";
+    @Parameter(names= {"--config","-c"}, description = "path to config file")
+    private String configPath=null;
 
-    public static void main(String[] args) throws Exception {
-        ProgConfig.getConfig();
-//        BasicConfigurator.configure();
-        String order = args[0];
+    @Parameter(names= {"--help","-h"}, help=false, description = "help information")
+    private boolean help = false;
+
+    @Parameter(names= {"--disable.update"}, description = "whether to update")
+    private boolean disableUpdate = true;
+
+    //    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
+    @Parameter(required = true,
+            description = "which copy to destroy, " +
+                    "including origin, copyone, copytwo")
+    private String copy = null;
+
+    @Parameter(names= {"--file","-f"}, description = "filename")
+    private String filename = null;
+
+    @Parameter(names= {"--block","-b"}, variableArity = true, description = "list of blocks to destroy")
+    private List<String> strBlockIdxList = null;
+//    @Parameter(names= {"--block","-b"}, description = "block to destroy")
+//    private String strBlockIdx;
+
+
+    public static void main(String[] argv) throws Exception {
+        Destroy destroy = new Destroy();
+        JCommander.Builder builder = JCommander.newBuilder();
+        builder.addObject(destroy);
+
+        JCommander jcmd = builder.build();
+        jcmd.parse(argv);
+        jcmd.setProgramName("hycloud-client");
+
+        ProgConfig progConfig = ProgConfig.getConfig(destroy.configPath);
+//        progConfig.dump();
+
+        destroy.run(jcmd);
+    }
+
+    private void run(JCommander jcmd) throws IOException {
+        if (help){
+            jcmd.usage();
+            System.exit(0);
+        }
+
+
+//        BasicConfigurator.configure();   damageBlock origin/copyone/copytwo filename blocknum
         int copyID = -1;
         String pathPrefix = null;
-        if (order.equals("damageBlock")) {
-            String str_copyID = args[1];
-            switch (str_copyID.toUpperCase()) {
+
+            switch (this.copy.toUpperCase()) {
                 case "ORIGIN":
                     copyID = 0;
                     pathPrefix = ProgConfig.getConfig().getBlockPathPrefix();
-                    System.out.println("0");
                     break;
                 case "COPYONE":
                     copyID = 1;
                     pathPrefix = ProgConfig.getConfig().getCopyOnePrefix();
-                    System.out.println("1");
                     break;
                 case "COPYTWO":
                     copyID = 2;
                     pathPrefix = ProgConfig.getConfig().getCopyTwoPrefix();
-                    System.out.println("2");
                     break;
                 default:
-                    System.out.println("Wrong copyID!");
+                    System.err.println("Wrong copyID!");
+                    System.exit(-1);
                     break;
             }
-            String fileNameToDamage = args[2];
-            String fileBlocknumToDamage = args[3];
-            String damegeBlockPath = pathPrefix + fileNameToDamage + blockPathMid + fileBlocknumToDamage;
 
-            String path = ProgConfig.getConfig().getSystemPath();
             long beginTime = System.currentTimeMillis();
+            FileSystem fs = FileSystem.get(URI.create(ProgConfig.getConfig().getSystemPath()),
+                    ProgConfig.getConfig().getHdfsConf());
+            Path srcBlock = new Path(ProgConfig.getConfig().getDamageFilePath());
+            String dstBlockPrefix = pathPrefix + this.filename + blockPathMid;
+            for (String blockIdx: strBlockIdxList){
+                Path dstBlock = new Path(dstBlockPrefix + blockIdx);
 
-            helper.print("URI.create(path): " + URI.create(path));
-            helper.print("ProgConfig.getConfig().getHdfsConf(): " + ProgConfig.getConfig().getHdfsConf().toString());
-
-            Configuration configuration = new Configuration();
-            configuration.set("fs.default.name", "hdfs://192.168.6.181:9000");
-//            configuration.set("fs.hdfs.impl",
-//                    org.apache.hadoop.hdfs.DistributedFileSystem.class.getName()
-//            );
-//            configuration.set("fs.file.impl",
-//                    org.apache.hadoop.fs.LocalFileSystem.class.getName()
-//            );
-            FileSystem fs = FileSystem.get(URI.create(path), configuration);
-
-            Path file1 = new Path(ProgConfig.getConfig().getDamageFilePath());
-//                      Path file2 =new Path("hdfs://master:9000/cpfile/2.txt_trash");
-            Path file2 = new Path(damegeBlockPath);
-
-            if(fs.exists(file2)){
-                fs.delete(file2,true);
-                System.out.println("Damage result: " + FileContext.getFileContext().util().copy(file1,file2));
-
-                long endTime = System.currentTimeMillis();
-                System.out.println("spend time:" + ((endTime - beginTime) ) + " ms");
-
-                System.out.println("copy finished!");
+                if(fs.exists(dstBlock)){
+                    fs.delete(dstBlock,true);
+                    boolean result = FileContext.getFileContext().util().copy(srcBlock,dstBlock);
+//                    System.out.println("Damage result: " + result);
+                    if (result && disableUpdate) {
+                        DestoryTransfer.updateBlockInfo(new CopyID(copyID),
+                                this.filename,
+                                Integer.parseInt(blockIdx),
+                                new BlockStatus(BlockStatus.DAMAGED));
+                    }
+                    long endTime = System.currentTimeMillis();
+                    System.out.println("Destroyed block " + blockIdx + " of " + filename + " (" + (endTime - beginTime) + " ms)");
+//                    System.out.println("spend time:" + ((endTime - beginTime) ) + " ms");
+                }
+                else {
+                    System.out.println("no such file or block!");
+                }
             }
-            else {
-                System.out.println("no such file or block!");
-            }
-
-        } else {
-            System.out.println("error order!");
-        }
     }
 }

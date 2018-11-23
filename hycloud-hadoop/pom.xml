@@ -36,6 +36,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <outputFile>target/verify-background.jar</outputFile>
                             <transformers>
                                 <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>-->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -51,11 +52,11 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>target/destroy.jar</outputFile>
+                            <outputFile>target/destroy-without-update.jar</outputFile>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cn.edu.nudt.hycloud.hadoop.tools.Destroy</mainClass>
+                                    <mainClass>cn.edu.nudt.hycloud.hadoop.tools.DestroyWithoutUpdate</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -67,11 +68,11 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>target/destroy-with-update.jar</outputFile>
+                            <outputFile>target/destroy.jar</outputFile>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cn.edu.nudt.hycloud.hadoop.tools.DestroyWithUpdate</mainClass>
+                                    <mainClass>cn.edu.nudt.hycloud.hadoop.tools.Destroy</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
