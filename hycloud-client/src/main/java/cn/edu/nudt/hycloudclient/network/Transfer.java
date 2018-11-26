@@ -122,33 +122,9 @@ public class Transfer {
     public static int verifyBlock(String filename, int blockIdx) throws IOException {
         URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/verifyBlock");
 
-//        Map<String, String> param = new HashMap<>();
-//        param.put("filenameKey", JSON.toJSONString(filename));
-//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
-//        String recvStr = BasicTransfer.doPost(url, param);
-
-//        long tstart, tend;
-//
-        BasicTransfer basicTransfer = new BasicTransfer();
-        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
-        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
-        String recvStr = basicTransfer.doPost(url);
-
-
-//        tstart = System.currentTimeMillis();
-//        PlusTransfer plusTransfer = new PlusTransfer();
-//        plusTransfer.update("filenameKey", JSON.toJSONString(filename));
-//        plusTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
-//        tend = System.currentTimeMillis();
-//        helper.timing("plusTransfer.update", tstart, tend);
-//
-//        String recvStr = plusTransfer.doPost(url);
-//        tend = System.currentTimeMillis();
-//        helper.timing("plusTransfer.doPost", tstart, tend);
-
-        Integer status = JSON.parseObject(recvStr, Integer.class);
-//        helper.print(filename + ", " + blockIdx + ", status = " + status);
-        return status;
+        String paramData = "filenameKey=" + filename + "&blockIdxKey=" + blockIdx + "&";
+        String recvStr = BasicTransfer.doPost(url, paramData);
+        return Integer.parseInt(recvStr);
     }
 
     public static int deleteFileBlocks(String filename) throws IOException {

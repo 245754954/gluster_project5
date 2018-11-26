@@ -68,10 +68,11 @@ public class BlockController {
 
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})
     public int verifyBlock(String filenameKey, String blockIdxKey){
-        String filename = JSON.parseObject(filenameKey, String.class);
-        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+//        String filename = JSON.parseObject(filenameKey, String.class);
+//        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
 
-        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
+        Integer blockIdx = Integer.parseInt(blockIdxKey);
+        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filenameKey, blockIdx);
         int rv = BlockStatus.NOFOUND;
         if(blockTable != null){
                 rv = blockTable.getStatus();
