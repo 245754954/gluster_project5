@@ -118,6 +118,9 @@ public class DeletionTransfer {
 			output.write(outBuf, 0, outBuf.length);
 			output.flush();
 			i++;
+			if(i % 500 == 0){
+				helper.print("\tfinished " + i + "/" + segmentKeys.size());
+			}
 		}
 		fis.close();
 		output.close();

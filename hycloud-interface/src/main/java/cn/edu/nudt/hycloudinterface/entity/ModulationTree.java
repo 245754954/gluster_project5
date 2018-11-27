@@ -79,17 +79,21 @@ public class ModulationTree implements Serializable{
 
             BigInteger xorTem = mTree.get(0).mModulator.xor(new BigInteger(digest.digest(masterKey.toByteArray())));
             hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
-//			for(int i = 1; i < mTree.size(); i++) {
-            for(int i = 1; i < this.mLeavesStart + mSegmentsNum; i++) {
-                int fidx = father(i);
-                xorTem = mTree.get(i).mModulator.xor(hashChains.get(fidx));
-                hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
+            if (this.mSegmentsNum == 1){
+                keys.add(hashChains.get(0));
+            }else{
+                //			for(int i = 1; i < mTree.size(); i++) {
+                for(int i = 1; i < this.mLeavesStart + mSegmentsNum; i++) {
+                    int fidx = father(i);
+                    xorTem = mTree.get(i).mModulator.xor(hashChains.get(fidx));
+                    hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
 
-                if(i >= this.mLeavesStart) {
-                    if(mTree.get(i).mStatus == Node.Deleted) {
-                        keys.add(null);
-                    }else {
-                        keys.add(hashChains.get(i));
+                    if(i >= this.mLeavesStart) {
+                        if(mTree.get(i).mStatus == Node.Deleted) {
+                            keys.add(null);
+                        }else {
+                            keys.add(hashChains.get(i));
+                        }
                     }
                 }
             }
