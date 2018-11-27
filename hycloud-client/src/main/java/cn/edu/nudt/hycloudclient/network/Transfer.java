@@ -4,6 +4,7 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
@@ -86,19 +87,17 @@ public class Transfer {
     public static boolean recoverableBlock(String filename, int blockIdx) throws IOException {
         URL url = new URL(Config.getConfig().getManagerServerUrl() + "block/recoverableBlock");
 
-//        Map<String, String> param = new HashMap<>();
-//        param.put("filenameKey", JSON.toJSONString(filename));
-//        param.put("blockIdxKey", JSON.toJSONString(blockIdx));
-//        String recvStr = BasicTransfer.doPost(url, param);
+//        BasicTransfer basicTransfer = new BasicTransfer();
+//        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
+//        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
+        String paramData = "filenameKey=" + filename + "&blockIdxKey=" + blockIdx;
+        String recvStr = BasicTransfer.doPost(url, paramData);
+        helper.print("recoverableBlock: " + recvStr);
+        return Boolean.parseBoolean(recvStr);
 
-        BasicTransfer basicTransfer = new BasicTransfer();
-        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
-        basicTransfer.update("blockIdxKey", JSON.toJSONString(blockIdx));
-        String recvStr = basicTransfer.doPost(url);
-
-        boolean rv = JSON.parseObject(recvStr, Boolean.class);
-//        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
-        return  rv;
+//        boolean rv = JSON.parseObject(recvStr, Boolean.class);
+////        helper.print(filename + ", " + blockIdx + ", recovered = " + rv);
+//        return  rv;
     }
 
     public static int restoreBlock(String filename, int blockIdx) throws IOException {

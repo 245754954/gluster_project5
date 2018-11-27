@@ -84,18 +84,26 @@ public class BlockController {
     public boolean recoverableBlock(String filenameKey, String blockIdxKey) throws IOException {
         boolean rv = false;
 
-        String filename = JSON.parseObject(filenameKey, String.class);
-        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+//        String filename = JSON.parseObject(filenameKey, String.class);
+//        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
+
+        helper.print("filenameKey: " + filenameKey);
+        helper.print("blockIdxKey: " + blockIdxKey);
+        int blockIdx = Integer.parseInt(blockIdxKey);
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // Scheme 2: query database
-        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filename, blockIdx);
+        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filenameKey, blockIdx);
         if (blockTable != null && blockTable.getCopyNum() > 0){
             rv = true;
         }
+        ///////////////////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // Scheme 1: query the platform directly, which may not response in time.
+        // TO DO
+        ///////////////////////////////////////////////////////////////////////////////////////
+
         return rv;
     }
 

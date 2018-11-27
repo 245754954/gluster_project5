@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: workstation
+    active: lyc
 
   #配置spring-jpa
   jpa:
