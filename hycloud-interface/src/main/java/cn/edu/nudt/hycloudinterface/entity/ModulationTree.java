@@ -80,7 +80,12 @@ public class ModulationTree implements Serializable{
             BigInteger xorTem = mTree.get(0).mModulator.xor(new BigInteger(digest.digest(masterKey.toByteArray())));
             hashChains.add(new BigInteger(digest.digest(xorTem.toByteArray())));
             if (this.mSegmentsNum == 1){
-                keys.add(hashChains.get(0));
+                int index = 0; // only one segment
+                if(mTree.get(index).mStatus == Node.Deleted) {
+                    keys.add(null);
+                }else {
+                    keys.add(hashChains.get(index));
+                }
             }else{
                 //			for(int i = 1; i < mTree.size(); i++) {
                 for(int i = 1; i < this.mLeavesStart + mSegmentsNum; i++) {

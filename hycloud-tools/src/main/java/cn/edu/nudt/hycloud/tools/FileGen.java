@@ -62,9 +62,17 @@ public class FileGen {
             n = Integer.parseInt(size.substring(0,size.length()-1));
             p = 0;
         }
+        int nexth = 0;
         for (int i = 0; i < n; i++){
             for (int j = 0; j < Math.pow(1024,p); j++) {
-                bufferedWriter.write(charlist[rand.nextInt(36)]);
+                if (nexth == 63) {
+                    bufferedWriter.write('\n');
+                    nexth = 0;
+                }
+                else {
+                    bufferedWriter.write(charlist[rand.nextInt(36)]);
+                }
+                nexth++;
             }
         }
         bufferedWriter.flush();

@@ -1,10 +1,18 @@
 #!/bin/sh
 
+#set -x
+
 mvn clean package -DskipTests
 
 # client
 cp ./hycloud-client/target/hycloud-client.jar ~/run/client/
+echo "copy hycloud-client.jar to ~/run/client"
 cp ./hycloud-client/client.properties ~/run/client/
+echo "copy client.properties to ~/run/client"
+
+# filegen
+cp ./hycloud-tools/target/hycloud-filegen.jar ~/run/tools/
+echo "copy hycloud-filegen.jar to ~/run/tools"
 
 # server
 scp ./hycloud-server/server.properties master:/home/hadoop/run/server/

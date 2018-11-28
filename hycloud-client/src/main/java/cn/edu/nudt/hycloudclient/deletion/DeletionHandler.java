@@ -108,7 +108,7 @@ public class DeletionHandler {
 //            }
 //            helper.print("assuredly delete segments: " + strDel);
 			SegmentList segmentList = new SegmentList(segStrList);
-			segmentList.dump();
+			segmentList.dump("Segments to delete: ");
 			DeletionHandler.sdel(filename, segmentList);
 		}
 	}
@@ -182,8 +182,8 @@ public class DeletionHandler {
                 strDeleted += i + ", ";
             }
         }
-        helper.print("total segments: " + segStatuses.size());
-        helper.print("deleted segments: " + strDeleted);
+        helper.print("Number of total segments: " + segStatuses.size());
+        helper.print("Deleted segments: " + strDeleted);
 	}
 	
 }

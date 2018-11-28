@@ -46,14 +46,14 @@ public class SegmentList implements Serializable {
         }
     }
 
-    public void dump(){
+    public void dump(String label){
         String strDel = "";
         if (this.mSegmentList != null){
             for (int i = 0; i < this.mSegmentList.size(); i++) {
                 strDel += (mSegmentList.get(i) -1) + ", ";
             }
         }
-        helper.print("segments: " + strDel);
+        helper.print(label + strDel);
     }
 
     public boolean add(int segIdx) {
