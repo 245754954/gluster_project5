@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: lyc
+    active: master-mysql
 
   #配置spring-jpa
   jpa:
@@ -8,13 +8,13 @@ spring:
       #create代表每次启动都会创建一个新的表，如果该表中有数据也会删除该数据
       #我们常用update，update启动时会给我们创建表，但是如果已经存在，就只是跟新
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 ---
 spring:
-  profiles: zfc
+  profiles: master-mysql
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/hycloud
+    url: jdbc:mysql://192.168.8.203:3306/hycloud
     username: root
     password: 123456
 

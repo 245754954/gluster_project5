@@ -23,17 +23,21 @@ public class HDFSController {
 
     @RequestMapping(value = "/fetchChallenge", method = {RequestMethod.POST})
     public Challenge fetchChallenge(String fetchChallenge){
+        Challenge challenge = null;
 
         long fileNum = fileTableDao.count();
-        long fid = ThreadLocalRandom.current().nextLong(fileNum);
+        if (fileNum != 0) {
 
-        List<FileTable> fileList = fileTableDao.findAll();
-        helper.print("fileNum: " + fileNum + ", fid: " + fid + ", fileList.size() = " + fileList.size());
 
-        FileTable fileTable = fileList.get((int) fid);
-        Challenge challenge = new Challenge(fileTable.getFilename(), fileTable.getBlockNum());
+            long fid = ThreadLocalRandom.current().nextLong(fileNum);
 
-        helper.print("Challenge: filename = " + challenge.getFilename() + ", blockNum = " + challenge.getBlockNum());
+            List<FileTable> fileList = fileTableDao.findAll();
+            helper.print("fileNum: " + fileNum + ", fid: " + fid + ", fileList.size() = " + fileList.size());
+
+            FileTable fileTable = fileList.get((int) fid);
+            challenge = new Challenge(fileTable.getFilename(), fileTable.getBlockNum());
+            helper.print("Challenge: filename = " + challenge.getFilename() + ", blockNum = " + challenge.getBlockNum());
+        }
         return  challenge;
     }
 

@@ -22,8 +22,8 @@ public class Destroy {
     @Parameter(names= {"--help","-h"}, help=false, description = "help information")
     private boolean help = false;
 
-    @Parameter(names= {"--disable.update"}, description = "whether to update")
-    private boolean disableUpdate = true;
+    @Parameter(names= {"--disable.update"}, description = "whether to disable update")
+    private boolean disableUpdate = false;
 
     //    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
     @Parameter(required = true,
@@ -97,7 +97,7 @@ public class Destroy {
                     fs.delete(dstBlock,true);
                     boolean result = FileContext.getFileContext().util().copy(srcBlock,dstBlock);
 //                    System.out.println("Damage result: " + result);
-                    if (result && disableUpdate) {
+                    if (result && !disableUpdate) {
                         DestoryTransfer.updateBlockInfo(new CopyID(copyID),
                                 this.filename,
                                 Integer.parseInt(blockIdx),
