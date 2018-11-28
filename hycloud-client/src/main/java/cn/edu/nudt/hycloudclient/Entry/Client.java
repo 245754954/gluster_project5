@@ -20,7 +20,7 @@ public class Client {
     @Parameter(names= {"--config","-c"}, description = "path to config file")
     private String configPath = null;
 
-    @Parameter(names= {"--help","-h"}, help=false, description = "help information")
+    @Parameter(names= {"--help","-h"}, description = "help information")
     private boolean help = false;
 
 //    @Parameter(names= {"--action","-a"}, required = true, description = "action to perform")
@@ -62,7 +62,8 @@ public class Client {
         jcmd.parse(argv);
         jcmd.setProgramName("hycloud-client");
 
-        Config conf = Config.getConfig(client.configPath);
+        Config.getConfig(client.configPath);
+//        Config conf = Config.getConfig(client.configPath);
 //        conf.dump();
 
         client.run(jcmd);
@@ -95,13 +96,13 @@ public class Client {
                 helper.timing(strAction, tstart,tend);
                 break;
             case Action.VERIFY:
-                tstart = System.currentTimeMillis();
+//                tstart = System.currentTimeMillis();
 
                 StorageHandler.verifyBlock(sourcefile, blocks);
 //                StorageHandler.verifyFile(veifyFiles);
 
-                tend = System.currentTimeMillis();
-                helper.timing(strAction, tstart,tend);
+//                tend = System.currentTimeMillis();
+//                helper.timing(strAction, tstart,tend);
                 break;
             case Action.RECOVERABLE:
                 tstart = System.currentTimeMillis();

@@ -1,4 +1,8 @@
 ###########################################################################
+Package and deploy:
+1) deploy.sh
+
+###########################################################################
 The project consists of the following modules:
 1) hycloud-server
 2) hycloud-client

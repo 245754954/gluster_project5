@@ -7,6 +7,7 @@ import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
 import cn.edu.nudt.hycloudinterface.Constants.BlockVerifyResult;
 import cn.edu.nudt.hycloudinterface.Constants.CopyID;
 import cn.edu.nudt.hycloudinterface.entity.*;
+import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -184,63 +185,38 @@ public class VerifyHandler {
         job.setReducerClass(MyReduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.setInputPaths(job, ProgConfig.getConfig().getInputPath());
+//        FileInputFormat.setInputPaths(job, ProgConfig.getConfig().getInputPath());
+        FileInputFormat.setInputPaths(job, ProgConfig.getConfig().getChalHdfsPath());
         FileOutputFormat.setOutputPath(job,new Path(ProgConfig.getConfig().getOutputPath()));
         job.waitForCompletion(true);
 
         BlockVerifyResultList mBlockVerifyResultList = readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
         for (int i = 0; i < mBlockVerifyResultList.size(); i++) {
             BlockVerifyResult blockVerifyResult = mBlockVerifyResultList.getBlockVerifyResult(i);
-            System.out.println(copyID + ",  " + blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
+            helper.print(ProgConfig.getConfig().isVerbose(), copyID + ",  " + blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
         }
         VerifyTransfer.submitResult(copyID, challenge.getFilename(), mBlockVerifyResultList);
 
     }
 
     public void startVerify() throws Exception{
-      Challenge challenge = VerifyTransfer.fetchChallenge();
-      System.out.println(challenge.getFilename() + ", " + challenge.getBlockNum());
+        Challenge challenge = VerifyTransfer.fetchChallenge();
+        if (challenge == null) {
+            return;
+        }
 //        Challenge challenge = new Challenge();
-//        challenge.setBlockNum(new Long((long)30));
-//        challenge.setFilename("jdk.tar.gz");
+//        challenge.setFilename("test128");
+//        challenge.setBlockNum(6L);
+        helper.print(ProgConfig.getConfig().isVerbose(), challenge.getFilename() + ", " + challenge.getBlockNum());
 
-        Configuration conf=new Configuration();
+        Configuration conf = new Configuration();
         conf.setBoolean("fs.hdfs.impl.disable.cache", true);
-
 
         for (int index = 0; index < 3; index++) {
             storeChallenge(CopyID.getCopyID(index), challenge);
 
-            subStartVerify(CopyID.getCopyID(index),challenge, conf);
+            subStartVerify(CopyID.getCopyID(index), challenge, conf);
         }
-
-//
-//
-//        Path outputpath=new Path(ProgConfig.getConfig().getOutputPath());    //输出路径
-//        FileSystem filesystem = outputpath.getFileSystem(conf);
-//        if (filesystem.exists(outputpath)) {
-//            filesystem.delete(outputpath,true);
-//        }
-//
-//        Job job=Job.getInstance(conf);     //定义一个job，启动任务
-//        job.setJobName("sha-256");
-//        job.setJarByClass(VerifyHandler.class);
-//        job.setMapperClass(MyMapper.class);
-//        job.setReducerClass(MyReduce.class);
-//        job.setOutputKeyClass(Text.class);
-//        job.setOutputValueClass(IntWritable.class);
-//        FileInputFormat.setInputPaths(job, challengeFile);
-//        FileOutputFormat.setOutputPath(job,new Path(ProgConfig.getConfig().getOutputPath()));
-//        job.waitForCompletion(true);
-//
-//        readOutput(ProgConfig.getConfig().getOutputPath() + "/part-r-00000");
-//        //System.out.println(status);
-//
-////        for (int i = 0; i < this.mBlockVerifyResultList.size(); i++) {
-////            BlockVerifyResult blockVerifyResult = this.mBlockVerifyResultList.getBlockVerifyResult(i);
-////            helper.print(blockVerifyResult.getBlockIdx() + ", " + blockVerifyResult.getStatus());
-////        }
-//        VerifyTransfer.submitResult(1, challenge.getFilename(), mBlockVerifyResultList);
     }
 
     public void storeChallenge(int copyID, Challenge challenge) throws Exception{
@@ -257,36 +233,24 @@ public class VerifyHandler {
                 break;
         }
 
-        Configuration conf=new Configuration();
         String filename = challenge.getFilename();
-        String fileHdfsPath = null;
         long blocknum = challenge.getBlockNum();
+
+        Path chalPath = new Path(ProgConfig.getConfig().getChalHdfsPath());
+
+        FileSystem fileSystem = FileSystem.get(ProgConfig.getConfig().getHdfsConf());
+//        Configuration configuration = new Configuration();
+//        FileSystem fileSystem = chalPath.getFileSystem(configuration);
+        PrintWriter writer = new PrintWriter(fileSystem.create(chalPath));
         long i = 0;
-        PrintWriter writer = null;
-        writer = new PrintWriter(ProgConfig.getConfig().getLocalChalName(), "UTF-8");
         while (i < blocknum) {
-            String line = "";
-            fileHdfsPath = pathPrefix + filename + blockPathMid + i;
-            line += fileHdfsPath;
+            String line = pathPrefix + filename + blockPathMid + i;
             writer.println(line);
             i++;
         }
         writer.close();
-        putToHDFS(ProgConfig.getConfig().getLocalChalName(),ProgConfig.getConfig().getChalHdfsPath(),conf);
     }
 
-    public boolean putToHDFS(String src , String dst , Configuration conf){
-        Path dstPath = new Path(dst) ;
-        try{
-            FileSystem hdfs = dstPath.getFileSystem(conf) ;
-            hdfs.copyFromLocalFile(false, new Path(src), dstPath) ;
-        }
-        catch(IOException ie){
-            ie.printStackTrace() ;
-            return false ;
-        }
-        return true ;
-    }
 }
 
 

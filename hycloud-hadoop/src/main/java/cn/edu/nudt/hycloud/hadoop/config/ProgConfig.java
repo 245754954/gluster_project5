@@ -22,8 +22,8 @@ public class ProgConfig {
     // your configuration
     private String managerServer ="127.0.0.1";
     private String managerServerPort = "8080";
-    private String inputPath ="hdfs://192.168.6.181:9000/chal/chal.txt";
-    private String localChalName = "/home/dky/test/chal.txt";
+//    private String inputPath ="hdfs://192.168.6.181:9000/chal/chal.txt";
+//    private String localChalName = "/home/dky/test/chal.txt";
     private String chalHdfsPath = "hdfs://192.168.6.181:9000/chal/";
     private String outputPath ="hdfs://192.168.6.181:9000/output";
     private String blockPathPrefix = "hdfs://192.168.6.181:9000/yhbd/verify/";
@@ -33,6 +33,7 @@ public class ProgConfig {
     private String systemPath = "hdfs://192.168.6.181:9000/";
 
     private int sleepTime = 30000;
+    private boolean verbose = false;
 
     public static ProgConfig getConfig() throws IOException {
         if(mProgConfig == null) {
@@ -44,6 +45,21 @@ public class ProgConfig {
         if(mProgConfig == null) {
             mProgConfig = new ProgConfig(configPath);
         }
+        return mProgConfig;
+    }
+
+    public static ProgConfig getConfig(boolean verbose) throws IOException {
+        if(mProgConfig == null) {
+            mProgConfig = new ProgConfig();
+        }
+        mProgConfig.setVerbose(verbose);
+        return mProgConfig;
+    }
+    public static ProgConfig getConfig(String configPath, boolean verbose) throws IOException {
+        if(mProgConfig == null) {
+            mProgConfig = new ProgConfig(configPath);
+        }
+        mProgConfig.setVerbose(verbose);
         return mProgConfig;
     }
 
@@ -74,16 +90,17 @@ public class ProgConfig {
         props.load(freader);
 
         String fsDefaultName = props.getProperty("fs.default.name", "hdfs://192.168.6.181:9000");
+//        helper.print("fsDefaultName: " + fsDefaultName);
         this.hdfsConf = new Configuration();
         this.hdfsConf.set("fs.default.name", fsDefaultName);
 
         this.sleepTime = Integer.parseInt(props.getProperty("sleepTime", "30000"));
         this.managerServer = props.getProperty("managerServer", "127.0.0.1");
         this.managerServerPort = props.getProperty("managerServerPort", "8080");
-        this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
+//        this.inputPath = props.getProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
         this.blockPathPrefix = props.getProperty("blockPathPrefix", "hdfs://192.168.6.181:9000/yhbd/verify/");
-        this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.181:9000/chal/");
-        this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
+        this.chalHdfsPath = props.getProperty("chalHdfsPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
+//        this.localChalName = props.getProperty("localChalName", "/home/dky/test/chal.txt");
         this.outputPath = props.getProperty("outputPath", "hdfs://192.168.6.181:9000/output");
 
         this.copyOnePrefix = props.getProperty("copyOnePrefix", "hdfs://192.168.6.181:9000/yhbd/copyone/");
@@ -99,7 +116,7 @@ public class ProgConfig {
         props.setProperty("sleepTime", "30000");
         props.setProperty("managerServer", "127.0.0.1");
         props.setProperty("managerServerPort", "8080");
-        props.setProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
+//        props.setProperty("inputPath", "hdfs://192.168.6.181:9000/chal/chal.txt");
         props.setProperty("blockPathPrefix", "hdfs://192.168.6.181:9000/yhbd/verify/");
         props.setProperty("chalHdfsPath", "hdfs://192.168.6.181:9000/chal/");
         props.setProperty("localChalName", "/home/dky/test/chal.txt");
@@ -113,6 +130,14 @@ public class ProgConfig {
         fwriter.close();
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     public int getSleepTime() {
         return sleepTime;
     }
@@ -121,21 +146,21 @@ public class ProgConfig {
         this.sleepTime = sleepTime;
     }
 
-    public String getInputPath() {
-        return inputPath;
-    }
+//    public String getInputPath() {
+//        return inputPath;
+//    }
 
-    public void setInputPath(String inputPath) {
-        this.inputPath = inputPath;
-    }
+//    public void setInputPath(String inputPath) {
+//        this.inputPath = inputPath;
+//    }
 
-    public String getLocalChalName() {
-        return localChalName;
-    }
-
-    public void setLocalChalName(String localChalName) {
-        this.localChalName = localChalName;
-    }
+//    public String getLocalChalName() {
+//        return localChalName;
+//    }
+//
+//    public void setLocalChalName(String localChalName) {
+//        this.localChalName = localChalName;
+//    }
 
     public String getChalHdfsPath() {
         return chalHdfsPath;
@@ -200,10 +225,10 @@ public class ProgConfig {
         helper.print("outputPath: " + this.outputPath);
         helper.print("managerServer: " + this.managerServer);
         helper.print("managerServerPort: " + this.managerServerPort);
-        helper.print("localChalName: " + this.localChalName);
+//        helper.print("localChalName: " + this.localChalName);
         helper.print("chalHdfsPath: " + this.chalHdfsPath);
         helper.print("blockPathPrefix: " + this.blockPathPrefix);
-        helper.print("inputPath: " + this.inputPath);
+//        helper.print("inputPath: " + this.inputPath);
         helper.print("getManagerServerUrl: " + this.getManagerServerUrl());
     }
 

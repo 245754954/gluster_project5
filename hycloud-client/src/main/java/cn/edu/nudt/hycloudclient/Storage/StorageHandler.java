@@ -154,12 +154,17 @@ public class StorageHandler {
     }
 
 	public static void verifyBlock(String filename, List<String> blocks) throws IOException {
+	    long tstart, tend;
+
 	    if(blocks != null) {
-            helper.print("Checking statuses of blocks from " + filename);
             for (String strIdx : blocks) {
+                tstart = System.currentTimeMillis();
+
                 int blockIdx = Integer.parseInt(strIdx);
                 int status = StorageTransfer.verifyBlock(filename, blockIdx);
-                helper.print(filename + ", " + blockIdx + ", status = " + BlockStatus.getStatusString(status));
+
+                tend = System.currentTimeMillis();
+                helper.print(blockIdx + ", " + BlockStatus.getStatusString(status) + ", " + (tend - tstart));
             }
         }
     }
