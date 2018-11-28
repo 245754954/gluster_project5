@@ -27,7 +27,6 @@ public class FileGen {
         JCommander jcmd = builder.build();
         jcmd.parse(argv);
         jcmd.setProgramName("FileGen");
-
         long tstart = System.currentTimeMillis();
 
         fileGen.run();
@@ -62,17 +61,17 @@ public class FileGen {
             n = Integer.parseInt(size.substring(0,size.length()-1));
             p = 0;
         }
-        int nexth = 0;
+        int nextl = 0;
         for (int i = 0; i < n; i++){
             for (int j = 0; j < Math.pow(1024,p); j++) {
-                if (nexth == 63) {
+                if (nextl == 63) {
                     bufferedWriter.write('\n');
-                    nexth = 0;
+                    nextl = -1;
                 }
                 else {
                     bufferedWriter.write(charlist[rand.nextInt(36)]);
                 }
-                nexth++;
+                nextl++;
             }
         }
         bufferedWriter.flush();
