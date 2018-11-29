@@ -1,14 +1,12 @@
 package cn.edu.nudt.hycloudclient.Entry;
 
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
-import cn.edu.nudt.hycloudclient.Storage.StorageTransfer;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -97,12 +95,19 @@ public class Client {
                 break;
             case Action.VERIFY:
 //                tstart = System.currentTimeMillis();
-
-                StorageHandler.verifyBlock(sourcefile, blocks);
-//                StorageHandler.verifyFile(veifyFiles);
-
+                if (blocks != null){
+                    StorageHandler.verifyBlock(sourcefile, blocks);
+                }else {
+                    StorageHandler.verifyFile(sourcefile);
+                }
 //                tend = System.currentTimeMillis();
 //                helper.timing(strAction, tstart,tend);
+                break;
+            case Action.LOCATE:
+                tstart = System.currentTimeMillis();
+                StorageHandler.locateDamaged(sourcefile);
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.RECOVERABLE:
                 tstart = System.currentTimeMillis();

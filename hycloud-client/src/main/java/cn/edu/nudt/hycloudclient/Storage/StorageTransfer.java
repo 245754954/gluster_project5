@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.network.Transfer;
+import cn.edu.nudt.hycloudinterface.entity.BlockList;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -21,6 +22,10 @@ public class StorageTransfer {
 
     public static int verifyFile(String filename) throws IOException {
         return Transfer.verifyFile(filename);
+    }
+
+    public static BlockList locateDamaged(String filename) throws IOException {
+        return Transfer.locateDamaged(filename);
     }
 
     public static void addBlock(String filename, int blockIdx, int copyNum, byte[] hashBytes) throws IOException {

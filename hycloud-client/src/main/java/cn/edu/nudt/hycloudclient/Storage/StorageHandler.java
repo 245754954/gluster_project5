@@ -5,6 +5,7 @@ import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
 import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 import cn.edu.nudt.hycloudinterface.Constants.RestoreResult;
+import cn.edu.nudt.hycloudinterface.entity.BlockList;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -169,13 +170,28 @@ public class StorageHandler {
         }
     }
 
-    public static void verifyFile(List<String> veifyFiles) throws IOException {
-	    if(veifyFiles != null) {
-            helper.print("Checking statuses of files ");
-            for (String filename: veifyFiles) {
-                int status = StorageTransfer.verifyFile(filename);
-                helper.print(filename + " status: " + FileStatus.getStatusString(status));
+    public static void verifyFile(String filename) throws IOException {
+        int status = FileStatus.NOFOUND;
+//        helper.print("Checking statuses of files ");
+
+        long tstart = System.currentTimeMillis();
+        if(filename != null) {
+            status = StorageTransfer.verifyFile(filename);
+        }
+        long tend = System.currentTimeMillis();
+        helper.print(filename + ", " + FileStatus.getStatusString(status) + ", " + (tend - tstart));
+    }
+
+    public static void locateDamaged(String filename) throws IOException {
+        if(filename != null) {
+            helper.print("Locate damaged blocks of " + filename);
+            BlockList damaged = StorageTransfer.locateDamaged(filename);
+
+            String damagedStr = "";
+            for (int i = 0; i < damaged.size(); i++) {
+                damagedStr += damaged.get(i) + ", ";
             }
+            helper.print(filename + ", damaged blocks: " + damagedStr);
         }
     }
 

@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudclient.network;
 
 import cn.edu.nudt.hycloudclient.config.Config;
+import cn.edu.nudt.hycloudinterface.entity.BlockList;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.BasicTransfer;
@@ -30,16 +31,19 @@ public class Transfer {
     public static int verifyFile(String filename) throws IOException {
         Config config = Config.getConfig();
         URL url = new URL(config.getManagerServerUrl() + "file/verifyFile");
-//        Map<String, String> param = new HashMap<String, String>();
-//        param.put("filenameKey", JSON.toJSONString(filename));
-//        String recvStr = BasicTransfer.doPost(url, param);
 
-        BasicTransfer basicTransfer = new BasicTransfer();
-        basicTransfer.update("filenameKey", JSON.toJSONString(filename));
-        String recvStr = basicTransfer.doPost(url);
-        Integer status = JSON.parseObject(recvStr, Integer.class);
-//        helper.print(filename + " status: " + FileStatus.getStatusString(status));
-        return status;
+        String paramData = "filenameKey=" + filename;
+        String recvStr = BasicTransfer.doPost(url, paramData);
+        return Integer.parseInt(recvStr);
+    }
+
+    public static BlockList locateDamaged(String filename) throws IOException {
+        Config config = Config.getConfig();
+        URL url = new URL(config.getManagerServerUrl() + "block/locateDamaged");
+
+        String paramData = "filenameKey=" + filename;
+        String recvStr = BasicTransfer.doPost(url, paramData);
+        return JSON.parseObject(recvStr, BlockList.class);
     }
 
     public static void addBlock(String filename, int blockIdx, int copyNum, BigInteger hash) throws IOException {

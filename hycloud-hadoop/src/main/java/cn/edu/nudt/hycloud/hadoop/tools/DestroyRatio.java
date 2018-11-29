@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-public class Destroy {
+public class DestroyRatio {
     public final String blockPathMid = "_block_";
 
     @Parameter(names= {"--config","-c"}, description = "path to config file")
@@ -39,9 +39,12 @@ public class Destroy {
 //    @Parameter(names= {"--block","-b"}, description = "block to destroy")
 //    private String strBlockIdx;
 
+    @Parameter(names= {"--ratio","-r"}, help=false, description = "number of blocks to destroy out of every 100 blocks")
+    private int ratio = 0;
+
 
     public static void main(String[] argv) throws Exception {
-        Destroy destroy = new Destroy();
+        DestroyRatio destroy = new DestroyRatio();
         JCommander.Builder builder = JCommander.newBuilder();
         builder.addObject(destroy);
 

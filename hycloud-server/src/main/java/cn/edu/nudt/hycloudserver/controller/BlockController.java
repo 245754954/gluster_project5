@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudserver.controller;
 
 import cn.edu.nudt.hycloudinterface.Constants.*;
+import cn.edu.nudt.hycloudinterface.entity.BlockList;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
@@ -79,6 +80,40 @@ public class BlockController {
         }
         return rv;
     }
+
+
+    @RequestMapping(value = "/locateDamaged", method = {RequestMethod.POST})
+    public BlockList locateDamaged(String filenameKey){
+        BlockList blockList = new BlockList();
+
+        FileTable fileTable = fileTableDao.findByFilename(filenameKey);
+        if (fileTable == null || fileTable.getStatus() == FileStatus.DAMAGED){
+            BlockList resBlockList = subLocateDamaged(filenameKey, 0, fileTable.getBlockNum() - 1);
+            blockList.add(resBlockList);
+        }
+        return blockList;
+    }
+
+    private BlockList subLocateDamaged(String filename, long startBlockIdx, long endBlockIdx){
+        BlockList blockList = new BlockList();
+        List<BlockTable> blockTableList = blockTableDao.findByFilenameAndStatusAndBlockIdxBetween(filename, BlockStatus.DAMAGED, startBlockIdx, endBlockIdx);
+        if (blockTableList != null && blockTableList.size() > 0){
+            if(blockTableList.size() > 1){
+                long middle = (endBlockIdx - startBlockIdx) / 2 + startBlockIdx;
+                BlockList blockList_left = subLocateDamaged(filename, startBlockIdx, middle);
+                blockList.add(blockList_left);
+
+                BlockList blockList_right = subLocateDamaged(filename, middle + 1, endBlockIdx);
+                blockList.add(blockList_right);
+            }else if (blockTableList.size() == 1){
+                if (blockTableList.get(0).getStatus() == BlockStatus.DAMAGED){
+                    blockList.add(blockTableList.get(0).getBlockIdx());
+                }
+            }
+        }
+        return blockList;
+    }
+
 
     @RequestMapping(value = "/recoverableBlock", method = {RequestMethod.POST})
     public boolean recoverableBlock(String filenameKey, String blockIdxKey) throws IOException {

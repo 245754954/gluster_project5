@@ -27,9 +27,9 @@ public class FileController {
 
     @RequestMapping(value = "/verifyFile", method = {RequestMethod.POST})
     public int verifyFile(String filenameKey){
-        String filename = JSON.parseObject(filenameKey, String.class);
+//        String filename = JSON.parseObject(filenameKey, String.class);
 
-        FileTable fileTable = fileTableDao.findByFilename(filename);
+        FileTable fileTable = fileTableDao.findByFilename(filenameKey);
         int rv = FileStatus.NOFOUND;
         if(fileTable != null){
             rv = fileTable.getStatus();

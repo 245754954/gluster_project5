@@ -2,11 +2,6 @@ package cn.edu.nudt.hycloudclient.Entry;
 
 import cn.edu.nudt.hycloudinterface.utils.helper;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
 public class Action {
     public final static int SPUT = 1;
     public final static int SGET = 2;
@@ -18,6 +13,7 @@ public class Action {
     public final static int VERIFY = 7;
     public final static int RESTORE = 8;
     public final static int RECOVERABLE = 9;
+    public final static int LOCATE = 10;
 
     public static int get(String atrAction) {
         int rv = -1;
@@ -39,6 +35,8 @@ public class Action {
             rv = Action.RESTORE;
         } else if (atrAction.equalsIgnoreCase("RECOVERABLE")) {
             rv = Action.RECOVERABLE;
+        } else if (atrAction.equalsIgnoreCase("LOCATE")) {
+            rv = Action.LOCATE;
         } else {
             helper.err("Error: wrong action string");
         }
