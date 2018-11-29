@@ -11,7 +11,9 @@ import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DestroyRatio {
     public final String blockPathMid = "_block_";
@@ -34,13 +36,11 @@ public class DestroyRatio {
     @Parameter(names= {"--file","-f"}, description = "filename")
     private String filename = null;
 
-    @Parameter(names= {"--block","-b"}, variableArity = true, description = "list of blocks to destroy")
-    private List<String> strBlockIdxList = null;
-//    @Parameter(names= {"--block","-b"}, description = "block to destroy")
-//    private String strBlockIdx;
-
     @Parameter(names= {"--ratio","-r"}, help=false, description = "number of blocks to destroy out of every 100 blocks")
     private int ratio = 0;
+
+    @Parameter(names= {"--num","-n"}, help=false, description = "number of blocks of the file")
+    private int num = 0;
 
 
     public static void main(String[] argv) throws Exception {
@@ -92,7 +92,20 @@ public class DestroyRatio {
                 ProgConfig.getConfig().getHdfsConf());
         Path srcBlock = new Path(ProgConfig.getConfig().getDamageFilePath());
         String dstBlockPrefix = pathPrefix + this.filename + blockPathMid;
-        for (String blockIdx: strBlockIdxList){
+
+        /** randomly select required blocks to damage */
+        int subNum = num * ratio / 100;
+        List<Integer> blockIdxList = new ArrayList<>();
+        while (blockIdxList.size() < subNum){
+            int idx = ThreadLocalRandom.current().nextInt(num);
+            if (!blockIdxList.contains(idx)){
+                blockIdxList.add(idx);
+            }
+        }
+        /** end randomly select */
+
+
+        for (Integer blockIdx: blockIdxList){
             Path dstBlock = new Path(dstBlockPrefix + blockIdx);
 
             if(fs.exists(dstBlock)){
@@ -102,7 +115,7 @@ public class DestroyRatio {
                 if (result && !disableUpdate) {
                     DestoryTransfer.updateBlockInfo(new CopyID(copyID),
                             this.filename,
-                            Integer.parseInt(blockIdx),
+                            blockIdx,
                             new BlockStatus(BlockStatus.DAMAGED));
                 }
                 long endTime = System.currentTimeMillis();
