@@ -15,9 +15,11 @@ public class StorageBase {
 			
 			String sqlCreateTable = "CREATE TABLE IF NOT EXISTS storgeTable ("
 					+ "fid INTEGER PRIMARY kEY AUTOINCREMENT,"
-					+ "filename text NOT NULL UNIQUE,"
-					+ "blockNum integer NOT NULL,"
-					+ "hdfsPath text NOT NULL UNIQUE)";
+					+ "filename text NOT NULL ,"
+					+ "blocknum integer NOT NULL,"
+					+ "challenge text NOT NULL,"
+					+ "storepath text NOT  NULL,"
+					+ "hashchallenge text NOT NULL UNIQUE)";
 			
 			Statement st = conn.createStatement();
 			st.execute(sqlCreateTable);
@@ -36,7 +38,8 @@ public class StorageBase {
 			
 			pst.setString(1, filename);
 			int rv = pst.executeUpdate();
-			if(rv > 0) helper.print("Database: " + filename + " exists in database, delete the old record");
+			if(rv > 0)
+				helper.print("Database: " + filename + " exists in database, delete the old record");
 			
 			pst.close();
 		} catch (SQLException e) {
@@ -45,17 +48,20 @@ public class StorageBase {
 		}
 	}
 	
-	public void insert(String filename, long blockNum, String hdfsPath) {
-		delete(filename);
+	public void insert(String filename, long blocknum, String challenge,String storepath,String hashchallenge) {
+
+		//delete(filename);
 		
 		String sqlInsert = "INSERT INTO storgeTable "
-				+ "(filename, blockNum, hdfsPath) "
-				+ "VALUES (?, ?, ?)";
+				+ "(filename, blocknum, challenge,storepath,hashchallenge) "
+				+ "VALUES (?, ?, ?,?,?)";
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlInsert);
 			pst.setString(1, filename);
-			pst.setLong(2, blockNum);
-			pst.setString(3, hdfsPath);
+			pst.setLong(2, blocknum);
+			pst.setString(3, challenge);
+			pst.setString(4,storepath);
+			pst.setString(5,hashchallenge);
 			
 			pst.executeUpdate();
 			pst.close();
@@ -67,9 +73,9 @@ public class StorageBase {
 	
 	
 	public String getHdfsPath(String filename) {
-		String sqlQuery = "SELECT hdfsPath FROM storgeTable WHERE filename is ?";
+		String sqlQuery = "SELECT hashchallenge FROM storgeTable WHERE filename is ?";
 		
-		String hdfsPath = null;
+		String hashchallenge = null;
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlQuery);
 			pst.setString(1, filename);
@@ -77,7 +83,7 @@ public class StorageBase {
 			ResultSet rs = pst.executeQuery();
 			
 			rs.next();
-			hdfsPath = rs.getString("hdfsPath");
+			hashchallenge = rs.getString("hashchallenge");
 			
 			rs.close();
 			pst.close();
@@ -85,11 +91,11 @@ public class StorageBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return hdfsPath;
+		return hashchallenge;
 	}
 
 	public long getBlockNum(String filename) {
-		String sqlQuery = "SELECT blockNum FROM storgeTable WHERE filename is ?";
+		String sqlQuery = "SELECT blocknum FROM storgeTable WHERE filename is ?";
 
 		long blockNum = 0;
 		try {
@@ -99,7 +105,7 @@ public class StorageBase {
 			ResultSet rs = pst.executeQuery();
 
 			rs.next();
-			blockNum = rs.getLong("blockNum");
+			blockNum = rs.getLong("blocknum");
 
 			rs.close();
 			pst.close();

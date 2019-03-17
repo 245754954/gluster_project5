@@ -29,6 +29,9 @@ public class ServerConfig {
 
     private String hadoopHomeDir;
 
+    //#the directory that store the file uploaded by client
+    private String store_directory;
+
     public static ServerConfig getConfig() throws IOException {
         if(serverConfig == null) {
             serverConfig = new ServerConfig();
@@ -66,6 +69,10 @@ public class ServerConfig {
         FileReader freader = new FileReader(temConfigPath);
 
         props.load(freader);
+
+        //the directory that store the file uploaded by client
+        this.store_directory = props.getProperty("store_directory","/home/ftp/");
+
 
         // block size in MB
 
@@ -131,6 +138,10 @@ public class ServerConfig {
 
     public String getHadoopHomeDir() {
         return hadoopHomeDir;
+    }
+
+    public String getStore_directory() {
+        return store_directory;
     }
 
     public void dump() {

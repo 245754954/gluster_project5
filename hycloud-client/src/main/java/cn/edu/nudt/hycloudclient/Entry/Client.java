@@ -48,9 +48,7 @@ public class Client {
 
     public static void main(String[] argv) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException {
 //        System.out.println(System.getProperty("user.dir"));
-        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-            System.setProperty("hadoop.home.dir", "E:\\CodeHub\\yhcloud-home\\winutils");
-        }
+
 
         Client client = new Client();
         Builder builder = JCommander.newBuilder();

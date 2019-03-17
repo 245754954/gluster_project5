@@ -49,6 +49,13 @@ public class Config {
     private String hdfsVerifyCopyOneHome;
     private String hdfsVerifyCopyTwoHome;
 
+
+
+
+    private String server_url;
+
+    private String store_directory;
+
     public static Config getConfig() throws IOException {
         if(mConfig == null) {
             mConfig = new Config();
@@ -88,6 +95,10 @@ public class Config {
         FileReader freader = new FileReader(temConfigPath);
 
         props.load(freader);
+
+        //upload and download url
+        this.server_url = props.getProperty("server_url","http://127.0.0.1:8080");
+        this.store_directory = props.getProperty("store_directory","/home/ftp");
 
         // block size in MB
         this.mBlockSize = Integer.parseInt(props.getProperty("BlockSize", "128"));
@@ -174,6 +185,14 @@ public class Config {
         return  this.mHdfsVerifyHome;
     }
 
+    public String getServer_url() {
+        return server_url;
+    }
+
+    public String getStore_directory() {
+        return store_directory;
+    }
+
     /**
      *
      * @return
@@ -188,7 +207,7 @@ public class Config {
     }
 
     public void dump() {
-        helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
+               helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
         helper.print("mManagerServerName: " + this.mManagerServerName);
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
         helper.print("getManagerServerUrl: " + getManagerServerUrl());

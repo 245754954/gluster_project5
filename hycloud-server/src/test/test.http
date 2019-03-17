@@ -39,6 +39,27 @@ Cache-Control: no-cache
 Content-Type: application/json
 
 {
-    "filename": "jdk.tar.gz",
-    ""
+    "filename": "jdk.tar.gz"
 }
+
+####
+POST http://localhost:8080/upload/
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "filename": "jdk.tar.gz"
+}
+
+###
+POST http://localhost:8080/upload/upload
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "filename": "jdk.tar.gz"
+}
+
+###

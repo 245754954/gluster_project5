@@ -2,6 +2,8 @@ package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
+import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
+import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
 import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
 import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 import cn.edu.nudt.hycloudinterface.Constants.RestoreResult;
@@ -21,32 +23,60 @@ public class StorageHandler {
 
 	public static void put(String sourcefilepath) throws IOException, NoSuchAlgorithmException {
 		Config conf = Config.getConfig();
-
-		File sourcefile = new File(sourcefilepath);
+        //加载文件
+        String str = new String(sourcefilepath);
+        System.out.println("the sourcefilepath is "+str.trim());
+		File sourcefile = new File(str);
+		//得到文件名字
 		String sourcefilename = sourcefile.getName();
+		//得到hdfs相关的信息
+
+        /*
         String hdfsPathPrefix = conf.getHdfsVerifyHome() + sourcefilename;
         String copyOnePathPrefix = conf.getHdfsVerifyCopyOneHome() + sourcefilename;
         String copyTwoPathPrefix = conf.getHdfsVerifyCopyTwoHome() + sourcefilename;
-
+        */
+        //拼接得到上传到服务器的详细地址
+        String base_path = conf.getStore_directory()+"/"+sourcefilename;
+        //得到配置文件中每一块的大小
         int blockSize = conf.getBlockSize();
+        helper.print("blocksize is "+blockSize);
+        //得到上传文件的长度
 		long filesize = sourcefile.length();
+		helper.print("the upload filesize is "+filesize);
+		//得到文件可以划分为多少块
 		long blockNum = filesize / blockSize;
+		//如果多余的不够一块的，也要多加一块，不能删除任何多余的内容
 		if(blockNum * blockSize < filesize) blockNum++;
+		//打印上传的相关信息
         helper.print("Uploading " + sourcefilename + " (size = " + filesize + ", blocks: " + blockNum + ")");
-
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        //得到hash256算法，生成摘要
+        //MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
 		// delete duplicate files anb blocks
+        //如果重复了的文件名字需要删除一下
+
+        /*
         StorageTransfer.deleteFile(sourcefilename);
         StorageTransfer.deleteFileBlocks(sourcefilename);
+        */
 
-
+        /*
+        //得到hdfs的一个实例
 		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
+		*/
+		//得到文件输入流
+        StorageBase sbase = new StorageBase();
 		FileInputStream fis = new FileInputStream(sourcefilepath);
-		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
+        //对文件分块进行一块一块的往hdfs中上传
+        StringBuilder builder1 = new StringBuilder();
+		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
+		{
+		    builder1.delete(0,builder1.length());
+		    //生成每一块的摘要
 		    helper.print("handling block: " + blockIdx);
-            digest.reset();
-
+            //digest.reset();
+            /*
 			String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
 			OutputStream osToHdfs = hdfs.create(new Path(blockHdfsPath));
 
@@ -55,44 +85,59 @@ public class StorageHandler {
 
             String blockCopyTwoPath = getBlockHdfsPath(copyTwoPathPrefix, blockIdx);
             OutputStream copyTwoOs = hdfs.create(new Path(blockCopyTwoPath));
+            */
 
 			byte[] buffer = new byte[1024];
             int currBlockSize = 0;
             int nread = 0;
+
             while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1){
-                digest.update(buffer, 0, nread);
-                osToHdfs.write(buffer, 0, nread);
+                //digest.update(buffer, 0, nread);
+                //osToHdfs.write(buffer, 0, nread);
                 currBlockSize += nread;
-
-                copyOneOs.write(buffer, 0, nread);
-                copyTwoOs.write(buffer, 0, nread);
+                builder1.append(buffer.toString());
+                //copyOneOs.write(buffer, 0, nread);
+                //copyTwoOs.write(buffer, 0, nread);
             }
-            osToHdfs.close();
-            copyOneOs.close();
-            copyTwoOs.close();
-            byte[] hash = digest.digest();
+            //osToHdfs.close();
+            //copyOneOs.close();
+            //copyTwoOs.close();
+            //生成每一块的摘要
+            //byte[] hash = digest.digest();
+            //得到挑战
+            String challenge = HashSaltUtil.salt();
+            String block_plaintext = builder1.toString();
+            String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
 
-            String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
-            OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
-            osToHdfsForTag.write(hash, 0, hash.length);
-            osToHdfsForTag.close();
+            //String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
+           // OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
+            //osToHdfsForTag.write(hash, 0, hash.length);
+            //osToHdfsForTag.close();
 
 //            fileInfo.addBlock(blockIdx, hash);
 //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-            StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
+            //将上传到hdfs文件系统的每一块文件相关的信息记录下来，这里
+            //保存到服务器
+            //StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
+
+
+            sbase.insert(sourcefilename, blockIdx, challenge,base_path,md5);
 		}
 		fis.close();
-        StorageTransfer.updateFileInfo(sourcefilename, blockNum);
-
+		//跟新服务器的文件上传信息
+        //StorageTransfer.updateFileInfo(sourcefilename, blockNum);
+        //打印上传文件名字
         helper.print(sourcefilename + " Uploaded");
-
-		StorageBase sbase = new StorageBase();
-		sbase.insert(sourcefilename, blockNum, hdfsPathPrefix);
+        //保存到本地的sqlite
 		sbase.close();
+
+		//上传文件到服务器
+        HttpConnectionUtil.uploadFile("upload/multiFileUpload1",new String[]{sourcefilepath});
 	}
 
 	public static void get(String requestfilename, String localpath) throws IOException, NoSuchAlgorithmException {
-        Config conf = Config.getConfig();
+        /*
+	    Config conf = Config.getConfig();
 
         StorageBase sbase = new StorageBase();
         long blockNum = sbase.getBlockNum(requestfilename);
@@ -102,6 +147,7 @@ public class StorageHandler {
         FileOutputStream fos = new FileOutputStream(localpath);
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
+
         for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
             digest.reset();
 
@@ -130,6 +176,12 @@ public class StorageHandler {
             }
         }
         fos.close();
+
+        */
+        //需要的文件名字
+        //文件下载以后本地的保存路径
+        HttpConnectionUtil.downloadFile(requestfilename,localpath);
+
 	}
 
     public static void recoverableBlock(String filename, List<String> blocks) throws IOException {

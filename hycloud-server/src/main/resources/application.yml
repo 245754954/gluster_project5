@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: master-mysql
+    active: zfc
 
   #配置spring-jpa
   jpa:
@@ -45,7 +45,14 @@ spring:
     username: root
     password: 123456
 
-
+---
+spring:
+  profiles: zfc
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.56.100:3306/hycloud
+    username: root
+    password: 123456
 
 
 #spring:
