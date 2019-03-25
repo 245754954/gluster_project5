@@ -23,6 +23,8 @@ public class Config {
      */
     private int mBlockSize;
 
+    private int num_of_challenge;
+
     /**
      * domain name or IP of the manager server
      */
@@ -99,9 +101,10 @@ public class Config {
         //upload and download url
         this.server_url = props.getProperty("server_url","http://127.0.0.1:8080");
         this.store_directory = props.getProperty("store_directory","/home/ftp");
-
-        // block size in MB
+        //the blocksize the unit is Byte,defalut value is 128KB
         this.mBlockSize = Integer.parseInt(props.getProperty("BlockSize", "128"));
+        //the number of challenge
+        this.num_of_challenge = Integer.parseInt(props.getProperty("num_of_challenge","3"));
 
         mManagerServerName = props.getProperty("ManagerServerName", "localhost");
         mManagerServerPort = Integer.parseInt(props.getProperty("ManagerServerPort", "8080"));
@@ -193,6 +196,10 @@ public class Config {
         return store_directory;
     }
 
+    public int getNum_of_challenge() {
+        return num_of_challenge;
+    }
+
     /**
      *
      * @return
@@ -202,12 +209,17 @@ public class Config {
         return mBlockSize * 1024 * 1024;
     }
 
+
     public String getManagerServerUrl(){
         return "http://" +this.mManagerServerName + ":" + this.mManagerServerPort + "/";
     }
 
+
+
+
     public void dump() {
-               helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
+        helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
+
         helper.print("mManagerServerName: " + this.mManagerServerName);
         helper.print("mManagerServerPort: " + this.mManagerServerPort);
         helper.print("getManagerServerUrl: " + getManagerServerUrl());

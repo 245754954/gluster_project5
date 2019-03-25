@@ -1,6 +1,7 @@
 package cn.edu.nudt.hycloudclient.database;
 
 import cn.edu.nudt.hycloudclient.config.Config;
+import cn.edu.nudt.hycloudclient.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.IOException;
@@ -19,7 +20,9 @@ public class StorageBase {
 					+ "blocknum integer NOT NULL,"
 					+ "challenge text NOT NULL,"
 					+ "storepath text NOT  NULL,"
-					+ "hashchallenge text NOT NULL UNIQUE)";
+					+ "real_size integer NOT NULL,"
+					+ "blocksize integer NOT NULL,"
+					+ "hashchallenge text NOT NULL )";
 			
 			Statement st = conn.createStatement();
 			st.execute(sqlCreateTable);
@@ -48,20 +51,22 @@ public class StorageBase {
 		}
 	}
 	
-	public void insert(String filename, long blocknum, String challenge,String storepath,String hashchallenge) {
+	public void insert(String filename, long blocknum, String challenge,String storepath,long real_size,long blocksize,String hashchallenge) {
 
 		//delete(filename);
 		
 		String sqlInsert = "INSERT INTO storgeTable "
-				+ "(filename, blocknum, challenge,storepath,hashchallenge) "
-				+ "VALUES (?, ?, ?,?,?)";
+				+ "(filename, blocknum, challenge,storepath,real_size,blocksize,hashchallenge) "
+				+ "VALUES (?, ?, ?,?,?,?,?)";
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlInsert);
 			pst.setString(1, filename);
 			pst.setLong(2, blocknum);
 			pst.setString(3, challenge);
 			pst.setString(4,storepath);
-			pst.setString(5,hashchallenge);
+			pst.setLong(5,real_size);
+			pst.setLong(6,blocksize);
+			pst.setString(7,hashchallenge);
 			
 			pst.executeUpdate();
 			pst.close();
@@ -114,6 +119,60 @@ public class StorageBase {
 			e.printStackTrace();
 		}
 		return blockNum;
+	}
+
+
+	public UploadInfo get_uploadinfo_by_filename_and_blocknumber(String filename ,long blocknumber,String challenge){
+
+		String sqlQuery = "SELECT * FROM storgeTable as t WHERE t.storepath is ? and t.blocknum is ? and t.challenge is ?";
+
+
+
+		 String filename_and_path1;
+		 String filename1;
+		 String challenge1;
+		 Long blocknumber1;
+		 Long real_size1;
+		 Long blocksize1;
+		 String hash_result1;
+		UploadInfo upload_info = new UploadInfo();
+
+		try {
+			PreparedStatement pst = conn.prepareStatement(sqlQuery);
+			pst.setString(1, filename);
+			pst.setLong(2,blocknumber);
+			pst.setString(3,challenge);
+
+			ResultSet rs = pst.executeQuery();
+
+			rs.next();
+
+			blocknumber1 = rs.getLong("blocknum");
+			filename_and_path1 = rs.getString("storepath");
+			real_size1 = rs.getLong("real_size");
+			hash_result1 = rs.getString("hashchallenge");
+			challenge1 = rs.getString("challenge");
+			blocksize1 = rs.getLong("blocksize");
+			filename1 = rs.getString("filename");
+
+
+			upload_info.setBlocknumber(blocknumber1);
+			upload_info.setBlocksize(blocksize1);
+			upload_info.setHash_result(hash_result1);
+			upload_info.setChallenge(challenge1);
+			upload_info.setReal_size(real_size1);
+			upload_info.setFilename_and_path(filename_and_path1);
+			upload_info.setFilename(filename1);
+			rs.close();
+			pst.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+
+		return upload_info;
 	}
 	
 //	public void update(String filename, BigInteger masterKey) {

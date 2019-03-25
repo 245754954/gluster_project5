@@ -2,8 +2,10 @@ package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
+import cn.edu.nudt.hycloudclient.entity.UploadInfo;
 import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
+import cn.edu.nudt.hycloudclient.util.MD5Util;
 import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
 import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
 import cn.edu.nudt.hycloudinterface.Constants.RestoreResult;
@@ -69,60 +71,87 @@ public class StorageHandler {
         StorageBase sbase = new StorageBase();
 		FileInputStream fis = new FileInputStream(sourcefilepath);
         //对文件分块进行一块一块的往hdfs中上传
+
+        //根据配置生成挑战数量
+        int num_of_challenge =conf.getNum_of_challenge();
+        String []challenge_array = new String[num_of_challenge];
+        for(int i=0;i<num_of_challenge;i++){
+
+            challenge_array[i]  = HashSaltUtil.salt();
+        }
+
+
+
+
         StringBuilder builder1 = new StringBuilder();
-		for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
-		{
-		    builder1.delete(0,builder1.length());
-		    //生成每一块的摘要
-		    helper.print("handling block: " + blockIdx);
-            //digest.reset();
-            /*
-			String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
-			OutputStream osToHdfs = hdfs.create(new Path(blockHdfsPath));
-
-            String blockCopyOnePath = getBlockHdfsPath(copyOnePathPrefix, blockIdx);
-            OutputStream copyOneOs = hdfs.create(new Path(blockCopyOnePath));
-
-            String blockCopyTwoPath = getBlockHdfsPath(copyTwoPathPrefix, blockIdx);
-            OutputStream copyTwoOs = hdfs.create(new Path(blockCopyTwoPath));
-            */
-
-			byte[] buffer = new byte[1024];
-            int currBlockSize = 0;
-            int nread = 0;
-
-            while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1){
-                //digest.update(buffer, 0, nread);
-                //osToHdfs.write(buffer, 0, nread);
-                currBlockSize += nread;
-                builder1.append(buffer.toString());
-                //copyOneOs.write(buffer, 0, nread);
-                //copyTwoOs.write(buffer, 0, nread);
-            }
-            //osToHdfs.close();
-            //copyOneOs.close();
-            //copyTwoOs.close();
-            //生成每一块的摘要
-            //byte[] hash = digest.digest();
-            //得到挑战
-            String challenge = HashSaltUtil.salt();
-            String block_plaintext = builder1.toString();
-            String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
-
-            //String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
-           // OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
-            //osToHdfsForTag.write(hash, 0, hash.length);
-            //osToHdfsForTag.close();
-
-//            fileInfo.addBlock(blockIdx, hash);
-//            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-            //将上传到hdfs文件系统的每一块文件相关的信息记录下来，这里
-            //保存到服务器
-            //StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
 
 
-            sbase.insert(sourcefilename, blockIdx, challenge,base_path,md5);
-		}
+
+            for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
+            {
+                builder1.delete(0,builder1.length());
+                //生成每一块的摘要
+                helper.print("handling block: " + blockIdx);
+                //digest.reset();
+                /*
+                String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
+                OutputStream osToHdfs = hdfs.create(new Path(blockHdfsPath));
+
+                String blockCopyOnePath = getBlockHdfsPath(copyOnePathPrefix, blockIdx);
+                OutputStream copyOneOs = hdfs.create(new Path(blockCopyOnePath));
+
+                String blockCopyTwoPath = getBlockHdfsPath(copyTwoPathPrefix, blockIdx);
+                OutputStream copyTwoOs = hdfs.create(new Path(blockCopyTwoPath));
+                */
+                int n = 1*1024*1024;
+                byte[] buffer = new byte[1024];
+                long currBlockSize = 0;
+                int nread = 0;
+
+                while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1){
+                    //digest.update(buffer, 0, nread);
+                    //osToHdfs.write(buffer, 0, nread);
+                    currBlockSize += nread;
+                    String str1 = new String(buffer,0,nread);
+                    builder1.append(str1);
+                    //copyOneOs.write(buffer, 0, nread);
+                    //copyTwoOs.write(buffer, 0, nread);
+                }
+                //osToHdfs.close();
+                //copyOneOs.close();
+                //copyTwoOs.close();
+                //生成每一块的摘要
+                //byte[] hash = digest.digest();
+                //得到挑战,每一块都要和三个salt进行hash生成
+                String block_plaintext = builder1.toString();
+                for(int i=0;i<num_of_challenge;i++)
+                {
+
+                    String challenge = challenge_array[i];
+
+                    //System.out.println("the value of plaintxt "+block_plaintext);
+                    //System.out.println("the length of plaintext "+block_plaintext.length());
+                    //String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
+                    //String md5 = HashSaltUtil.MD5WithoutSalt(block_plaintext);
+                    String md5 = MD5Util.string2MD5(block_plaintext);
+                    //String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
+                    // OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
+                    //osToHdfsForTag.write(hash, 0, hash.length);
+                    //osToHdfsForTag.close();
+
+                    //            fileInfo.addBlock(blockIdx, hash);
+                    //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
+                    //将上传到hdfs文件系统的每一块文件相关的信息记录下来，这里
+                    //保存到服务器
+                    //StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
+
+
+                    sbase.insert(sourcefilename, blockIdx, challenge, base_path, currBlockSize, blockSize, md5);
+                }
+                }
+
+
+
 		fis.close();
 		//跟新服务器的文件上传信息
         //StorageTransfer.updateFileInfo(sourcefilename, blockNum);
@@ -206,20 +235,58 @@ public class StorageHandler {
         }
     }
 
-	public static void verifyBlock(String filename, List<String> blocks) throws IOException {
+	public static void verifyBlock(String filename, List<String> blocks,List<String> challenges) throws IOException {
 	    long tstart, tend;
+	    StorageBase st = new StorageBase();
+        System.out.println("the value of challenges");
+        for(String sts:challenges){
 
+            System.out.println(sts);
+        }
+
+        if(null!=blocks)
+        {
+            int len = blocks.size();
+            for (int i = 0; i < len; i++) {
+                tstart = System.currentTimeMillis();
+                String strIdx = blocks.get(i);
+                int blockIdx = Integer.parseInt(strIdx);
+                UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
+                String hash = StorageTransfer.verifyBlock(up);
+                if(up.getHash_result().equals(hash))
+                {
+                    System.out.println("yes they are equals");
+                }
+                else
+                {
+
+                    System.out.println("they are not equals");
+                }
+                tend = System.currentTimeMillis();
+                helper.print("the time is "+(tend-tstart));
+            }
+        }
+        /*
 	    if(blocks != null) {
             for (String strIdx : blocks) {
                 tstart = System.currentTimeMillis();
 
+
+                //对于每一块需要查找本地的数据库，找到filename_and_path key
+                //blocksize  real_size
+
+
                 int blockIdx = Integer.parseInt(strIdx);
-                int status = StorageTransfer.verifyBlock(filename, blockIdx);
+                UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename,blockIdx,challenges.get(0));
+
+                int status = StorageTransfer.verifyBlock(up);
 
                 tend = System.currentTimeMillis();
                 helper.print(blockIdx + ", " + BlockStatus.getStatusString(status) + ", " + (tend - tstart));
             }
-        }
+
+
+        }*/
     }
 
     public static void verifyFile(String filename) throws IOException {

@@ -13,6 +13,7 @@ import cn.edu.nudt.hycloudserver.entity.BlockCopyOne;
 import cn.edu.nudt.hycloudserver.entity.BlockCopyTwo;
 import cn.edu.nudt.hycloudserver.entity.BlockTable;
 import cn.edu.nudt.hycloudserver.entity.FileTable;
+import cn.edu.nudt.hycloudserver.util.DispatchHandler;
 import com.alibaba.fastjson.JSON;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
@@ -68,17 +69,31 @@ public class BlockController {
 
 
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})
-    public int verifyBlock(String filenameKey, String blockIdxKey){
+    public String verifyBlock(String filename, String filename_and_path,String challenge,String blocknumber,String blocksize,String real_size) throws IOException {
 //        String filename = JSON.parseObject(filenameKey, String.class);
 //        Integer blockIdx = JSON.parseObject(blockIdxKey, Integer.class);
 
-        Integer blockIdx = Integer.parseInt(blockIdxKey);
-        BlockTable blockTable = blockTableDao.findByFilenameAndBlockIdx(filenameKey, blockIdx);
-        int rv = BlockStatus.NOFOUND;
-        if(blockTable != null){
-                rv = blockTable.getStatus();
-        }
-        return rv;
+        Integer blocknumber1 = Integer.parseInt(blocknumber);
+        Integer blocksize1 = Integer.parseInt(blocksize);
+        Integer real_size1 = Integer.parseInt(real_size);
+        Integer offset = blocknumber1*blocksize1;
+
+        //根据条待卷的大小和配置信息计算offset
+        ServerConfig config = ServerConfig.getConfig();
+        long stripe_size = config.getStripe_size();
+        long stripe_count = config.getStripe_count();
+
+        long line_size = 0;
+        long stripe_num = 0;
+        long dest_offset = 0;
+
+        line_size = stripe_size * stripe_count;
+        stripe_num = offset / line_size;
+        dest_offset = (stripe_num * stripe_size) + (offset % stripe_size);
+
+        String hash_reslut = DispatchHandler.get_hash_with_blocknumber_and_challenge(filename_and_path,blocksize1,offset,challenge,blocknumber1,real_size1,dest_offset);
+        System.out.println("the hash_result is "+hash_reslut);
+        return hash_reslut;
     }
 
 

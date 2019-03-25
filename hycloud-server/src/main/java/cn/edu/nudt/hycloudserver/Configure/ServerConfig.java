@@ -17,6 +17,9 @@ public class ServerConfig {
 
     private String serverConfigPath = null;
 
+    private long stripe_size;
+
+    private long stripe_count;
 
     private Configuration hdfsConf;
 
@@ -73,7 +76,11 @@ public class ServerConfig {
         //the directory that store the file uploaded by client
         this.store_directory = props.getProperty("store_directory","/home/ftp/");
 
-
+        //total bricks
+        this.stripe_count = Long.parseLong(props.getProperty("stripe_count"));
+        //the default size of stripe volume
+        this.stripe_size = Long.parseLong(props.getProperty("stripe_size"));
+        // block size in MB
         // block size in MB
 
         this.hdfsConf = new Configuration();
@@ -110,6 +117,14 @@ public class ServerConfig {
         FileWriter fwriter = new FileWriter(defaultConfigPath);
         props.store(fwriter, "Configure file for YHBD Manager Server");
         fwriter.close();
+    }
+
+    public long getStripe_size() {
+        return stripe_size;
+    }
+
+    public long getStripe_count() {
+        return stripe_count;
     }
 
     public String getHdfsYhbdHome() {
@@ -153,6 +168,9 @@ public class ServerConfig {
         helper.print("copyNum: " + this.copyNum);
         helper.print("hdfsConf: " + this.hdfsConf);
         helper.print("hadoopHomeDir: " + this.hadoopHomeDir);
+
+        helper.print("stripe_count: " + this.stripe_count);
+        helper.print("stripe_size: " + this.stripe_size);
     }
 
     public static void main(String ... argv) throws IOException {

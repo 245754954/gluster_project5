@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudclient.Storage;
 
+import cn.edu.nudt.hycloudclient.entity.UploadInfo;
 import cn.edu.nudt.hycloudclient.network.Transfer;
 import cn.edu.nudt.hycloudinterface.entity.BlockList;
 
@@ -51,8 +52,9 @@ public class StorageTransfer {
         return Transfer.restoreBlock(filename, blockIdx);
     }
 
-    public static int verifyBlock(String filename, int blockIdx) throws IOException {
-        return Transfer.verifyBlock(filename, blockIdx);
+    public static String verifyBlock(UploadInfo up) throws IOException {
+
+        return Transfer.verifyBlock(up);
     }
 
     public static int deleteFileBlocks(String filename) throws IOException {

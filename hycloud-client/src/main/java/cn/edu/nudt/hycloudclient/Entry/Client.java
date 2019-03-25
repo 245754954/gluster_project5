@@ -40,6 +40,9 @@ public class Client {
 
     @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify, starts with 0")
     private List<String> blocks = null;
+
+    @Parameter(names = {"--challenge","-t"}, variableArity = true, description = "list of challenges of related blocks")
+    private List<String> challenges=null;
 //
 //    @Parameter(names= {"--verify", "-y"}, variableArity = true, description = "list of files to verify")
 //    private List<String> veifyFiles = null;
@@ -94,7 +97,7 @@ public class Client {
             case Action.VERIFY:
 //                tstart = System.currentTimeMillis();
                 if (blocks != null){
-                    StorageHandler.verifyBlock(sourcefile, blocks);
+                    StorageHandler.verifyBlock(sourcefile, blocks,challenges);
                 }else {
                     StorageHandler.verifyFile(sourcefile);
                 }

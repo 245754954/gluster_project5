@@ -25,6 +25,14 @@
 	</properties>
 
 	<dependencies>
+
+		<!--java dispatch c-->
+
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+
+		</dependency>
 		<!--网页页面-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
