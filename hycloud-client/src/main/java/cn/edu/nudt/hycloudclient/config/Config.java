@@ -14,10 +14,9 @@ public class Config {
 
     private static final String clientConfigFileName = "client.properties";
     private static final String PropertiesFilePath = "./hycloud-client/" + clientConfigFileName;
-//    \hycloud-client\src\main\resources
 
-    private String mConfigPath = null;
 
+    private String mConfigPath=null;
     /**
      * block size for integrity verification
      */
@@ -25,33 +24,11 @@ public class Config {
 
     private int num_of_challenge;
 
-    /**
-     * domain name or IP of the manager server
-     */
-    private String mManagerServerName;
-    /**
-     * port of the manager server
-     */
-    private int mManagerServerPort;
+
     /**
      * path to store the client database
      */
     private String mClientDatabasePath;
-//    /**
-//     * bits to represent a modulator
-//     */
-//    private int mModulatorBits;
-
-    private Configuration mHdfsConf;
-
-    private String mHdfsDeleteHome;
-    private String mHdfsVerifyHome;
-
-    private int copyNum;
-    private String hdfsVerifyCopyOneHome;
-    private String hdfsVerifyCopyTwoHome;
-
-
 
 
     private String server_url;
@@ -106,67 +83,28 @@ public class Config {
         //the number of challenge
         this.num_of_challenge = Integer.parseInt(props.getProperty("num_of_challenge","3"));
 
-        mManagerServerName = props.getProperty("ManagerServerName", "localhost");
-        mManagerServerPort = Integer.parseInt(props.getProperty("ManagerServerPort", "8080"));
         mClientDatabasePath = props.getProperty("ClientDatabasePath", "./yhbdclient.db");
-//        mModulatorBits = Integer.parseInt(props.getProperty("ModulatorBits", "160"));
-
-        this.mHdfsConf = new Configuration();
-        mHdfsConf.set("fs.default.name",
-                props.getProperty("fs.default.name", "hdfs://192.168.6.173:9000"));
-        this.mHdfsDeleteHome = props.getProperty("HdfsDeleteHome", "hdfs://192.168.6.173:9000/yhbd/delete/");
-        this.mHdfsVerifyHome= props.getProperty("HdfsVerifyHome", "hdfs://192.168.6.173:9000/yhbd/verify/");
-
-        this.copyNum = Integer.parseInt(props.getProperty("copyNum", "3"));
-        this.hdfsVerifyCopyOneHome= props.getProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
-        this.hdfsVerifyCopyTwoHome = props.getProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
         freader.close();
     }
 
     public static void initConfig() throws IOException {
+        /*
         Properties props = new Properties();
 
         // block size in MB
         props.setProperty("BlockSize", "128");
 
-        props.setProperty("ManagerServerName", "localhost");
-        props.setProperty("ManagerServerPort", "8080");
+
 
         props.setProperty("ClientDatabasePath", "./yhbdclient.db");
-
-        props.setProperty("fs.default.name", "hdfs://192.168.6.129:9000");
-        props.setProperty("HdfsDeleteHome", "hdfs://192.168.6.129:9000/yhbd/delete/");
-        props.setProperty("HdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
-
-        props.setProperty("copyNum", "3");
-        props.setProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.173:9000/yhbd/copyone/");
-        props.setProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.173:9000/yhbd/copytwo/");
 
 
         FileWriter fwriter = new FileWriter(PropertiesFilePath);
         props.store(fwriter, "Configure file for YHBD client");
-        fwriter.close();
+        fwriter.close();*/
+
     }
 
-    public int getCopyNum() {
-        return copyNum;
-    }
-
-    public String getHdfsVerifyCopyOneHome() {
-        return hdfsVerifyCopyOneHome;
-    }
-
-    public String getHdfsVerifyCopyTwoHome() {
-        return hdfsVerifyCopyTwoHome;
-    }
-
-    public String getManagerServerName() {
-        return mManagerServerName;
-    }
-
-    public int getManagerServerPort() {
-        return mManagerServerPort;
-    }
 
     public String getClientDatabasePath() {
         return mClientDatabasePath;
@@ -176,17 +114,7 @@ public class Config {
 //        return mModulatorBits;
 //    }
 
-    public Configuration getHdfsConf() {
-        return this.mHdfsConf;
-    }
 
-    public String getHdfsDeleteHome() {
-        return this.mHdfsDeleteHome;
-    }
-
-    public String getHdfsVerifyHome(){
-        return  this.mHdfsVerifyHome;
-    }
 
     public String getServer_url() {
         return server_url;
@@ -210,9 +138,7 @@ public class Config {
     }
 
 
-    public String getManagerServerUrl(){
-        return "http://" +this.mManagerServerName + ":" + this.mManagerServerPort + "/";
-    }
+
 
 
 
@@ -220,23 +146,12 @@ public class Config {
     public void dump() {
         helper.print("mClientDatabasePath: " + this.mClientDatabasePath);
 
-        helper.print("mManagerServerName: " + this.mManagerServerName);
-        helper.print("mManagerServerPort: " + this.mManagerServerPort);
-        helper.print("getManagerServerUrl: " + getManagerServerUrl());
-//        helper.print("mModulatorBits: " + this.mModulatorBits);
-
         helper.print("mBlockSize: " + this.mBlockSize);
-        helper.print("mHdfsConf: " + this.mHdfsConf);
-        helper.print("mHdfsDeleteHome: " + this.mHdfsDeleteHome);
-        helper.print("mHdfsVerifyHome: " + this.mHdfsVerifyHome);
 
-        helper.print("copyNum: " + this.copyNum);
-        helper.print("hdfsVerifyCopyOneHome: " + this.hdfsVerifyCopyOneHome);
-        helper.print("hdfsVerifyCopyTwoHome: " + this.hdfsVerifyCopyTwoHome);
     }
 
     public static void main(String ... argv) throws IOException {
-//        Config.initConfig();
+        //Config.initConfig();
 
         Config cfg = Config.getConfig();
         cfg.dump();

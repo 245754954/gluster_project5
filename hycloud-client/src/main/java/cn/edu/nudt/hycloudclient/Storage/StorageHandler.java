@@ -3,6 +3,7 @@ package cn.edu.nudt.hycloudclient.Storage;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudclient.entity.UploadInfo;
+import cn.edu.nudt.hycloudclient.util.DispatchTask;
 import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
 import cn.edu.nudt.hycloudclient.util.MD5Util;
@@ -131,9 +132,9 @@ public class StorageHandler {
 
                     //System.out.println("the value of plaintxt "+block_plaintext);
                     //System.out.println("the length of plaintext "+block_plaintext.length());
-                    //String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
+                    String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
                     //String md5 = HashSaltUtil.MD5WithoutSalt(block_plaintext);
-                    String md5 = MD5Util.string2MD5(block_plaintext);
+                    //String md5 = MD5Util.string2MD5(block_plaintext);
                     //String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
                     // OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
                     //osToHdfsForTag.write(hash, 0, hash.length);
@@ -149,9 +150,6 @@ public class StorageHandler {
                     sbase.insert(sourcefilename, blockIdx, challenge, base_path, currBlockSize, blockSize, md5);
                 }
                 }
-
-
-
 		fis.close();
 		//跟新服务器的文件上传信息
         //StorageTransfer.updateFileInfo(sourcefilename, blockNum);
@@ -165,105 +163,31 @@ public class StorageHandler {
 	}
 
 	public static void get(String requestfilename, String localpath) throws IOException, NoSuchAlgorithmException {
-        /*
-	    Config conf = Config.getConfig();
-
-        StorageBase sbase = new StorageBase();
-        long blockNum = sbase.getBlockNum(requestfilename);
-        String hdfsPathPrefix = sbase.getHdfsPath(requestfilename);
-        sbase.close();
-
-        FileOutputStream fos = new FileOutputStream(localpath);
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
-
-        for (int blockIdx = 0; blockIdx < blockNum; blockIdx++) {
-            digest.reset();
-
-            String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
-            BufferedInputStream bis = new BufferedInputStream(hdfs.open(new Path(blockHdfsPath)));
-            byte[] buffer = new byte[1024];
-            int nread = 0;
-            while ((nread = bis.read(buffer)) != -1){
-                digest.update(buffer, 0, nread);
-                fos.write(buffer, 0, nread);
-            }
-            bis.close();
-            byte[] hash = digest.digest();
-            BigInteger calHash = new BigInteger(hash);
-
-            String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
-            bis = new BufferedInputStream(hdfs.open(new Path(tagHdfsPath)));
-            nread = bis.read(buffer);
-            bis.close();
-            byte[] hashBuffer = new byte[nread];
-            System.arraycopy(buffer, 0, hashBuffer, 0, nread);
-            BigInteger recvHash = new BigInteger(hashBuffer);
-
-            if (!calHash.equals(recvHash)){
-                helper.err("Error: block " + blockIdx + " of " + requestfilename);
-            }
-        }
-        fos.close();
-
-        */
-        //需要的文件名字
-        //文件下载以后本地的保存路径
         HttpConnectionUtil.downloadFile(requestfilename,localpath);
 
 	}
 
-    public static void recoverableBlock(String filename, List<String> blocks) throws IOException {
-        if(blocks != null) {
-            helper.print("Recoverable testing of blocks of " + filename);
-            for (String strIdx : blocks) {
-                int blockIdx = Integer.parseInt(strIdx);
-                boolean rv = StorageTransfer.recoverableBlock(filename, blockIdx);
-                helper.print(filename + ", " + blockIdx + ", recoverable = " + rv);
-            }
-        }
-    }
 
-    public static void restoreBlock(String filename, List<String> blocks) throws IOException {
-        if(blocks != null) {
-            helper.print("Restoring blocks of " + filename);
-            for (String strIdx : blocks) {
-                int blockIdx = Integer.parseInt(strIdx);
-                int rv = StorageTransfer.restoreBlock(filename, blockIdx);
-                helper.print(filename + ", " + blockIdx + ", restored = " + RestoreResult.getString(rv));
-            }
-        }
-    }
+
 
 	public static void verifyBlock(String filename, List<String> blocks,List<String> challenges) throws IOException {
-	    long tstart, tend;
-	    StorageBase st = new StorageBase();
-        System.out.println("the value of challenges");
-        for(String sts:challenges){
 
-            System.out.println(sts);
-        }
+
+        StorageBase st = new StorageBase();
 
         if(null!=blocks)
         {
             int len = blocks.size();
             for (int i = 0; i < len; i++) {
-                tstart = System.currentTimeMillis();
                 String strIdx = blocks.get(i);
                 int blockIdx = Integer.parseInt(strIdx);
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
-                String hash = StorageTransfer.verifyBlock(up);
-                if(up.getHash_result().equals(hash))
-                {
-                    System.out.println("yes they are equals");
-                }
-                else
-                {
 
-                    System.out.println("they are not equals");
-                }
-                tend = System.currentTimeMillis();
-                helper.print("the time is "+(tend-tstart));
+                DispatchTask dis = new DispatchTask();
+                dis.setUp(up);
+                dis.setI(i);
+                Thread t = new Thread(dis);
+                t.start();
             }
         }
         /*
@@ -289,30 +213,7 @@ public class StorageHandler {
         }*/
     }
 
-    public static void verifyFile(String filename) throws IOException {
-        int status = FileStatus.NOFOUND;
-//        helper.print("Checking statuses of files ");
 
-        long tstart = System.currentTimeMillis();
-        if(filename != null) {
-            status = StorageTransfer.verifyFile(filename);
-        }
-        long tend = System.currentTimeMillis();
-        helper.print(filename + ", " + FileStatus.getStatusString(status) + ", " + (tend - tstart));
-    }
-
-    public static void locateDamaged(String filename) throws IOException {
-        if(filename != null) {
-            helper.print("Locate damaged blocks of " + filename);
-            BlockList damaged = StorageTransfer.locateDamaged(filename);
-
-            String damagedStr = "";
-            for (int i = 0; i < damaged.size(); i++) {
-                damagedStr += damaged.get(i) + ", ";
-            }
-            helper.print(filename + ", damaged blocks: " + damagedStr);
-        }
-    }
 
 	private static String getBlockHdfsPath(String hdfsPathPrefix, int blockIdx){
         return hdfsPathPrefix+ "_block_" + blockIdx;
@@ -322,87 +223,4 @@ public class StorageHandler {
     }
 
 
-//	static MessageDigest MD5 = null;
-//    static {
-//        try {
-//        MD5 = MessageDigest.getInstance("MD5");
-//        } catch (NoSuchAlgorithmException ne) {
-//        ne.printStackTrace();
-//        }
-//    }
-//
-//	public static void put(String sourcefile) throws IOException {
-//		Config conf = Config.getConfig();
-//
-//		File sfile = new File(sourcefile);
-//		String filename = sfile.getName();
-//		String hdfsPath = conf.getHdfsHome() + "plain_" + filename;
-//
-//		FileSystem hdfs = FileSystem.get(conf.getHdfsConf()) ;
-//		InputStream fin = new BufferedInputStream(new FileInputStream(sourcefile));
-//		OutputStream out = hdfs.create(new Path(hdfsPath));
-//
-//		int flag = 0;
-//		int index = 0;
-//		String[] hash;
-//        hash = new String[999];
-//		byte[] buffer = new byte[1024*1024];
-//		int nread = 0;
-//		String md5 = new String(Hex.encodeHex(MD5.digest()));
-//		while( ( nread = fin.read(buffer)) != -1) {
-//			flag++;
-//           	MD5.update(buffer, 0, nread);
-//			out.write(buffer, 0, nread);
-//			if (flag == 128) {
-//           		md5 = new String(Hex.encodeHex(MD5.digest()));
-//           		////////////////////////////////////////////////////////System.out.println(md5);
-//           		hash[index++] = md5;
-//           		flag = 0;
-//           		try {
-//           	        MD5 = MessageDigest.getInstance("MD5");
-//           	        } catch (NoSuchAlgorithmException ne) {
-//           	        ne.printStackTrace();
-//           	        }
-//           	}
-//		}
-//		if (flag > 0) {
-//           	md5 = new String(Hex.encodeHex(MD5.digest()));
-//        	////////////////////////////////////////////////////////////System.out.println(md5);
-//        	hash[index++] = md5;
-//        }
-//		out.close();
-//		fin.close();
-//
-//		StorageBase sb = new StorageBase();
-//		sb.insert(filename, hdfsPath);
-//		sb.close();
-//	}
-//
-//	public static void get(String filename, String localpath) throws IOException {
-//		Config conf = Config.getConfig();
-//
-//		StorageBase sb = new StorageBase();
-//		String hdfsPath = sb.getHdfsPath(filename);
-//		sb.close();
-//
-//		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
-//		InputStream input = hdfs.open(new Path(hdfsPath));
-//		FileOutputStream fout = new FileOutputStream(localpath);
-//
-//		byte[] buffer = new byte[1024];
-//		int nread = 0;
-//		while( (nread = input.read(buffer)) != -1) {
-//			fout.write(buffer, 0, nread);
-//		}
-//		fout.close();
-//		input.close();
-////
-////		try{
-////			FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
-//////					lPath.getFileSystem(conf.getHdfsConf()) ;
-////			hdfs.copyToLocalFile(false, new Path(hdfsPath), new Path(localpath),true) ;
-////		} catch(IOException ie){
-////			ie.printStackTrace() ;
-////		}
-//	}
 }
