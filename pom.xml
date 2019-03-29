@@ -16,7 +16,6 @@
 		<module>hycloud-client</module>
 		<module>hycloud-interface</module>
         <module>hycloud-tools</module>
-		<module>hycloud-hadoop</module>
 	</modules>
 
 	<properties>

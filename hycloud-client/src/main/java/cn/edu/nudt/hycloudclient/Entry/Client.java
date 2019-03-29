@@ -99,21 +99,21 @@ public class Client {
                 if (blocks != null){
                     StorageHandler.verifyBlock(sourcefile, blocks,challenges);
                 }else {
-                    StorageHandler.verifyFile(sourcefile);
+                    helper.print("the verify block information can not be null");
                 }
 //                tend = System.currentTimeMillis();
 //                helper.timing(strAction, tstart,tend);
                 break;
             case Action.LOCATE:
                 tstart = System.currentTimeMillis();
-                StorageHandler.locateDamaged(sourcefile);
+//                StorageHandler.locateDamaged(sourcefile);
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
                 break;
             case Action.RECOVERABLE:
                 tstart = System.currentTimeMillis();
 
-                StorageHandler.recoverableBlock(sourcefile, blocks);
+//                StorageHandler.recoverableBlock(sourcefile, blocks);
 //                StorageHandler.verifyFile(veifyFiles);
 
                 tend = System.currentTimeMillis();
@@ -122,7 +122,7 @@ public class Client {
             case Action.RESTORE:
                 tstart = System.currentTimeMillis();
 
-                StorageHandler.restoreBlock(sourcefile, blocks);
+//                StorageHandler.restoreBlock(sourcefile, blocks);
 //                StorageHandler.verifyFile(veifyFiles);
 
                 tend = System.currentTimeMillis();
@@ -131,7 +131,7 @@ public class Client {
             case Action.SPUT:
                 tstart = System.currentTimeMillis();
 
-                DeletionHandler.sput(sourcefile, granularity);
+//                DeletionHandler.sput(sourcefile, granularity);
 
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
@@ -139,7 +139,7 @@ public class Client {
             case Action.SGET:
                 tstart = System.currentTimeMillis();
 
-                DeletionHandler.sget(sourcefile, localpath);
+//                DeletionHandler.sget(sourcefile, localpath);
 
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
@@ -147,7 +147,7 @@ public class Client {
             case Action.SDEL:
                 tstart = System.currentTimeMillis();
 
-                DeletionHandler.sdel(sourcefile, deletes);
+//                DeletionHandler.sdel(sourcefile, deletes);
 
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);
@@ -155,7 +155,7 @@ public class Client {
             case Action.SDUMP:
                 tstart = System.currentTimeMillis();
 
-                DeletionHandler.sdump(sourcefile);
+//                DeletionHandler.sdump(sourcefile);
 
                 tend = System.currentTimeMillis();
                 helper.timing(strAction, tstart,tend);

@@ -39,7 +39,6 @@ public class DispatchHandler {
         String libraryDirs = System.getProperty("java.library.path");
         System.out.println(libraryDirs);
         System.loadLibrary( "DispatchHandler" );
-
     }
 
     // native 关键字表示本地方法，提醒编译器该方法将在外部定义
@@ -67,7 +66,7 @@ public class DispatchHandler {
 //        System.out.println(getInt());
          System.out.println(getString());
 
-         get_hash_with_blocknumber_and_challenge(25,2,"/opt/stripe3/upload.txt","trusted.1.123abc123abc1232.40.2.20",1,10,2);
+        // get_hash_with_blocknumber_and_challenge(25,2,"/opt/stripe3/upload.txt","trusted.1.123abc123abc1232.40.2.20",1,10,2);
 
 //        Path path = Paths.get("/opt/stripe_vol2/f.txt");
 //        UserDefinedFileAttributeView view =

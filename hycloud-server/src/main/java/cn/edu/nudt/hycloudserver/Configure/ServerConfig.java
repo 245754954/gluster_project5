@@ -17,22 +17,13 @@ public class ServerConfig {
 
     private String serverConfigPath = null;
 
+    //the size of stripe default value 1MB
     private long stripe_size;
 
+    //the number of bricks
     private long stripe_count;
 
-    private Configuration hdfsConf;
-
-    private String hdfsYhbdHome;
-    private String hdfsVerifyHome;
-
-    private int copyNum;
-    private String hdfsVerifyCopyOneHome;
-    private String hdfsVerifyCopyTwoHome;
-
-    private String hadoopHomeDir;
-
-    //#the directory that store the file uploaded by client
+    //the directory that store the file uploaded by client
     private String store_directory;
 
     public static ServerConfig getConfig() throws IOException {
@@ -83,41 +74,11 @@ public class ServerConfig {
         // block size in MB
         // block size in MB
 
-        this.hdfsConf = new Configuration();
-        hdfsConf.set("fs.default.name",
-                props.getProperty("fs.default.name", "hdfs://192.168.6.129:9000"));
 
-        this.hdfsYhbdHome= props.getProperty("hdfsYhbdHome", "hdfs://192.168.6.129:9000/yhbd/");
-        this.hdfsVerifyHome= props.getProperty("hdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
-
-        this.copyNum = Integer.parseInt(props.getProperty("copyNum", "3"));
-        this.hdfsVerifyCopyOneHome= props.getProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.129:9000/yhbd/copyone/");
-        this.hdfsVerifyCopyTwoHome = props.getProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
-
-        this.hadoopHomeDir = props.getProperty("hadoop.home.dir", null);
         freader.close();
     }
 
-    public static void initConfig() throws IOException {
-        Properties props = new Properties();
 
-        // block size in MB
-        props.setProperty("fs.default.name", "hdfs://192.168.6.129:9000");
-
-        props.setProperty("hdfsYhbdHome", "hdfs://192.168.6.129:9000/yhbd/");
-        props.setProperty("hdfsVerifyHome", "hdfs://192.168.6.129:9000/yhbd/verify/");
-
-        props.setProperty("copyNum", "3");
-        props.setProperty("hdfsVerifyCopyOneHome", "hdfs://192.168.6.129:9000/yhbd/copyone/");
-        props.setProperty("hdfsVerifyCopyTwoHome", "hdfs://192.168.6.129:9000/yhbd/copytwo/");
-
-        props.setProperty("hadoop.home.dir", "E:\\CodeHub\\yhcloud-home\\winutils");
-
-
-        FileWriter fwriter = new FileWriter(defaultConfigPath);
-        props.store(fwriter, "Configure file for YHBD Manager Server");
-        fwriter.close();
-    }
 
     public long getStripe_size() {
         return stripe_size;
@@ -127,54 +88,17 @@ public class ServerConfig {
         return stripe_count;
     }
 
-    public String getHdfsYhbdHome() {
-        return hdfsYhbdHome;
-    }
-
-    public Configuration getHdfsConf() {
-        return hdfsConf;
-    }
-
-    public String getHdfsVerifyHome() {
-        return hdfsVerifyHome;
-    }
-
-    public int getCopyNum() {
-        return copyNum;
-    }
-
-    public String getHdfsVerifyCopyOneHome() {
-        return hdfsVerifyCopyOneHome;
-    }
-
-    public String getHdfsVerifyCopyTwoHome() {
-        return hdfsVerifyCopyTwoHome;
-    }
-
-    public String getHadoopHomeDir() {
-        return hadoopHomeDir;
-    }
-
     public String getStore_directory() {
         return store_directory;
     }
 
     public void dump() {
-        helper.print("hdfsVerifyCopyOneHome: " + this.hdfsVerifyCopyOneHome);
-        helper.print("hdfsVerifyCopyTwoHome: " + this.hdfsVerifyCopyTwoHome);
-        helper.print("hdfsVerifyHome: " + this.hdfsVerifyHome);
-        helper.print("hdfsYhbdHome: " + this.hdfsYhbdHome);
-
-        helper.print("copyNum: " + this.copyNum);
-        helper.print("hdfsConf: " + this.hdfsConf);
-        helper.print("hadoopHomeDir: " + this.hadoopHomeDir);
-
         helper.print("stripe_count: " + this.stripe_count);
         helper.print("stripe_size: " + this.stripe_size);
     }
 
     public static void main(String ... argv) throws IOException {
-        ServerConfig.initConfig();
+//        ServerConfig.initConfig();
 
 //        ServerConfig cfg = ServerConfig.getConfig();
 //        cfg.dump();
