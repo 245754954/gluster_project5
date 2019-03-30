@@ -19,6 +19,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StorageHandler {
@@ -174,7 +175,7 @@ public class StorageHandler {
 
 
         StorageBase st = new StorageBase();
-
+        List<UploadInfo> ups = new ArrayList<UploadInfo>();
         if(null!=blocks)
         {
             int len = blocks.size();
@@ -183,12 +184,15 @@ public class StorageHandler {
                 int blockIdx = Integer.parseInt(strIdx);
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
 
-                DispatchTask dis = new DispatchTask();
-                dis.setUp(up);
-                dis.setI(i);
-                Thread t = new Thread(dis);
-                t.start();
+//                DispatchTask dis = new DispatchTask();
+//                dis.setUp(up);
+//                dis.setI(i);
+//                Thread t = new Thread(dis);
+                  ups.add(up);
+
+//                 t.start();
             }
+            StorageTransfer.verifyBlock(ups);
         }
         /*
 	    if(blocks != null) {

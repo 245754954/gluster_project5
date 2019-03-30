@@ -3,6 +3,7 @@ package cn.edu.nudt.hycloudserver.controller;
 import cn.edu.nudt.hycloudinterface.Constants.*;
 import cn.edu.nudt.hycloudinterface.entity.BlockList;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
+import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyOneDao;
@@ -19,19 +20,27 @@ import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/block")
 public class BlockController {
 
+    @RequestMapping(value="/verify1",method = {RequestMethod.GET,RequestMethod.POST})
+    public void verify1(@Param("ups") List<UploadInfo> ups){
+        for(UploadInfo up:ups){
 
+            System.out.println(up.toString());
+        }
 
+    }
 
 
 

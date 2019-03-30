@@ -6,14 +6,15 @@ import cn.edu.nudt.hycloudinterface.entity.BlockList;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 public class StorageTransfer {
 
 
 
-    public static String verifyBlock(UploadInfo up) throws IOException {
+    public static String verifyBlock(List<UploadInfo> ups) throws IOException {
 
-        return Transfer.verifyBlock(up);
+        return Transfer.verifyBlock(ups);
     }
 
 
