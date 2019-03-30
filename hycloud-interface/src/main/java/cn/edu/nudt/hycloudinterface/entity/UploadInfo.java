@@ -1,4 +1,4 @@
-package cn.edu.nudt.hycloudclient.entity;
+package cn.edu.nudt.hycloudinterface.entity;
 
 public class UploadInfo {
 

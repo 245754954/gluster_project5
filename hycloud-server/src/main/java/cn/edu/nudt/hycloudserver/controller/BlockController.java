@@ -3,6 +3,8 @@ package cn.edu.nudt.hycloudserver.controller;
 import cn.edu.nudt.hycloudinterface.Constants.*;
 import cn.edu.nudt.hycloudinterface.entity.BlockList;
 import cn.edu.nudt.hycloudinterface.entity.BlockVerifyResultList;
+import cn.edu.nudt.hycloudinterface.entity.QueryInfo;
+import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import cn.edu.nudt.hycloudserver.Configure.ServerConfig;
 import cn.edu.nudt.hycloudserver.Dao.BlockCopyOneDao;
@@ -14,24 +16,45 @@ import cn.edu.nudt.hycloudserver.entity.BlockCopyTwo;
 import cn.edu.nudt.hycloudserver.entity.BlockTable;
 import cn.edu.nudt.hycloudserver.entity.FileTable;
 import cn.edu.nudt.hycloudserver.util.DispatchHandler;
+import cn.edu.nudt.hycloudserver.util.DispatchTask;
 import com.alibaba.fastjson.JSON;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/block")
 public class BlockController {
 
+    @RequestMapping(value="/verify1",method = {RequestMethod.GET,RequestMethod.POST})
+    public void verify1(String ups){
+
+       QueryInfo info = JSON.parseObject(ups, QueryInfo.class);
+       List<UploadInfo> up1 = info.getUps();
+
+       for(int i=0;i<up1.size();i++){
+
+           UploadInfo up = new UploadInfo();
+           up=up1.get(i);
+
+           DispatchTask dis = new DispatchTask();
+           dis.setUp(up);
+           dis.setI(i);
+           Thread t = new Thread(dis);
+           t.start();
+       }
 
 
+
+
+    }
 
 
 

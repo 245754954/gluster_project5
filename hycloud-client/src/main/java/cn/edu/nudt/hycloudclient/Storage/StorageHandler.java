@@ -2,23 +2,14 @@ package cn.edu.nudt.hycloudclient.Storage;
 
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
-import cn.edu.nudt.hycloudclient.entity.UploadInfo;
-import cn.edu.nudt.hycloudclient.util.DispatchTask;
 import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
-import cn.edu.nudt.hycloudclient.util.MD5Util;
-import cn.edu.nudt.hycloudinterface.Constants.BlockStatus;
-import cn.edu.nudt.hycloudinterface.Constants.FileStatus;
-import cn.edu.nudt.hycloudinterface.Constants.RestoreResult;
-import cn.edu.nudt.hycloudinterface.entity.BlockList;
+import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StorageHandler {
@@ -84,13 +75,19 @@ public class StorageHandler {
 
 
 
-        StringBuilder builder1 = new StringBuilder();
+           StringBuilder builder1 = new StringBuilder();
+
+
 
 
 
             for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
             {
+
                 builder1.delete(0,builder1.length());
+
+
+
                 //生成每一块的摘要
                 helper.print("handling block: " + blockIdx);
                 //digest.reset();
@@ -114,17 +111,14 @@ public class StorageHandler {
                     //osToHdfs.write(buffer, 0, nread);
                     currBlockSize += nread;
                     String str1 = new String(buffer,0,nread);
+
                     builder1.append(str1);
-                    //copyOneOs.write(buffer, 0, nread);
-                    //copyTwoOs.write(buffer, 0, nread);
+
                 }
-                //osToHdfs.close();
-                //copyOneOs.close();
-                //copyTwoOs.close();
-                //生成每一块的摘要
-                //byte[] hash = digest.digest();
-                //得到挑战,每一块都要和三个salt进行hash生成
-                String block_plaintext = builder1.toString();
+
+               String block_plaintext = builder1.toString();
+
+
                 for(int i=0;i<num_of_challenge;i++)
                 {
 
@@ -172,9 +166,10 @@ public class StorageHandler {
 
 	public static void verifyBlock(String filename, List<String> blocks,List<String> challenges) throws IOException {
 
-	    long tstart, tend;
-	    StorageBase st = new StorageBase();
 
+
+        StorageBase st = new StorageBase();
+        List<UploadInfo> ups = new ArrayList<UploadInfo>();
         if(null!=blocks)
         {
             int len = blocks.size();
@@ -183,14 +178,22 @@ public class StorageHandler {
                 int blockIdx = Integer.parseInt(strIdx);
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
 
-                DispatchTask dis = new DispatchTask();
-                dis.setUp(up);
-                dis.setI(i);
-                Thread t = new Thread(dis);
-                t.start();
-
+                ups.add(up);
             }
+            StorageTransfer.verifyBlock(ups);
         }
+        /*
+	    if(blocks != null) {
+            for (String strIdx : blocks) {
+                tstart = System.currentTimeMillis();
+
+
+                //对于每一块需要查找本地的数据库，找到filename_and_path key
+                //blocksize  real_size
+
+
+            }*/
+
 
     }
 

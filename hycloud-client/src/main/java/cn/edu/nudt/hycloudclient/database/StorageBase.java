@@ -1,7 +1,7 @@
 package cn.edu.nudt.hycloudclient.database;
 
 import cn.edu.nudt.hycloudclient.config.Config;
-import cn.edu.nudt.hycloudclient.entity.UploadInfo;
+import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.IOException;
@@ -122,7 +122,7 @@ public class StorageBase {
 	}
 
 
-	public UploadInfo get_uploadinfo_by_filename_and_blocknumber(String filename ,long blocknumber,String challenge){
+	public UploadInfo get_uploadinfo_by_filename_and_blocknumber(String filename , long blocknumber, String challenge){
 
 		String sqlQuery = "SELECT * FROM storgeTable as t WHERE t.storepath is ? and t.blocknum is ? and t.challenge is ?";
 
