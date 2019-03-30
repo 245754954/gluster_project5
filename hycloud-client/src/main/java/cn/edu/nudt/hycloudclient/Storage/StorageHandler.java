@@ -3,6 +3,7 @@ package cn.edu.nudt.hycloudclient.Storage;
 import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudclient.entity.UploadInfo;
+import cn.edu.nudt.hycloudclient.util.DispatchTask;
 import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
 import cn.edu.nudt.hycloudclient.util.MD5Util;
@@ -170,6 +171,7 @@ public class StorageHandler {
 
 
 	public static void verifyBlock(String filename, List<String> blocks,List<String> challenges) throws IOException {
+
 	    long tstart, tend;
 	    StorageBase st = new StorageBase();
 
@@ -177,49 +179,19 @@ public class StorageHandler {
         {
             int len = blocks.size();
             for (int i = 0; i < len; i++) {
-                tstart = System.currentTimeMillis();
                 String strIdx = blocks.get(i);
                 int blockIdx = Integer.parseInt(strIdx);
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
-                if(null==up.getHash_result()){
-                    System.out.println("The infomation of block "+(i)+" wrong please check the the input!");
-                    continue;
-                }
-                String hash = StorageTransfer.verifyBlock(up);
-                if(up.getHash_result().equals(hash))
-                {
-                    System.out.println("the block "+(i)+" is intact");
-                }
-                else
-                {
 
-                    System.out.println("the block "+(i)+" is not intact");
-                }
-                tend = System.currentTimeMillis();
-                helper.print("spend time :"+(tend-tstart));
+                DispatchTask dis = new DispatchTask();
+                dis.setUp(up);
+                dis.setI(i);
+                Thread t = new Thread(dis);
+                t.start();
+
             }
         }
-        /*
-	    if(blocks != null) {
-            for (String strIdx : blocks) {
-                tstart = System.currentTimeMillis();
 
-
-                //对于每一块需要查找本地的数据库，找到filename_and_path key
-                //blocksize  real_size
-
-
-                int blockIdx = Integer.parseInt(strIdx);
-                UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename,blockIdx,challenges.get(0));
-
-                int status = StorageTransfer.verifyBlock(up);
-
-                tend = System.currentTimeMillis();
-                helper.print(blockIdx + ", " + BlockStatus.getStatusString(status) + ", " + (tend - tstart));
-            }
-
-
-        }*/
     }
 
 
