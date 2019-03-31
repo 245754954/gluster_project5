@@ -13,7 +13,7 @@ import java.util.List;
 public class Transfer {
 
 
-    public static String verifyBlock(List<UploadInfo> ups) throws IOException {
+    public static List<String> verifyBlock(List<UploadInfo> ups) throws IOException {
 //        URL url = new URL(Config.getConfig().getServer_url() + "/block/verifyBlock");
         URL url = new URL(Config.getConfig().getServer_url() + "/block/verify1");
 
@@ -32,9 +32,10 @@ public class Transfer {
 
         basic.update("ups", JSON.toJSONString(queryInfo));
         String hash = basic.doPost(url);
-//        String hash = BasicTransfer.doPost(url, json.toString());
-//        System.out.println(json.toString());
-        return hash;
+        List<String> hashList = (List<String>)JSON.parse(hash);
+
+
+        return hashList;
     }
 
 

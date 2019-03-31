@@ -5,6 +5,7 @@ package cn.edu.nudt.hycloudclient.util;
 import sun.nio.cs.ext.GBK;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
@@ -12,12 +13,30 @@ import java.util.Random;
  *ps：准确来说散列加密不是加密算法，因为它是不可逆的（只能加密，不能解密）
  */
 public class HashSaltUtil {
+    private MessageDigest md;
+
+
+    public HashSaltUtil() throws NoSuchAlgorithmException {
+
+         md = MessageDigest.getInstance("MD5");
+         md.reset();
+
+    }
+
+    public MessageDigest getMd() {
+        return md;
+    }
+
+
 
     private static char[] hex = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    public static void main(String[] args) throws Exception {
-        String input = "1234561234567890123456789021";
-        String salt1 = salt();
+
+
+
+//    public static void main(String[] args) throws Exception {
+//        String input = "1234561234567890123456789021";
+//        String salt1 = salt();
 //        String st = "A";
 //        System.out.println(st.length());
 //        System.out.println(st.getBytes("GBK").length);
@@ -25,18 +44,18 @@ public class HashSaltUtil {
 //
 //        System.out.println(st.getBytes("unicode").length);
 //        System.out.println(st.getBytes("unicode"));
-
-
-
-        System.out.println("salt is "+salt1);
-        System.out.println("MD5加密" + "\n"
-                + "明文：" + input + "\n"
-                + "无盐密文：" + MD5WithoutSalt(input));
-        String enc = MD5WithSalt(input,salt1);
-        System.out.println("带盐密文：" + enc);
-        System.out.println("the length of enc is "+enc.length());
-        System.out.println(verify("1234561234567890123456789021",enc));
-    }
+//
+//
+//
+//        System.out.println("salt is "+salt1);
+//        System.out.println("MD5加密" + "\n"
+//                + "明文：" + input + "\n"
+//                + "无盐密文：" + MD5WithoutSalt(input));
+//        String enc = MD5WithSalt(input,salt1);
+//        System.out.println("带盐密文：" + enc);
+//        System.out.println("the length of enc is "+enc.length());
+//        System.out.println(verify("1234561234567890123456789021",enc));
+//    }
 
     /**
      *@params: [inputStr] 输入明文
@@ -44,8 +63,10 @@ public class HashSaltUtil {
      */
     public static String MD5WithoutSalt(String inputStr) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");//申明使用MD5算法,更改参数为"SHA"就是SHA算法了
-            return byte2HexStr(md.digest(inputStr.getBytes()));//哈希计算,转换输出
+           //申明使用MD5算法,更改参数为"SHA"就是SHA算法了
+            HashSaltUtil ha = new HashSaltUtil();
+            MessageDigest md1 = ha.getMd();
+            return byte2HexStr(md1.digest(inputStr.getBytes()));//哈希计算,转换输出
         } catch (Exception e) {
             e.printStackTrace();
             return e.toString();
@@ -68,12 +89,14 @@ public class HashSaltUtil {
      */
     public static String MD5WithSalt(String inputStr,String salt) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");//申明使用MD5算法,更改参数为"SHA"就是SHA算法了
+            HashSaltUtil ha = new HashSaltUtil();
+
+            MessageDigest md1 = ha.getMd();//申明使用MD5算法,更改参数为"SHA"就是SHA算法了
 
 
 
             String inputWithSalt = inputStr + salt;//加盐，输入加盐
-            String hashResult = byte2HexStr(md.digest(inputWithSalt.getBytes()));//哈希计算,转换输出
+            String hashResult = byte2HexStr(md1.digest(inputWithSalt.getBytes()));//哈希计算,转换输出
             System.out.println("加盐密文："+hashResult);
 
             /*将salt存储到hash值中，用于登陆验证密码时使用相同的盐*/
@@ -90,6 +113,32 @@ public class HashSaltUtil {
             return e.toString();
         }
     }
+
+public void md5_with_update(String input){
+
+    this.md.update(input.getBytes());
+
+
+}
+
+public String md5_with_salt_final(String salt){
+
+     this.md.update(salt.getBytes());
+     String md5_result = byte2HexStr(this.md.digest());
+
+    /*将salt存储到hash值中，用于登陆验证密码时使用相同的盐*/
+    char[] cs = new char[48];
+    for (int i = 0; i < 48; i += 3) {
+        cs[i] = md5_result.charAt(i / 3 * 2);
+        cs[i + 1] = salt.charAt(i / 3);//输出带盐，存储盐到hash值中;每两个hash字符中间插入一个盐字符
+        cs[i + 2] = md5_result.charAt(i / 3 * 2 + 1);
+    }
+    md5_result = new String(cs);
+    //md重置
+    this.md.reset();
+    return md5_result;
+
+}
 
 
     /**

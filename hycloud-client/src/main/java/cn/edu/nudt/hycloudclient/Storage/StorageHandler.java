@@ -6,8 +6,11 @@ import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
 import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.*;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +26,7 @@ public class StorageHandler {
 		File sourcefile = new File(str);
 		//得到文件名字
 		String sourcefilename = sourcefile.getName();
-		//得到hdfs相关的信息
 
-        /*
-        String hdfsPathPrefix = conf.getHdfsVerifyHome() + sourcefilename;
-        String copyOnePathPrefix = conf.getHdfsVerifyCopyOneHome() + sourcefilename;
-        String copyTwoPathPrefix = conf.getHdfsVerifyCopyTwoHome() + sourcefilename;
-        */
         //拼接得到上传到服务器的详细地址
         String base_path = conf.getStore_directory()+"/"+sourcefilename;
         //得到配置文件中每一块的大小
@@ -47,22 +44,10 @@ public class StorageHandler {
         //得到hash256算法，生成摘要
         //MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-		// delete duplicate files anb blocks
-        //如果重复了的文件名字需要删除一下
-
-        /*
-        StorageTransfer.deleteFile(sourcefilename);
-        StorageTransfer.deleteFileBlocks(sourcefilename);
-        */
-
-        /*
-        //得到hdfs的一个实例
-		FileSystem hdfs = FileSystem.get(conf.getHdfsConf());
-		*/
 		//得到文件输入流
         StorageBase sbase = new StorageBase();
 		FileInputStream fis = new FileInputStream(sourcefilepath);
-        //对文件分块进行一块一块的往hdfs中上传
+
 
         //根据配置生成挑战数量
         int num_of_challenge =conf.getNum_of_challenge();
@@ -73,77 +58,47 @@ public class StorageHandler {
         }
 
 
+        HashSaltUtil ha1 = new HashSaltUtil();
+        HashSaltUtil ha2 = new HashSaltUtil();
+        HashSaltUtil ha3 = new HashSaltUtil();
 
-
-           StringBuilder builder1 = new StringBuilder();
-
-
-
-
-
-            for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
-            {
-
-                builder1.delete(0,builder1.length());
-
-
-
+        for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
+        {
                 //生成每一块的摘要
                 helper.print("handling block: " + blockIdx);
-                //digest.reset();
-                /*
-                String blockHdfsPath = getBlockHdfsPath(hdfsPathPrefix, blockIdx);
-                OutputStream osToHdfs = hdfs.create(new Path(blockHdfsPath));
 
-                String blockCopyOnePath = getBlockHdfsPath(copyOnePathPrefix, blockIdx);
-                OutputStream copyOneOs = hdfs.create(new Path(blockCopyOnePath));
-
-                String blockCopyTwoPath = getBlockHdfsPath(copyTwoPathPrefix, blockIdx);
-                OutputStream copyTwoOs = hdfs.create(new Path(blockCopyTwoPath));
-                */
-                int n = 1*1024*1024;
                 byte[] buffer = new byte[1024];
                 long currBlockSize = 0;
                 int nread = 0;
 
-                while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1){
-                    //digest.update(buffer, 0, nread);
-                    //osToHdfs.write(buffer, 0, nread);
+                while (currBlockSize < blockSize &&  (nread = fis.read(buffer)) != -1)
+                {
+
                     currBlockSize += nread;
                     String str1 = new String(buffer,0,nread);
 
-                    builder1.append(str1);
+                    ha1.md5_with_update(str1);
+                    ha2.md5_with_update(str1);
+                    ha3.md5_with_update(str1);
 
                 }
 
-               String block_plaintext = builder1.toString();
+                String challenge1 = challenge_array[0];
+                String challenge2 = challenge_array[1];
+                String challenge3 = challenge_array[2];
+
+                String md5_1 = ha1.md5_with_salt_final(challenge1);
+                String md5_2 = ha2.md5_with_salt_final(challenge2);
+                String md5_3 = ha3.md5_with_salt_final(challenge3);
+
+                sbase.insert(sourcefilename, blockIdx, challenge1, base_path, currBlockSize, blockSize, md5_1);
+                sbase.insert(sourcefilename, blockIdx, challenge2, base_path, currBlockSize, blockSize, md5_2);
+                sbase.insert(sourcefilename, blockIdx, challenge3, base_path, currBlockSize, blockSize, md5_3);
+        }
 
 
-                for(int i=0;i<num_of_challenge;i++)
-                {
-
-                    String challenge = challenge_array[i];
-
-                    //System.out.println("the value of plaintxt "+block_plaintext);
-                    //System.out.println("the length of plaintext "+block_plaintext.length());
-                    String md5 = HashSaltUtil.MD5WithSalt(block_plaintext,challenge);
-                    //String md5 = HashSaltUtil.MD5WithoutSalt(block_plaintext);
-                    //String md5 = MD5Util.string2MD5(block_plaintext);
-                    //String tagHdfsPath = getTagHdfsPath(hdfsPathPrefix, blockIdx);
-                    // OutputStream osToHdfsForTag = hdfs.create(new Path(tagHdfsPath));
-                    //osToHdfsForTag.write(hash, 0, hash.length);
-                    //osToHdfsForTag.close();
-
-                    //            fileInfo.addBlock(blockIdx, hash);
-                    //            StorageTransfer.addBlockInfoToManagerServer(sourcefilename, blockIdx, hash);
-                    //将上传到hdfs文件系统的每一块文件相关的信息记录下来，这里
-                    //保存到服务器
-                    //StorageTransfer.addBlock(sourcefilename, blockIdx, conf.getCopyNum(), hash);
 
 
-                    sbase.insert(sourcefilename, blockIdx, challenge, base_path, currBlockSize, blockSize, md5);
-                }
-                }
 		fis.close();
 		//跟新服务器的文件上传信息
         //StorageTransfer.updateFileInfo(sourcefilename, blockNum);
@@ -151,7 +106,6 @@ public class StorageHandler {
         helper.print(sourcefilename + " Uploaded");
         //保存到本地的sqlite
 		sbase.close();
-
 		//上传文件到服务器
         HttpConnectionUtil.uploadFile("upload/multiFileUpload1",new String[]{sourcefilepath});
 	}
@@ -173,26 +127,35 @@ public class StorageHandler {
         if(null!=blocks)
         {
             int len = blocks.size();
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len; i++)
+            {
                 String strIdx = blocks.get(i);
                 int blockIdx = Integer.parseInt(strIdx);
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
-
                 ups.add(up);
             }
-            StorageTransfer.verifyBlock(ups);
+
+            List<String> result_set = StorageTransfer.verifyBlock(ups);
+
+            for(int i=0;i<len;i++)
+            {
+                if(ups.get(i).getHash_result().equals(result_set.get(i)))
+                {
+                    helper.print("block "+i+" is intact ");
+                    helper.print("origin signature is "+ups.get(i).getHash_result());
+                    helper.print("returned signature is "+result_set.get(i));
+                }
+                else
+                {
+                    helper.print("block "+i+" is not  intact");
+                    helper.print("origin signature is "+ups.get(i).getHash_result());
+                    helper.print("returned signature is "+result_set.get(i));
+
+                }
+
+            }
+
         }
-        /*
-	    if(blocks != null) {
-            for (String strIdx : blocks) {
-                tstart = System.currentTimeMillis();
-
-
-                //对于每一块需要查找本地的数据库，找到filename_and_path key
-                //blocksize  real_size
-
-
-            }*/
 
 
     }

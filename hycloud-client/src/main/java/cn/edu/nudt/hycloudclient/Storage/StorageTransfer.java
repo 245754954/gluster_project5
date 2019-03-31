@@ -10,7 +10,7 @@ public class StorageTransfer {
 
 
 
-    public static String verifyBlock(List<UploadInfo> ups) throws IOException {
+    public static List<String> verifyBlock(List<UploadInfo> ups) throws IOException {
 
         return Transfer.verifyBlock(ups);
     }

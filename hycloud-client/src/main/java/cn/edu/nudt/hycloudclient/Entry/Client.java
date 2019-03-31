@@ -95,14 +95,14 @@ public class Client {
                 helper.timing(strAction, tstart,tend);
                 break;
             case Action.VERIFY:
-//                tstart = System.currentTimeMillis();
+                tstart = System.currentTimeMillis();
                 if (blocks != null){
                     StorageHandler.verifyBlock(sourcefile, blocks,challenges);
                 }else {
                     helper.print("the verify block information can not be null");
                 }
-//                tend = System.currentTimeMillis();
-//                helper.timing(strAction, tstart,tend);
+                tend = System.currentTimeMillis();
+                helper.timing(strAction, tstart,tend);
                 break;
             case Action.LOCATE:
                 tstart = System.currentTimeMillis();

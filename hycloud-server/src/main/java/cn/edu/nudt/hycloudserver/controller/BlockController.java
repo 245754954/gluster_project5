@@ -26,47 +26,62 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 
 @RestController
 @RequestMapping("/block")
 public class BlockController {
 
-    @RequestMapping(value="/verify1",method = {RequestMethod.GET,RequestMethod.POST})
-    public void verify1(String ups){
+    @RequestMapping(value = "/verify1", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String verify1(String ups) throws InterruptedException {
 
-       QueryInfo info = JSON.parseObject(ups, QueryInfo.class);
-       List<UploadInfo> up1 = info.getUps();
+        QueryInfo info = JSON.parseObject(ups, QueryInfo.class);
+        List<UploadInfo> up1 = info.getUps();
+        List<String> hashList = new ArrayList<>();
+        List<DispatchTask> disList = new ArrayList<>();
+        //等待所有子线程执行完毕才可以
+        Vector<Thread> thread_vector = new Vector<Thread>();
+        for (int i = 0; i < up1.size(); i++) {
 
-       for(int i=0;i<up1.size();i++){
+            UploadInfo up = null;
+            up = up1.get(i);
 
-           UploadInfo up = new UploadInfo();
-           up=up1.get(i);
+            DispatchTask dis = new DispatchTask();
+            disList.add(dis);
+            dis.setUp(up);
+            dis.setI(i);
+            Thread t = new Thread(dis);
+            thread_vector.add(t);
+            t.start();
 
-           DispatchTask dis = new DispatchTask();
-           dis.setUp(up);
-           dis.setI(i);
-           Thread t = new Thread(dis);
-           t.start();
-       }
+        }
 
+        for(Thread t :thread_vector){
+            t.join();
+        }
 
+        //主线程执行
 
+        disList.forEach(d -> {
+            hashList.add(d.getHash());
+        });
+
+       return JSON.toJSONString(hashList);
 
     }
 
 
-
-
-
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})
-    public String verifyBlock(String filename, String filename_and_path,String challenge,String blocknumber,String blocksize,String real_size) throws IOException {
+    public String verifyBlock(String filename, String filename_and_path, String challenge, String blocknumber, String blocksize, String real_size) throws IOException {
 
         Integer blocknumber1 = Integer.parseInt(blocknumber);
         Integer blocksize1 = Integer.parseInt(blocksize);
         Integer real_size1 = Integer.parseInt(real_size);
-        Integer offset = blocknumber1*blocksize1;
+        Integer offset = blocknumber1 * blocksize1;
 
         //根据条待卷的大小和配置信息计算offset
         ServerConfig config = ServerConfig.getConfig();
@@ -81,8 +96,8 @@ public class BlockController {
         stripe_num = offset / line_size;
         dest_offset = (stripe_num * stripe_size) + (offset % stripe_size);
 
-        String hash_reslut = DispatchHandler.get_hash_with_blocknumber_and_challenge(filename_and_path,blocksize1,offset,challenge,blocknumber1,real_size1,dest_offset);
-        System.out.println("the hash_result is "+hash_reslut);
+        String hash_reslut = DispatchHandler.get_hash_with_blocknumber_and_challenge(filename_and_path, blocksize1, offset, challenge, blocknumber1, real_size1, dest_offset);
+        System.out.println("the hash_result is " + hash_reslut);
         return hash_reslut;
     }
 

@@ -36,9 +36,9 @@ public class DispatchHandler {
 
     // 静态初始化代码块，保证虚拟机在第一次使用该类时就会装载库
     static {
-        String libraryDirs = System.getProperty("java.library.path");
-        System.out.println(libraryDirs);
-        System.loadLibrary( "DispatchHandler" );
+        //String libraryDirs = System.getProperty("java.library.path");
+       // System.out.println(libraryDirs);
+       // System.loadLibrary( "DispatchHandler" );
     }
 
     // native 关键字表示本地方法，提醒编译器该方法将在外部定义
@@ -64,7 +64,7 @@ public class DispatchHandler {
 //        //java调用c语言中的函数，并且返回参数，返回string类型
 //        //和int类型
 //        System.out.println(getInt());
-         System.out.println(getString());
+        // System.out.println(getString());
 
         // get_hash_with_blocknumber_and_challenge(25,2,"/opt/stripe3/upload.txt","trusted.1.123abc123abc1232.40.2.20",1,10,2);
 
@@ -100,7 +100,7 @@ public class DispatchHandler {
         System.out.println(key);
 
         Path path = Paths.get(filepath_and_name);
-        System.out.println("the filepath_and_name"+filepath_and_name);
+        //System.out.println("the filepath_and_name"+filepath_and_name);
         UserDefinedFileAttributeView view =
                 Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
 
