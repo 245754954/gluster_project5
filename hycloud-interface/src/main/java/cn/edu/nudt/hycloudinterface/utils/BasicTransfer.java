@@ -29,7 +29,7 @@ public class BasicTransfer {
         try {
             httpsConn = (HttpURLConnection) url.openConnection();
             httpsConn.setConnectTimeout(30000);
-            httpsConn.setReadTimeout(30000);
+            httpsConn.setReadTimeout(300000);
             httpsConn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
             httpsConn.setDoOutput(true);
             httpsConn.setRequestMethod("POST");
