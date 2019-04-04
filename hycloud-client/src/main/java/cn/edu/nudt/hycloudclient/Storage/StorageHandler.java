@@ -56,8 +56,6 @@ public class StorageHandler {
 
             challenge_array[i]  = HashSaltUtil.salt();
         }
-
-
         HashSaltUtil ha1 = new HashSaltUtil();
         HashSaltUtil ha2 = new HashSaltUtil();
         HashSaltUtil ha3 = new HashSaltUtil();
