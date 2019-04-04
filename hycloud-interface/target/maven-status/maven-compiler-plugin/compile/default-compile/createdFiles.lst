@@ -1,0 +1,17 @@
+cn/edu/nudt/hycloudinterface/entity/SegmentList.class
+cn/edu/nudt/hycloudinterface/entity/BlockVerifyResultList.class
+cn/edu/nudt/hycloudinterface/utils/PlusTransfer.class
+cn/edu/nudt/hycloudinterface/utils/helper.class
+cn/edu/nudt/hycloudinterface/entity/BlockInfo.class
+cn/edu/nudt/hycloudinterface/entity/FileInfo.class
+cn/edu/nudt/hycloudinterface/entity/Challenge.class
+cn/edu/nudt/hycloudinterface/Constants/BlockStatus.class
+cn/edu/nudt/hycloudinterface/Constants/FileStatus.class
+cn/edu/nudt/hycloudinterface/Constants/RestoreResult.class
+cn/edu/nudt/hycloudinterface/utils/Assist.class
+cn/edu/nudt/hycloudinterface/entity/ModulationTree.class
+cn/edu/nudt/hycloudinterface/Constants/BlockVerifyResult.class
+cn/edu/nudt/hycloudinterface/entity/BlockList.class
+cn/edu/nudt/hycloudinterface/entity/Node.class
+cn/edu/nudt/hycloudinterface/utils/BasicTransfer.class
+cn/edu/nudt/hycloudinterface/Constants/CopyID.class
