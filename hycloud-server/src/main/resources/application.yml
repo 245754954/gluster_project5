@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: zfc
+    active: dev
 
   #配置spring-jpa
   jpa:
