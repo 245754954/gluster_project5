@@ -196,5 +196,7 @@
     <orderEntry type="module" module-name="hycloud-interface" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.51" level="project" />
     <orderEntry type="library" name="Maven: com.beust:jcommander:1.72" level="project" />
+    <orderEntry type="library" name="Maven: it.unisa.dia.gas:jpbc-api:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: it.unisa.dia.gas:jpbc-plaf:2.0.0" level="project" />
   </component>
 </module>
