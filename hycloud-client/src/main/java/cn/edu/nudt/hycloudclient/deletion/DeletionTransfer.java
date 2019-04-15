@@ -6,8 +6,7 @@ import cn.edu.nudt.hycloudclient.network.Transfer;
 import cn.edu.nudt.hycloudinterface.entity.ModulationTree;
 import cn.edu.nudt.hycloudinterface.entity.SegmentList;
 import cn.edu.nudt.hycloudinterface.utils.helper;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

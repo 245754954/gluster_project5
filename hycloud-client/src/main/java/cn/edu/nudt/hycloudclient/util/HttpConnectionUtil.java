@@ -67,6 +67,7 @@ public class HttpConnectionUtil {
             URLConnection urlConnection = url.openConnection();
             // http的连接类
             HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setChunkedStreamingMode(0);
             // 设定请求的方法，默认是GET
             httpURLConnection.setRequestMethod("POST");
             // 设置字符编码
