@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>hycloud</artifactId>
+        <groupId>cn.edu.nudt</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+
+    <artifactId>hycloud-native</artifactId>
+    <groupId>cn.edu.nudt</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>so</packaging>
+
+    <properties>
+        <JAVA_HOME>/usr/local/jdk1.8/jdk</JAVA_HOME>
+    </properties>
+
+    <!--gcc sign.c  -c -fpic  -I $JAVA_HOME/include -I $JAVA_HOME/include/linux-->
+    <!--gcc -shared  sign.o -o libhycloudnative.so -L /usr/local/lib -l pbc -l gmp-->
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>1.0-alpha-8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <compilerProvider>generic-classic</compilerProvider>
+                    <compilerExecutable>gcc</compilerExecutable>
+                    <linkerExecutable>gcc</linkerExecutable>
+                    <sources>
+                        <source>
+                            <directory>${basedir}/src/main/java/</directory>
+                            <fileNames>
+                                <fileName>sign.c</fileName>
+                            </fileNames>
+                        </source>
+                    </sources>
+                    <compilerStartOptions>
+                        <compilerStartOption>-I ${JAVA_HOME}/include/</compilerStartOption>
+                        <compilerStartOption>-I ${JAVA_HOME}/include/linux/</compilerStartOption>
+                        <compilerStartOption>-I /usr/local/include/pbc/</compilerStartOption>
+                    </compilerStartOptions>
+
+                    <compilerEndOptions>
+                        <compilerEndOption>-c</compilerEndOption>
+                        <compilerEndOption>-fPIC</compilerEndOption>
+                    </compilerEndOptions>
+
+
+                    <linkerStartOptions>-shared</linkerStartOptions>
+                    <linkerEndOptions>
+                        <linkerEndOption>-L /usr/local/lib</linkerEndOption>
+                        <linkerEndOption>-shared -lgmp -lpbc</linkerEndOption>
+                    </linkerEndOptions>
+
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

@@ -12,11 +12,12 @@
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
+		<module>hycloud-native</module>
 		<module>hycloud-server</module>
 		<module>hycloud-client</module>
 		<module>hycloud-interface</module>
         <module>hycloud-tools</module>
-	</modules>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
