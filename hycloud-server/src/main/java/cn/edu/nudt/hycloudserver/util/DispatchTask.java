@@ -53,6 +53,8 @@ public class DispatchTask implements Runnable {
             long stripe_num = 0;
             long dest_offset = 0;
 
+
+
             line_size = stripe_size * stripe_count;
             stripe_num = offset / line_size;
             dest_offset = (stripe_num * stripe_size) + (offset % stripe_size);
@@ -63,15 +65,17 @@ public class DispatchTask implements Runnable {
                 return;
             }
 
+            String p = this.up.getP();
+            String y = this.up.getY();
             tstart = System.currentTimeMillis();
-            this.hash = DispatchHandler.get_hash_with_blocknumber_and_challenge(up.getFilename_and_path(), blocksize1, offset, up.getChallenge(), blocknumber1, real_size1, dest_offset);
+            this.hash = DispatchHandler.get_hash_with_blocknumber_and_challenge(up.getFilename_and_path(), blocksize1, offset, up.getChallenge(), blocknumber1, real_size1, dest_offset,p,y);
 
-            if (up.getHash_result().equals(hash)) {
-                System.out.println("the block " + (i) + " is intact");
-            }
-            else {
-                System.out.println("the block " + (i) + " is not intact");
-            }
+//            if (up.getHash_result().equals(hash)) {
+//                System.out.println("the block " + (i) + " is intact");
+//            }
+//            else {
+//                System.out.println("the block " + (i) + " is not intact");
+//            }
 
             tend = System.currentTimeMillis();
             helper.print("spend time :" + (tend - tstart));
