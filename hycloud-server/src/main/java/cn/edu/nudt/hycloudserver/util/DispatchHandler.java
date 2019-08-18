@@ -98,7 +98,7 @@ public class DispatchHandler {
         sb.delete( 0, sb.length() );
         sb.append(blocknumber).append(".").append(challenge).append(".").append(blocksize).append(".").append(offset).append(".").append(real_size).append(".").append(dest_offset).append(".").append(p).append(".").append(y);
         String key = sb.toString();
-        System.out.println(key);
+       // System.out.println(key);
 
         Path path = Paths.get(filepath_and_name);
         //System.out.println("the filepath_and_name"+filepath_and_name);

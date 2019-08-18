@@ -62,7 +62,9 @@ public class StorageHandler {
         HashSaltUtil ha3 = new HashSaltUtil();
         //生成系统参数x  y  p
         //其中x代表私侥，y代表公钥，p代表循环群系统参数
+
         String []param = SignUtil.generate_x_and_p();
+
         String x = param[0];
         String y = param[1];
         String p = param[2];
@@ -100,7 +102,10 @@ public class StorageHandler {
                 //采用BLS进行数据签名
                 //sign[]代表返回的数据签名
                 //sign[0] == w_str sign[1] == y_str
+
+
                 String []sign1 =   SignUtil.Sign(md5_1,48,x,p);
+
                 String []sign2 =    SignUtil.Sign(md5_1,48,x,p);
                 String []sign3 =   SignUtil.Sign(md5_1,48,x,p);
 
@@ -149,6 +154,7 @@ public class StorageHandler {
                 UploadInfo up = st.get_uploadinfo_by_filename_and_blocknumber(filename, blockIdx, challenges.get(i));
                 ups.add(up);
             }
+
 
             List<String> result_set = StorageTransfer.verifyBlock(ups);
 

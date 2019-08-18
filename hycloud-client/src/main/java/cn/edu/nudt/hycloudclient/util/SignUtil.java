@@ -1,5 +1,7 @@
 package cn.edu.nudt.hycloudclient.util;
 
+import java.io.IOException;
+
 /*
     javac -encoding UTF-8 SignUtil
 * javah -classpath . -jni cn.edu.nudt.hycloudclient.util.SignUtil
@@ -33,8 +35,13 @@ public class SignUtil {
 
     public static native void greeting();
 
-    public static void main(String[] args){
+
+
 //
+//    public static void main(String[] args){
+//
+//        get_relative_path();
+
 //        String []str =  SignUtil.Sign("zfc",3);
 //        if(null==str){
 //
@@ -46,10 +53,10 @@ public class SignUtil {
 //        System.out.println("the value of w_str :  "+str[0]);
 //        System.out.println("the value of y_str:   "+str[1]);
 //        System.out.println("the value of p_str:   "+str[2]);
-//
 
 
 
-    }
+
+//    }
 
 }

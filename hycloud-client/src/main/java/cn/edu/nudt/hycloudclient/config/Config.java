@@ -1,5 +1,6 @@
 package cn.edu.nudt.hycloudclient.config;
 
+import cn.edu.nudt.hycloudclient.util.PropertyUtil;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 
 import java.io.File;
@@ -12,7 +13,7 @@ public class Config {
     private static Config mConfig;
 
     private static final String clientConfigFileName = "client.properties";
-    private static final String PropertiesFilePath = "./hycloud-client/" + clientConfigFileName;
+    private static final String PropertiesFilePath =  clientConfigFileName;
 
 
     private String mConfigPath=null;
@@ -59,31 +60,32 @@ public class Config {
     }
 
     private void loadConfig() throws IOException {
-        Properties props = new Properties();
-
-        String temConfigPath = this.PropertiesFilePath;
-        if(this.mConfigPath != null){
-            temConfigPath = this.mConfigPath;
-        }else{
-            File temfile = new File("./" + clientConfigFileName);
-            if (temfile.exists() && temfile.isFile()){
-                temConfigPath = "./" + clientConfigFileName;
-            }
-        }
-        FileReader freader = new FileReader(temConfigPath);
-
-        props.load(freader);
+//        Properties props = new Properties();
+//
+//        String temConfigPath = this.PropertiesFilePath;
+//        if(this.mConfigPath != null){
+//            temConfigPath = this.mConfigPath;
+//        }else{
+//            File temfile = new File("./" + clientConfigFileName);
+//            if (temfile.exists() && temfile.isFile()){
+//                temConfigPath = "./" + clientConfigFileName;
+//            }
+//        }
+//        FileReader freader = new FileReader(temConfigPath);
+//
+//        props.load(freader);
 
         //upload and download url
-        this.server_url = props.getProperty("server_url","http://127.0.0.1:8080");
-        this.store_directory = props.getProperty("store_directory","/home/ftp");
+        this.server_url = PropertyUtil.getProperty("server_url","http://127.0.0.1:8080");
+        this.store_directory = PropertyUtil.getProperty("store_directory");
         //the blocksize the unit is Byte,defalut value is 128KB
-        this.mBlockSize = Integer.parseInt(props.getProperty("BlockSize", "128"));
+        this.mBlockSize = Integer.parseInt(PropertyUtil.getProperty("BlockSize"));
         //the number of challenge
-        this.num_of_challenge = Integer.parseInt(props.getProperty("num_of_challenge","3"));
+        this.num_of_challenge = Integer.parseInt(PropertyUtil.getProperty("num_of_challenge","3"));
 
-        mClientDatabasePath = props.getProperty("ClientDatabasePath", "./yhbdclient.db");
-        freader.close();
+        mClientDatabasePath = PropertyUtil.getProperty("ClientDatabasePath", "./yhbdclient.db");
+
+//        freader.close();
     }
 
     public static void initConfig() throws IOException {
@@ -149,11 +151,11 @@ public class Config {
 
     }
 
-    public static void main(String ... argv) throws IOException {
-        //Config.initConfig();
-
-        Config cfg = Config.getConfig();
-        cfg.dump();
-
-    }
+//    public static void main(String ... argv) throws IOException {
+//        //Config.initConfig();
+//
+//        Config cfg = Config.getConfig();
+//        cfg.dump();
+//
+//    }
 }

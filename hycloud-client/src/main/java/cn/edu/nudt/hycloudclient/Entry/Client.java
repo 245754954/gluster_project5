@@ -2,7 +2,6 @@ package cn.edu.nudt.hycloudclient.Entry;
 
 import cn.edu.nudt.hycloudclient.Storage.StorageHandler;
 import cn.edu.nudt.hycloudclient.config.Config;
-import cn.edu.nudt.hycloudclient.deletion.DeletionHandler;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
@@ -31,18 +30,24 @@ public class Client {
     // parameters for Assured Deletion
     @Parameter(names= {"--file","-f"}, description = "path or name of the file")
     private String sourcefile = null;
+
     @Parameter(names= {"--localpath","-l"}, description = "path to to store the file")
     private String localpath = null;
+
     @Parameter(names= {"--granularity","-g"}, description = "the size in KB of every segment")
     private int granularity = 64;
+
     @Parameter(names= {"--delete", "-d"}, variableArity = true, description = "list of segments to be deleted")
     private List<String> deletes = null;
+
 
     @Parameter(names= {"--block", "-b"}, variableArity = true, description = "list of blocks to verify, starts with 0")
     private List<String> blocks = null;
 
+
     @Parameter(names = {"--challenge","-t"}, variableArity = true, description = "list of challenges of related blocks")
     private List<String> challenges=null;
+
 //
 //    @Parameter(names= {"--verify", "-y"}, variableArity = true, description = "list of files to verify")
 //    private List<String> veifyFiles = null;

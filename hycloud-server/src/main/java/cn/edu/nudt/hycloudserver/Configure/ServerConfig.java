@@ -1,17 +1,16 @@
 package cn.edu.nudt.hycloudserver.Configure;
 
 import cn.edu.nudt.hycloudinterface.utils.helper;
+import cn.edu.nudt.hycloudserver.util.PropertyUtil;
 
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
 public class ServerConfig {
     private static ServerConfig serverConfig;
-
     private static final String serverConfigFileName = "server.properties";
     private static final String defaultConfigPath = "./hycloud-server/" + serverConfigFileName;
 
@@ -49,33 +48,38 @@ public class ServerConfig {
     }
 
     private void loadConfig() throws IOException {
-        Properties props = new Properties();
 
-        String temConfigPath = defaultConfigPath;
-        if(this.serverConfigPath != null){
-            temConfigPath = this.serverConfigPath;
-        }else{
-            File temfile = new File("./" + serverConfigFileName);
-            if (temfile.exists() && temfile.isFile()){
-                temConfigPath = "./" + serverConfigFileName;
-            }
-        }
-        FileReader freader = new FileReader(temConfigPath);
+        this.store_directory = PropertyUtil.getProperty("store_directory");
+        this.stripe_count = Long.parseLong(PropertyUtil.getProperty("stripe_count"));
+        this.stripe_size = Long.parseLong(PropertyUtil.getProperty("stripe_size"));
 
-        props.load(freader);
-
-        //the directory that store the file uploaded by client
-        this.store_directory = props.getProperty("store_directory","/home/ftp/");
-
-        //total bricks
-        this.stripe_count = Long.parseLong(props.getProperty("stripe_count"));
-        //the default size of stripe volume
-        this.stripe_size = Long.parseLong(props.getProperty("stripe_size"));
-        // block size in MB
-        // block size in MB
-
-
-        freader.close();
+//        Properties props = new Properties();
+//
+//        String temConfigPath = defaultConfigPath;
+//        if(this.serverConfigPath != null){
+//            temConfigPath = this.serverConfigPath;
+//        }else{
+//            File temfile = new File("./" + serverConfigFileName);
+//            if (temfile.exists() && temfile.isFile()){
+//                temConfigPath = "./" + serverConfigFileName;
+//            }
+//        }
+//        FileReader freader = new FileReader(temConfigPath);
+//
+//        props.load(freader);
+//
+//        //the directory that store the file uploaded by client
+////        this.store_directory = props.getProperty("store_directory","/home/ftp/");
+//
+//        //total bricks
+////        this.stripe_count = Long.parseLong(props.getProperty("stripe_count"));
+//        //the default size of stripe volume
+////        this.stripe_size = Long.parseLong(props.getProperty("stripe_size"));
+//        // block size in MB
+//        // block size in MB
+//
+//
+//        freader.close();
     }
 
 
