@@ -54,7 +54,7 @@ public class FileGen {
             p = 2;
         }
         else if (size.contains("G") || size.contains("g")){
-            n = Integer.parseInt(size.substring(0,size.length()-2));
+            n = Integer.parseInt(size.substring(0,size.length()-1));
             p = 3;
         }
         else{

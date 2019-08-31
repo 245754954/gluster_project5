@@ -285,13 +285,13 @@ void sign(JNIEnv *env, jclass jcls,char *message,int len,const char *in_x,const 
         fprintf(stderr, "only works with symmetic pairing\n");
         exit(1);
     }
-    printf("system setup\n");
+    //printf("system setup\n");
     //解析得到参数P
     int n0 =  element_length_in_bytes_x_only(P);//计算需要多大的值用于保存压缩数据的大小
     unsigned char *p_data = pbc_malloc(n0);
     base64_decode(in_p,p_data);
     element_from_bytes_x_only(P, p_data);//解压
-    element_printf("the value of P = %B\n",P);
+    //element_printf("the value of P = %B\n",P);
 
     //解析得到密钥x
     mpz_t t4;
@@ -308,7 +308,7 @@ void sign(JNIEnv *env, jclass jcls,char *message,int len,const char *in_x,const 
 
 
     //签名
-    printf("sign phase\n");
+    //printf("sign phase\n");
     element_from_hash(M, message,len);
     element_mul_zn(W, M, x);
 
@@ -320,7 +320,7 @@ void sign(JNIEnv *env, jclass jcls,char *message,int len,const char *in_x,const 
     element_to_bytes_x_only(w_data, W);
     base64_encode(w_data,out_w_str,n1);
 
-    printf("the value of out_w_str %s\n", out_w_str);
+   // printf("the value of out_w_str %s\n", out_w_str);
 
 
 
@@ -329,7 +329,7 @@ void sign(JNIEnv *env, jclass jcls,char *message,int len,const char *in_x,const 
     unsigned char *y_data = pbc_malloc(n2);
     element_to_bytes_x_only(y_data, Y);
     base64_encode(y_data,out_y_str,n2);
-    printf("the value of out_y_str %s\n", out_y_str);
+    //printf("the value of out_y_str %s\n", out_y_str);
 
 
 
