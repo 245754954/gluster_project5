@@ -16,7 +16,7 @@
     <packaging>so</packaging>
 
     <properties>
-        <JAVA_HOME>/usr/local/jdk1.8/jdk</JAVA_HOME>
+        <JAVA_HOME>/home/zfc/jdk1.8.0_191/</JAVA_HOME>
     </properties>
 
     <!--gcc sign.c  -c -fpic  -I $JAVA_HOME/include -I $JAVA_HOME/include/linux-->

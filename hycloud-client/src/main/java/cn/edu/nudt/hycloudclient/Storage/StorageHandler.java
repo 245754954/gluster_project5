@@ -105,7 +105,7 @@ public class StorageHandler {
         //保存到本地的sqlite
 		sbase.close();
 		//上传文件到服务器
-        HttpConnectionUtil.uploadFile("upload/multiFileUpload1",new String[]{sourcefilepath});
+//        HttpConnectionUtil.uploadFile("upload/multiFileUpload1",new String[]{sourcefilepath});
 	}
 
 	public static void get(String requestfilename, String localpath) throws IOException, NoSuchAlgorithmException {

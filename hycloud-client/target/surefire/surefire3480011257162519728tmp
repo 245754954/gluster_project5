@@ -1,0 +1,7 @@
+#surefire
+#Sat Aug 31 02:23:15 EDT 2019
+java.library.path=/home/zfc/code/gluster_project5/hycloud-client/target/classes
+user.dir=/home/zfc/code/gluster_project5/hycloud-client
+idea.version=2018.3
+localRepository=/root/.m2/repository
+basedir=/home/zfc/code/gluster_project5/hycloud-client
