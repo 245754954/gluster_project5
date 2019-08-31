@@ -92,13 +92,13 @@ public class DispatchHandler {
 
 
 
-    public static  String get_hash_with_blocknumber_and_challenge(String filepath_and_name,int blocksize, long offset,  String challenge, int blocknumber,int real_size,long dest_offset) throws IOException {
+    public static  String get_hash_with_blocknumber_and_challenge(String filepath_and_name,long blocksize, long offset,  String challenge, long blocknumber,long real_size,long dest_offset,String p,String y) throws IOException {
 
         StringBuilder sb = new StringBuilder();
         sb.delete( 0, sb.length() );
-        sb.append(blocknumber).append(".").append(challenge).append(".").append(blocksize).append(".").append(offset).append(".").append(real_size).append(".").append(dest_offset);
+        sb.append(blocknumber).append(".").append(challenge).append(".").append(blocksize).append(".").append(offset).append(".").append(real_size).append(".").append(dest_offset).append(".").append(p).append(".").append(y);
         String key = sb.toString();
-        System.out.println(key);
+       // System.out.println(key);
 
         Path path = Paths.get(filepath_and_name);
         //System.out.println("the filepath_and_name"+filepath_and_name);
@@ -106,6 +106,7 @@ public class DispatchHandler {
                 Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
 
         ByteBuffer buf = ByteBuffer.allocate(view.size(key));
+
         view.read(key, buf);
         buf.flip();
         String value = Charset.defaultCharset().decode(buf).toString();

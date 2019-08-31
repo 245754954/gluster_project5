@@ -42,6 +42,8 @@ public class BlockController {
         List<DispatchTask> disList = new ArrayList<>();
         //等待所有子线程执行完毕才可以
         Vector<Thread> thread_vector = new Vector<Thread>();
+        long tstart, tend;
+        tstart = System.currentTimeMillis();
         for (int i = 0; i < up1.size(); i++) {
 
             UploadInfo up = null;
@@ -61,6 +63,8 @@ public class BlockController {
             t.join();
         }
 
+        tend = System.currentTimeMillis();
+        helper.print("average spend time :" + Float.parseFloat(String.valueOf(tend - tstart) ));
         //主线程执行
 
         disList.forEach(d -> {
@@ -73,7 +77,7 @@ public class BlockController {
 
 
     @RequestMapping(value = "/verifyBlock", method = {RequestMethod.POST})
-    public String verifyBlock(String filename, String filename_and_path, String challenge, String blocknumber, String blocksize, String real_size) throws IOException {
+    public String verifyBlock(String filename, String filename_and_path, String challenge, String blocknumber, String blocksize, String real_size,String p,String y) throws IOException {
 
         Integer blocknumber1 = Integer.parseInt(blocknumber);
         Integer blocksize1 = Integer.parseInt(blocksize);
@@ -93,7 +97,7 @@ public class BlockController {
         stripe_num = offset / line_size;
         dest_offset = (stripe_num * stripe_size) + (offset % stripe_size);
 
-        String hash_reslut = DispatchHandler.get_hash_with_blocknumber_and_challenge(filename_and_path, blocksize1, offset, challenge, blocknumber1, real_size1, dest_offset);
+        String hash_reslut = DispatchHandler.get_hash_with_blocknumber_and_challenge(filename_and_path, blocksize1, offset, challenge, blocknumber1, real_size1, dest_offset,p,y);
         System.out.println("the hash_result is " + hash_reslut);
         return hash_reslut;
     }

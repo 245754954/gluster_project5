@@ -4,6 +4,7 @@ import cn.edu.nudt.hycloudclient.config.Config;
 import cn.edu.nudt.hycloudclient.database.StorageBase;
 import cn.edu.nudt.hycloudclient.util.HashSaltUtil;
 import cn.edu.nudt.hycloudclient.util.HttpConnectionUtil;
+import cn.edu.nudt.hycloudclient.util.SignUtil;
 import cn.edu.nudt.hycloudinterface.entity.UploadInfo;
 import cn.edu.nudt.hycloudinterface.utils.helper;
 import com.alibaba.fastjson.JSON;
@@ -59,6 +60,15 @@ public class StorageHandler {
         HashSaltUtil ha1 = new HashSaltUtil();
         HashSaltUtil ha2 = new HashSaltUtil();
         HashSaltUtil ha3 = new HashSaltUtil();
+        //生成系统参数x  y  p
+        //其中x代表私侥，y代表公钥，p代表循环群系统参数
+
+        String []param = SignUtil.generate_x_and_p();
+
+        String x = param[0];
+        String y = param[1];
+        String p = param[2];
+        sbase.insert_param(x,y,p);
 
         for (int blockIdx = 0; blockIdx < blockNum; blockIdx++)
         {
@@ -89,9 +99,21 @@ public class StorageHandler {
                 String md5_2 = ha2.md5_with_salt_final(challenge2);
                 String md5_3 = ha3.md5_with_salt_final(challenge3);
 
-                sbase.insert(sourcefilename, blockIdx, challenge1, base_path, currBlockSize, blockSize, md5_1);
-                sbase.insert(sourcefilename, blockIdx, challenge2, base_path, currBlockSize, blockSize, md5_2);
-                sbase.insert(sourcefilename, blockIdx, challenge3, base_path, currBlockSize, blockSize, md5_3);
+                //采用BLS进行数据签名
+                //sign[]代表返回的数据签名
+                //sign[0] == w_str sign[1] == y_str
+
+
+                String []sign1 =   SignUtil.Sign(md5_1,48,x,p);
+
+                String []sign2 =    SignUtil.Sign(md5_2,48,x,p);
+                String []sign3 =   SignUtil.Sign(md5_3,48,x,p);
+
+
+
+                sbase.insert(sourcefilename, blockIdx, challenge1, base_path, currBlockSize, blockSize, md5_1,sign1[0],sign1[1],p);
+                sbase.insert(sourcefilename, blockIdx, challenge2, base_path, currBlockSize, blockSize, md5_2,sign2[0],sign2[1],p);
+                sbase.insert(sourcefilename, blockIdx, challenge3, base_path, currBlockSize, blockSize, md5_3,sign3[0],sign3[1],p);
         }
 
 
@@ -133,11 +155,12 @@ public class StorageHandler {
                 ups.add(up);
             }
 
+
             List<String> result_set = StorageTransfer.verifyBlock(ups);
 
             for(int i=0;i<len;i++)
             {
-                if(ups.get(i).getHash_result().equals(result_set.get(i)))
+                if(SignUtil.Verify(ups.get(i).getY(), ups.get(i).getP(), ups.get(i).getW(),result_set.get(i))==0)
                 {
                     helper.print("block "+i+" is intact ");
                     helper.print("origin signature is "+ups.get(i).getHash_result());

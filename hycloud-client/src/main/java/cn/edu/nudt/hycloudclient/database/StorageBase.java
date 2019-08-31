@@ -16,16 +16,26 @@ public class StorageBase {
 			
 			String sqlCreateTable = "CREATE TABLE IF NOT EXISTS storgeTable ("
 					+ "fid INTEGER PRIMARY kEY AUTOINCREMENT,"
-					+ "filename text NOT NULL ,"
+					+ "filename text NOT NULL,"
 					+ "blocknum integer NOT NULL,"
 					+ "challenge text NOT NULL,"
 					+ "storepath text NOT  NULL,"
 					+ "real_size integer NOT NULL,"
 					+ "blocksize integer NOT NULL,"
-					+ "hashchallenge text NOT NULL )";
+					+ "hashchallenge text NOT NULL,"
+					+ "w text NOT NULL,"
+					+ "y text NOT NULL,"
+					+ "p text NOT NULL)";
+
+			String  param_table = "CREATE TABLE IF NOT EXISTS params ("
+					+ "pid INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "x text NOT NULL,"
+					+ "y text NOT NULL,"
+					+ "p text NOT NULL)";
 			
 			Statement st = conn.createStatement();
 			st.execute(sqlCreateTable);
+			st.execute(param_table);
 			st.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -50,14 +60,36 @@ public class StorageBase {
 			e.printStackTrace();
 		}
 	}
+
+	public void insert_param(String x, String y,String p) {
+
+		String sqlInsert = "INSERT INTO params "
+				+ "(x,y,p) "
+				+ "VALUES (?, ?, ?)";
+		try
+		{
+			PreparedStatement pst = conn.prepareStatement(sqlInsert);
+			pst.setString(1, x);
+			pst.setString(2, y);
+			pst.setString(3, p);
+
+			pst.executeUpdate();
+			pst.close();
+		}
+		catch (SQLException e)
+		{
+
+			e.printStackTrace();
+		}
+	}
 	
-	public void insert(String filename, long blocknum, String challenge,String storepath,long real_size,long blocksize,String hashchallenge) {
+	public void insert(String filename, long blocknum, String challenge,String storepath,long real_size,long blocksize,String hashchallenge,String w,String y,String p) {
 
 		//delete(filename);
 		
 		String sqlInsert = "INSERT INTO storgeTable "
-				+ "(filename, blocknum, challenge,storepath,real_size,blocksize,hashchallenge) "
-				+ "VALUES (?, ?, ?,?,?,?,?)";
+				+ "(filename, blocknum, challenge,storepath,real_size,blocksize,hashchallenge,w,y,p) "
+				+ "VALUES (?, ?, ?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement pst = conn.prepareStatement(sqlInsert);
 			pst.setString(1, filename);
@@ -67,6 +99,9 @@ public class StorageBase {
 			pst.setLong(5,real_size);
 			pst.setLong(6,blocksize);
 			pst.setString(7,hashchallenge);
+			pst.setString(8,w);
+			pst.setString(9,y);
+			pst.setString(10,p);
 			
 			pst.executeUpdate();
 			pst.close();
@@ -135,6 +170,9 @@ public class StorageBase {
 		 Long real_size1;
 		 Long blocksize1;
 		 String hash_result1;
+		 String w1;
+		 String y1;
+		 String p1;
 		UploadInfo upload_info = new UploadInfo();
 
 		try {
@@ -154,6 +192,11 @@ public class StorageBase {
 			challenge1 = rs.getString("challenge");
 			blocksize1 = rs.getLong("blocksize");
 			filename1 = rs.getString("filename");
+			w1 = rs.getString("w");
+			y1 = rs.getString("y");
+			p1 = rs.getString("p");
+
+
 
 
 			upload_info.setBlocknumber(blocknumber1);
@@ -163,6 +206,9 @@ public class StorageBase {
 			upload_info.setReal_size(real_size1);
 			upload_info.setFilename_and_path(filename_and_path1);
 			upload_info.setFilename(filename1);
+			upload_info.setW(w1);
+			upload_info.setY(y1);
+			upload_info.setP(p1);
 			rs.close();
 			pst.close();
 		} catch (SQLException e) {

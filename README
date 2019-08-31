@@ -1,4 +1,11 @@
 ###########################################################################
+compile project
+    cd glusterfs_project
+    cd ./hycloud-native  ;mvn clean;mvn install;
+    cd ../
+    mvn install
+
+
 Package and deploy:
 1) deploy.sh
 

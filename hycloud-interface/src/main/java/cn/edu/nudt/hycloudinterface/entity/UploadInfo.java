@@ -9,6 +9,9 @@ public class UploadInfo {
     private Long blocksize;
     private String hash_result;
     private String filename;
+    private String w;
+    private String y;
+    private String p;
 
     public UploadInfo() {
     }
@@ -23,6 +26,43 @@ public class UploadInfo {
         this.filename = filename;
     }
 
+    public UploadInfo(String filename_and_path, String challenge, Long blocknumber, Long real_size, Long blocksize, String hash_result, String filename, String w, String y, String p) {
+        this.filename_and_path = filename_and_path;
+        this.challenge = challenge;
+        this.blocknumber = blocknumber;
+        this.real_size = real_size;
+        this.blocksize = blocksize;
+        this.hash_result = hash_result;
+        this.filename = filename;
+        this.w = w;
+        this.y = y;
+        this.p = p;
+    }
+
+    public String getW() {
+        return w;
+    }
+
+    public void setW(String w) {
+        this.w = w;
+    }
+
+    public String getY() {
+        return y;
+    }
+
+    public void setY(String y) {
+        this.y = y;
+    }
+
+    public String getP() {
+        return p;
+    }
+
+    public void setP(String p) {
+        this.p = p;
+    }
+
     @Override
     public String toString() {
         return "UploadInfo{" +
@@ -33,6 +73,9 @@ public class UploadInfo {
                 ", blocksize=" + blocksize +
                 ", hash_result='" + hash_result + '\'' +
                 ", filename='" + filename + '\'' +
+                ", w='" + w + '\'' +
+                ", y='" + y + '\'' +
+                ", p='" + p + '\'' +
                 '}';
     }
 

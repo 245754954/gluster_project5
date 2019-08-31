@@ -11,7 +11,138 @@
 #include "SignUtil.h"
 
 
-//字节流转换为十六进制字符串
+#ifndef MAX_PATH
+#define MAX_PATH 256
+#endif
+
+const char * base64char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+char * base64_encode( const unsigned char * bindata, char * base64, int binlength )
+{
+    int i, j;
+    unsigned char current;
+
+    for ( i = 0, j = 0 ; i < binlength ; i += 3 )
+    {
+        current = (bindata[i] >> 2) ;
+        current &= (unsigned char)0x3F;
+        base64[j++] = base64char[(int)current];
+
+        current = ( (unsigned char)(bindata[i] << 4 ) ) & ( (unsigned char)0x30 ) ;
+        if ( i + 1 >= binlength )
+        {
+            base64[j++] = base64char[(int)current];
+            base64[j++] = '=';
+            base64[j++] = '=';
+            break;
+        }
+        current |= ( (unsigned char)(bindata[i+1] >> 4) ) & ( (unsigned char) 0x0F );
+        base64[j++] = base64char[(int)current];
+
+        current = ( (unsigned char)(bindata[i+1] << 2) ) & ( (unsigned char)0x3C ) ;
+        if ( i + 2 >= binlength )
+        {
+            base64[j++] = base64char[(int)current];
+            base64[j++] = '=';
+            break;
+        }
+        current |= ( (unsigned char)(bindata[i+2] >> 6) ) & ( (unsigned char) 0x03 );
+        base64[j++] = base64char[(int)current];
+
+        current = ( (unsigned char)bindata[i+2] ) & ( (unsigned char)0x3F ) ;
+        base64[j++] = base64char[(int)current];
+    }
+    base64[j] = '\0';
+    return base64;
+}
+
+int base64_decode( const char * base64, unsigned char * bindata )
+{
+    int i, j;
+    unsigned char k;
+    unsigned char temp[4];
+    for ( i = 0, j = 0; base64[i] != '\0' ; i += 4 )
+    {
+        memset( temp, 0xFF, sizeof(temp) );
+        for ( k = 0 ; k < 64 ; k ++ )
+        {
+            if ( base64char[k] == base64[i] )
+                temp[0]= k;
+        }
+        for ( k = 0 ; k < 64 ; k ++ )
+        {
+            if ( base64char[k] == base64[i+1] )
+                temp[1]= k;
+        }
+        for ( k = 0 ; k < 64 ; k ++ )
+        {
+            if ( base64char[k] == base64[i+2] )
+                temp[2]= k;
+        }
+        for ( k = 0 ; k < 64 ; k ++ )
+        {
+            if ( base64char[k] == base64[i+3] )
+                temp[3]= k;
+        }
+
+        bindata[j++] = ((unsigned char)(((unsigned char)(temp[0] << 2))&0xFC)) |
+                ((unsigned char)((unsigned char)(temp[1]>>4)&0x03));
+        if ( base64[i+2] == '=' )
+            break;
+
+        bindata[j++] = ((unsigned char)(((unsigned char)(temp[1] << 4))&0xF0)) |
+                ((unsigned char)((unsigned char)(temp[2]>>2)&0x0F));
+        if ( base64[i+3] == '=' )
+            break;
+
+        bindata[j++] = ((unsigned char)(((unsigned char)(temp[2] << 6))&0xF0)) |
+                ((unsigned char)(temp[3]&0x3F));
+    }
+    return j;
+}
+
+void encode(FILE * fp_in, FILE * fp_out)
+{
+    unsigned char bindata[2050];
+    char base64[4096];
+    size_t bytes;
+    while ( !feof( fp_in ) )
+    {
+        bytes = fread( bindata, 1, 2049, fp_in );
+        base64_encode( bindata, base64, bytes );
+        fprintf( fp_out, "%s", base64 );
+    }
+}
+
+void decode(FILE * fp_in, FILE * fp_out)
+{
+    int i;
+    unsigned char bindata[2050];
+    char base64[4096];
+    size_t bytes;
+    while ( !feof( fp_in ) )
+    {
+        for ( i = 0 ; i < 2048 ; i ++ )
+        {
+            base64[i] = fgetc(fp_in);
+            if ( base64[i] == EOF )
+                break;
+            else if ( base64[i] == '\n' || base64[i] == '\r' )
+                i --;
+        }
+        bytes = base64_decode( base64, bindata );
+        fwrite( bindata, bytes, 1, fp_out );
+    }
+}
+
+void help(const char * filepath)
+{
+    fprintf( stderr, "Usage: %s [-d] [input_filename] [-o output_filepath]\n", filepath );
+    fprintf( stderr, "\t-d\tdecode data\n" );
+    fprintf( stderr, "\t-o\toutput filepath\n\n" );
+}
+
+
 void ByteToHexStr(const unsigned char *source, char *dest, int sourceLen)
 
 {
@@ -79,14 +210,35 @@ void HexStrToByte(const char *source, unsigned char *dest, int sourceLen)
     return;
 }
 
-void pbc_demo_pairing_init_me(pairing_t pairing)
+
+
+
+
+
+void pbc_demo_pairing_init_me(JNIEnv *env, jclass jcls,pairing_t pairing)
 {
+//    jclass cls = (*env)->FindClass(env,"get_param_path");
+//    jmethodID mid;
+//    mid = (*env)->GetStaticMethodID(env,cls, "get_relative_path", "()Ljava/lang/String;"); //查找java方法
+//    char *mysize=NULL;
+//    if (mid != 0) {
+//
+//        jstring size = (jstring)(*env)->CallStaticObjectMethod(env,cls, mid,NULL); //调用ava方法
+//
+//        mysize = (char*)(*env)->GetStringUTFChars(env,size, NULL); //转换jstring为char用于显示
+//
+//        (*env)->ReleaseStringUTFChars(env, size, 0);
+//    } else {
+//        printf("%s\n","method not find");
+//    }
+//
+//    char buf[80]={'\0'};
+//    getcwd(buf,80);
+//    printf("current work dir is %s\n",buf);
+
     char s[16384];
     FILE *fp = NULL;
-     printf("system setup\n");
      fp = fopen("a.param", "r");
-     printf("The current path : %s\n", getenv("PWD"));
-     printf("system setup\n");
     if (!fp)
         pbc_die("error opening \n");
 
@@ -100,23 +252,20 @@ void pbc_demo_pairing_init_me(pairing_t pairing)
         pbc_die("pairing init failed\n");
 }
 
-void sign(char message[],int len,char w_str[],char p_str[],char y_str[]){
+void sign(JNIEnv *env, jclass jcls,char *message,int len,const char *in_x,const char *in_p,char *out_w_str,char *out_y_str){
 
     pairing_t pairing;
-    //参数
-    //pbc_param_t par;
-    // initialization
+
 
     //生命一系列的变量
     element_t P, Y, M, W;
     element_t x;
     element_t T1, T2;
-    clock_t start, stop;
     int byte;
 
 
 
-    pbc_demo_pairing_init_me(pairing);
+    pbc_demo_pairing_init_me(env,jcls,pairing);
     element_init_G1(P, pairing);
     //将变量temp1初始化为群G1中的元素
     element_init_G1(Y, pairing);
@@ -136,71 +285,61 @@ void sign(char message[],int len,char w_str[],char p_str[],char y_str[]){
         fprintf(stderr, "only works with symmetic pairing\n");
         exit(1);
     }
-    printf("BLS Scheme\n");
-    printf("system setup\n");
-    start = clock();
-    //随机选择G1中的一个元素赋值给P
-    element_random(P);
-    element_random(x);
+    //printf("system setup\n");
+    //解析得到参数P
+    int n0 =  element_length_in_bytes_x_only(P);//计算需要多大的值用于保存压缩数据的大小
+    unsigned char *p_data = pbc_malloc(n0);
+    base64_decode(in_p,p_data);
+    element_from_bytes_x_only(P, p_data);//解压
+    //element_printf("the value of P = %B\n",P);
+
+    //解析得到密钥x
+    mpz_t t4;
+    mpz_init(t4);
+    mpz_init_set_str(t4,in_x,10);
+   // gmp_printf("value of T4 = %Zd\n", t4);
+    element_set_mpz(x,t4);
+   // element_printf("value of x = %B\n",x);
+    mpz_clear(t4);
+
+
     element_mul_zn(Y, P, x);
-    stop = clock();
-    printf("the time of setup phase %fs\n", (double)(stop - start));
-    // element_printf("P=%B\n", P);
-    // element_printf("private key is x=%B\n", x);
-    // element_printf("public key is y=%B\n", Y);
+
+
 
     //签名
-    printf("sign phase\n");
-    start = clock();
+    //printf("sign phase\n");
     element_from_hash(M, message,len);
     element_mul_zn(W, M, x);
-    stop = clock();
-    printf("the time of signing phase %fs\n", (double)(stop - start));
-    // element_printf("the value of M %B\n", M);
-    // element_printf("the value of W %B\n", W);
-
-
-
-    int n = element_length_in_bytes_compressed(W);
-    unsigned char *w_data = pbc_malloc(n);
-    element_to_bytes_compressed(w_data, W);
-
-    // char w_str1[512] = {'\0'};
-    //将字节数组转换成十六进制字数组，注意：十六进制字节数组只是字节数组的一个子集
-    //字节数组按%c打印出来，仍然还有许多不好认识的字节，但是转成十六进制字节以后就都是可以认识的
-    ByteToHexStr(w_data, w_str, n);
-    printf("the value of w_str %s\n", w_str);
-    //printf("\n");
-
-
-
-    int n1 = element_length_in_bytes_compressed(Y);
-    unsigned char *y_data = pbc_malloc(n1);
-    element_to_bytes_compressed(y_data, Y);
-    //printf("the value of Y len %d\n", n1);
-
-    // char y_str[128] = {'\0'};
-    //将字节数组转换成十六进制字数组，注意：十六进制字节数组只是字节数组的一个子集
-    //字节数组按%c打印出来，仍然还有许多不好认识的字节，但是转成十六进制字节以后就都是可以认识的
-    ByteToHexStr(y_data, y_str, n1);
-    printf("the value of y_str %s\n", y_str);
-    //printf("\n");
 
 
 
 
-    int n3 = element_length_in_bytes_compressed(P);
-    unsigned char *p_data = pbc_malloc(n3);
-    element_to_bytes_compressed(p_data, P);
-    //printf("the value of Y len %d\n", n3);
+    int n1 = element_length_in_bytes_x_only(W);
+    unsigned char *w_data = pbc_malloc(n1);
+    element_to_bytes_x_only(w_data, W);
+    base64_encode(w_data,out_w_str,n1);
 
-    ByteToHexStr(p_data, p_str, n3);
-    printf("the value of p_str %s\n", p_str);
-    //printf("\n");
+   // printf("the value of out_w_str %s\n", out_w_str);
+
+
+
+
+    int n2 = element_length_in_bytes_x_only(Y);
+    unsigned char *y_data = pbc_malloc(n2);
+    element_to_bytes_x_only(y_data, Y);
+    base64_encode(y_data,out_y_str,n2);
+    //printf("the value of out_y_str %s\n", out_y_str);
+
+
+
+
+
 
     pbc_free(w_data);
     pbc_free(y_data);
     pbc_free(p_data);
+
 
     element_clear(P);
     element_clear(Y);
@@ -214,104 +353,178 @@ void sign(char message[],int len,char w_str[],char p_str[],char y_str[]){
 
 }
 
-int verify(char *message,int len,char *w_str,char *p_str,char *y_str){
+int verify(JNIEnv *env, jclass jcls,char *y_str,char *p_str,char *w_str,char *m_str){
 
-     pairing_t pairing;
+        pairing_t pairing;
+       //参数
+       //pbc_param_t par;
+       // initialization
+
+       //生命一系列的变量
+       element_t P, Y, M, W;
+
+       element_t T1, T2;
+
+       pbc_demo_pairing_init_me(env,jcls,pairing);
+
+       //将变量P初始化为群G1中的元素
+       element_init_G1(P, pairing);
+
+       //将变量temp1初始化为群G1中的元素
+       element_init_G1(Y, pairing);
+       //将变量Q初始化为群G2中的元素
+       element_init_G1(M, pairing);
+       //将变量temp2初始化为群G2中的元素
+       element_init_G1(W, pairing);
+       //将变量x初始化为群GT中的元素
+       //将变量y初始化为群GT中的元素
+       element_init_GT(T1, pairing);
+       //将a初始化未环Zr中的元素
+       element_init_GT(T2, pairing);
+
+       int n0 = element_length_in_bytes_x_only(P); //计算需要多大的值用于保存压缩数据的大小
+       unsigned char *p_data = pbc_malloc(n0);
+
+       base64_decode(p_str, p_data);
+       //printf("verify p_str %s\n", p_str);
+
+       element_from_bytes_x_only(P, p_data); //解压
+      // element_printf("verify p_str decompressed = %B\n", P);
+
+       if (!pairing_is_symmetric(pairing))
+       {
+           fprintf(stderr, "only works with symmetic pairing\n");
+           exit(1);
+       }
+
+       int n1 = element_length_in_bytes_x_only(W); //计算需要多大的值用于保存压缩数据的大小
+       unsigned char *w_data = pbc_malloc(n1);
+       //printf("verify w_str %s\n", w_str);
+
+       base64_decode(w_str, w_data);
+
+       element_from_bytes_x_only(W, w_data); //解压
+       //element_printf("verify w_str decompressed = %B\n", W);
+
+       int n2 = element_length_in_bytes_x_only(Y); //计算需要多大的值用于保存压缩数据的大小
+       unsigned char *y_data = pbc_malloc(n2);
+       //printf("verify y_str %s\n", y_str);
+
+       base64_decode(y_str, y_data);
+       element_from_bytes_x_only(Y, y_data); //解压
+      // element_printf("verify y_str decompressed = %B\n", Y);
+
+
+        int n3 = element_length_in_bytes_x_only(M); //计算需要多大的值用于保存压缩数据的大小
+       unsigned char *m_data = pbc_malloc(n3);
+       //printf("verify y_str %s\n", m_str);
+
+       base64_decode(m_str, m_data);
+       element_from_bytes_x_only(M, m_data); //解压
+      // element_printf("verify y_str decompressed = %B\n", M);
+
+       //element_printf("the value of M= %B\n", M);
+       pairing_apply(T1, P, W, pairing);
+       pairing_apply(T2, Y, M, pairing);
+
+       pbc_free(w_data);
+       pbc_free(y_data);
+       pbc_free(p_data);
+       pbc_free(m_data);
+       int flag = 0;
+       if (!element_cmp(T1, T2))
+       {
+
+           printf("the signature is valid\n");
+
+       }
+       else
+       {
+
+           element_invert(T1, T1);
+           if (!element_cmp(T1, T2))
+           {
+
+               printf("the signature is valid\n");
+             //  printf("signature verifies on second guess\n");
+
+           }
+           else
+           {
+               printf("signature does not verify\n");
+               flag =1;
+           }
+       }
+
+       element_clear(P);
+       element_clear(Y);
+       element_clear(M);
+       element_clear(W);
+       element_clear(T1);
+       element_clear(T2);
+       pairing_clear(pairing);
+
+       if(flag){
+            return 1;
+       }
+
+       return 0;
+
+}
+
+
+void generate_param(JNIEnv *env, jclass jcls,char *x_str,char *p_str,char *y_str){
+    pairing_t pairing;
     //参数
-    //pbc_param_t par;
-    // initialization
-
-    //生命一系列的变量
-    element_t P, Y, M, W,B;
+    element_t P, Y;
     element_t x;
-    element_t T1, T2;
-    clock_t start, stop;
-    int byte;
 
-     pbc_demo_pairing_init_me(pairing);
-
+    pbc_demo_pairing_init_me(env,jcls,pairing);
     //将变量P初始化为群G1中的元素
     element_init_G1(P, pairing);
-     element_init_G1(B, pairing);
-    //将变量temp1初始化为群G1中的元素
     element_init_G1(Y, pairing);
-    //将变量Q初始化为群G2中的元素
-    element_init_G1(M, pairing);
-    //将变量temp2初始化为群G2中的元素
-    element_init_G1(W, pairing);
-    //将变量x初始化为群GT中的元素
     element_init_Zr(x, pairing);
-    //将变量y初始化为群GT中的元素
-    element_init_GT(T1, pairing);
-    //将a初始化未环Zr中的元素
-    element_init_GT(T2, pairing);
+
+     //随机选择G1中的一个元素赋值给P
+     element_random(P);
+     element_random(x);
+     element_mul_zn(Y, P, x);
+
+     mpz_t t3;
+     mpz_init(t3);
+     element_to_mpz(t3,x);
+    // gmp_printf("value of T3 = %Zd\n", t3);
+     mpz_get_str(x_str,10,t3);
+    // printf("value of x_str  = %s\n",x_str);
+     mpz_clear(t3);
 
 
-    int n0 =  element_length_in_bytes_compressed(P);//计算需要多大的值用于保存压缩数据的大小
-    unsigned char *p_data = pbc_malloc(n0);
-    HexStrToByte(p_str,p_data,strlen(p_str));
-    element_from_bytes_compressed(P, p_data);//解压
-    //element_printf("p_str decompressed = %B\n", P);
+    int n1 = element_length_in_bytes_x_only(P);
+    unsigned char *p_data = pbc_malloc(n1);
+    element_to_bytes_x_only(p_data, P);
+    base64_encode(p_data,p_str,n1);
+  //  printf("the value of p_str %s\n", p_str);
 
-     if (!pairing_is_symmetric(pairing))
-    {
-        fprintf(stderr, "only works with symmetic pairing\n");
-        exit(1);
-    }
+     int n2 = element_length_in_bytes_x_only(Y);
+     unsigned char *y_data = pbc_malloc(n2);
+     element_to_bytes_x_only(y_data, Y);
+     base64_encode(y_data,y_str,n2);
+    // printf("the value of y_str %s\n", y_str);
 
-    int n1 = element_length_in_bytes_compressed(W); //计算需要多大的值用于保存压缩数据的大小
-    unsigned char *w_data = pbc_malloc(n1);
 
-    //printf("the len of pairing %d\n",n1);
-    //printf("the strlen of w_str %ld\n",strlen(w_str));
-    HexStrToByte(w_str, w_data, strlen(w_str));
-    //printf("the strlen of w_data %ld\n",strlen(w_data));
-    element_from_bytes_compressed(W, w_data); //解压
-    element_printf("w_str decompressed = %B\n", W);
 
-    int n2= element_length_in_bytes_compressed(Y); //计算需要多大的值用于保存压缩数据的大小
-    unsigned char *y_data = pbc_malloc(n2);
-     //printf("the strlen of y_str %ld\n",strlen(y_str));
-    HexStrToByte(y_str, y_data, strlen(y_str));
-    //printf("the strlen of y_data %ld\n",strlen(y_data));
 
-    element_from_bytes_compressed(Y, y_data); //解压
-    element_printf("y_str decompressed = %B\n", Y);
 
-    element_from_hash(M,message,len);
-    element_printf("the value of M= %B\n", M);
-    pairing_apply(T1, P, W, pairing);
-    pairing_apply(T2, Y, M, pairing);
-
-    pbc_free(w_data);
     pbc_free(y_data);
     pbc_free(p_data);
-    // pbc_free(w_data1);
-    // pbc_free(y_data1);
-    //pbc_free(p_data);
-    if (!element_cmp(T1, T2))
-    {
-
-        printf("the signature is valid\n");
-    }
-    else
-    {
-
-        printf("the signature is not  valid\n");
-    }
-
     element_clear(P);
     element_clear(Y);
-    element_clear(M);
-    element_clear(W);
     element_clear(x);
-    element_clear(T1);
-    element_clear(T2);
     pairing_clear(pairing);
-    return 0;
+   return ;
+
 
 }
-
 
 /*
 int main(int argc, char *argv[])
@@ -525,48 +738,87 @@ int main(int argc, char *argv[])
 
 
 
-JNIEXPORT jobjectArray JNICALL Java_SignUtil_Sign(JNIEnv *env, jclass jls, jstring message, jint len){
-        char *message1 = "zfc";
-        int len1 = 3;
+//签名算法
+JNIEXPORT jobjectArray JNICALL Java_cn_edu_nudt_hycloudclient_util_SignUtil_Sign
+  (JNIEnv *env, jclass jcls, jstring message, jint len, jstring x ,jstring p){
+
         char w_str[256]={'\0'};
         char y_str[256]={'\0'};
         char p_str[256]={'\0'};
         jobjectArray infos = NULL;
-
-        sign(message1,len1,w_str,p_str,y_str);
-        verify(message1,len1,w_str,p_str,y_str);
+        const char *x1 = (*env)->GetStringUTFChars(env, x, 0);
+        const char *p1 = (*env)->GetStringUTFChars(env, p, 0);
+        char *m1 = (*env)->GetStringUTFChars(env, message, 0);
+        sign(env, jcls,m1,len,x1,p1,w_str,y_str);
+//        verify(message1,len1,w_str,p_str,y_str);
 
         infos = (*env)->NewObjectArray(env,3, (*env)->FindClass(env,"java/lang/String"), NULL);
 
-        jobject str1 = (*env)->NewStringUTF(env,"zfc");
+        jobject str1 = (*env)->NewStringUTF(env,w_str);
+        jobject str2 = (*env)->NewStringUTF(env,y_str);
         (*env)->SetObjectArrayElement(env,infos, 0, str1);
-//        sign(message,len,w_str,p_str,y_str);
+        (*env)->SetObjectArrayElement(env,infos, 1, str2);
 
-//            jstring str;
-//           	jobjectArray args = 0;
-//           	jsize len = 5;
-//           	const char* sa[] = { "Hello,", "world!", "mx2", "is", "good" };
-//           	int i = 0;
-//           	args = (env)->NewObjectArray(len, (env)->FindClass("java/lang/String"), 0);
-//           	for (i = 0; i < len; i++)
-//           	{
-//           		str = (env)->NewStringUTF(sa[i]);
-//           		(env)->SetObjectArrayElement(args, i, str);
-//           	}
-
-//            args = (env)->NewObjectArray(len, (env)->FindClass("java/lang/String"), 0);
-//            str = (env)->NewStringUTF(w_str);
-//            (env)->SetObjectArrayElement(args, 0, str);
-//            str = (env)->NewStringUTF(y_str);
-//            (env)->SetObjectArrayElement(args, 1, str);
-//            str = (env)->NewStringUTF(y_str);
-//            (env)->SetObjectArrayElement(args, 2, str);
-
-//           	return args;
         return infos;
 
   }
 
- JNIEXPORT void JNICALL Java_SignUtil_greeting(JNIEnv *env, jclass jcls) {
+
+  JNIEXPORT jobjectArray JNICALL Java_cn_edu_nudt_hycloudclient_util_SignUtil_generate_1x_1and_1p
+    (JNIEnv *env, jclass jcls){
+
+        char x_str[256]={'\0'};
+        char y_str[256]={'\0'};
+        char p_str[256]={'\0'};
+        jobjectArray params = NULL;
+
+        generate_param(env, jcls,x_str,p_str,y_str);
+        params = (*env)->NewObjectArray(env,3, (*env)->FindClass(env,"java/lang/String"), NULL);
+
+        jobject str1 = (*env)->NewStringUTF(env,x_str);
+        jobject str2 = (*env)->NewStringUTF(env,p_str);
+        jobject str3 = (*env)->NewStringUTF(env,y_str);
+        (*env)->SetObjectArrayElement(env,params, 0, str1);
+        (*env)->SetObjectArrayElement(env,params, 1, str2);
+        (*env)->SetObjectArrayElement(env,params, 2, str3);
+
+         return params;
+
+
+
+    }
+
+JNIEXPORT void JNICALL Java_cn_edu_nudt_hycloudclient_util_SignUtil_greeting
+  (JNIEnv *env, jclass jcls) {
      printf("Goodbye World!\n");
+
  }
+
+
+/*
+ * Class:     cn_edu_nudt_hycloudclient_util_SignUtil
+ * Method:    Verify
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_cn_edu_nudt_hycloudclient_util_SignUtil_Verify
+  (JNIEnv *env, jclass jcls, jstring y_str, jstring p_str, jstring w_str, jstring m_str){
+
+      char *p_str1 = NULL;
+      char *y_str1 = NULL;
+      char *w_str1 = NULL;
+      char *m_str1 = NULL;
+
+      jboolean isCopy;	// 返回JNI_TRUE表示原字符串的拷贝，返回JNI_FALSE表示返回原字符串的指针
+      p_str1 = (*env)->GetStringUTFChars(env, p_str, &isCopy);
+      y_str1 = (*env)->GetStringUTFChars(env, y_str, &isCopy);
+      w_str1 = (*env)->GetStringUTFChars(env, w_str, &isCopy);
+      m_str1 = (*env)->GetStringUTFChars(env, m_str, &isCopy);
+     // printf("p_str = %s\n",p_str);
+
+
+     int flag =  verify(env, jcls,y_str1,p_str1,w_str1,m_str1);
+     return flag;
+
+  }
+
+
